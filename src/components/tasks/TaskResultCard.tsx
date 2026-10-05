@@ -4,6 +4,7 @@ import { type TaskSummary } from "@/api/data-manager";
 
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
 import { projectLinks, type ResultsState } from "../../projects/routes";
+import { TaskIcon } from "../icons";
 import { CapabilityReasons } from "../results/CapabilityReasons";
 import { ResultCard } from "../results/ResultCard";
 import { DeleteTaskButton } from "./DeleteTaskButton";
@@ -66,6 +67,7 @@ export const TaskResultCard = ({
     collapsedByDefault={collapsedByDefault}
     createdDateTime={task.created}
     href={projectLinks.result(projectId, "tasks", task.id, resultsState)}
+    kindIcon={<TaskIcon fontSize="small" />}
     linkTitle={task.purpose}
     showDuration={false}
     state={task.processing_stage}

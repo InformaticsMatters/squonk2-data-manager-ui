@@ -2,6 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 
 test.describe.configure({ mode: "serial" });
 
@@ -874,4 +875,34 @@ test("catalogues that cannot be refreshed are marked stale, locked, and retryabl
   await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}`);
+});
+
+test("the catalogue arrives once behind its skeleton, and a definition opens complete", async ({
+  page,
+}, testInfo) => {
+  const releaseWorkflows = await holdReads(page, `${acceptanceUrls.dataManager}/workflow`);
+  await login(page, acceptanceRun, testInfo);
+
+  // Every catalogue answers before any of them is shown.
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Run" })).toHaveCount(0);
+  await releaseWorkflows();
+  await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
+  await expect(page.getByText("Acceptance Workflow Definition")).toBeVisible();
+
+  // The catalogue stays as it is until the definition can be shown whole.
+  const releaseDefinition = await holdReads(
+    page,
+    `${acceptanceUrls.dataManager}/workflow/${fixtureIds.workflow}`,
+  );
+  await page.getByRole("link", { name: "Run Acceptance Workflow Definition" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceRun}/workflows/${fixtureIds.workflow}`,
+  );
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await releaseDefinition();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByText("Screens a library against a target")).toBeVisible();
+  await expect(dialog.getByRole("progressbar")).toHaveCount(0);
 });

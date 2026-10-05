@@ -1,12 +1,6 @@
 import { type UnitAllDetail } from "@/api/account-server";
 
 import {
-  ArrowForwardRounded,
-  BusinessRounded,
-  FolderRounded,
-  InboxRounded,
-} from "@mui/icons-material";
-import {
   Alert,
   Box,
   Button,
@@ -21,6 +15,13 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
+import {
+  AddIcon,
+  ContainsIcon,
+  OrganisationIcon,
+  ProjectIcon,
+  UnitIcon,
+} from "../components/icons";
 import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import { type ProjectOnboardingDecision } from "./projectIndex";
 import { projectLinks } from "./routes";
@@ -30,9 +31,9 @@ import { projectLinks } from "./routes";
  * either step makes sense, so it is drawn once rather than restated in both of them.
  */
 const hierarchy = [
-  { icon: <BusinessRounded fontSize="small" />, label: "Organisation" },
-  { icon: <InboxRounded fontSize="small" />, label: "Unit" },
-  { icon: <FolderRounded fontSize="small" />, label: "Project" },
+  { icon: <OrganisationIcon fontSize="small" />, label: "Organisation" },
+  { icon: <UnitIcon fontSize="small" />, label: "Unit" },
+  { icon: <ProjectIcon fontSize="small" />, label: "Project" },
 ] as const;
 
 const Hierarchy = () => (
@@ -44,7 +45,7 @@ const Hierarchy = () => (
   >
     {hierarchy.map(({ icon, label }, index) => (
       <Stack direction="row" key={label} sx={{ alignItems: "center", gap: 1 }}>
-        {index > 0 ? <ArrowForwardRounded color="disabled" fontSize="small" /> : null}
+        {index > 0 ? <ContainsIcon color="disabled" fontSize="small" /> : null}
         <Stack
           component={Paper}
           direction="row"
@@ -152,12 +153,13 @@ export const ProjectOnboarding = ({
                 <Button
                   component={Link}
                   href={projectLinks.create(personalUnit ? { unitId: personalUnit.id } : {})}
+                  startIcon={<AddIcon />}
                   variant="contained"
                 >
                   Create project
                 </Button>
               ) : (
-                <Button disabled variant="contained">
+                <Button disabled startIcon={<AddIcon />} variant="contained">
                   Create project
                 </Button>
               )}

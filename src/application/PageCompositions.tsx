@@ -4,10 +4,16 @@ import { ErrorBoundary } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import NextError from "next/error";
 
+import { AdministrationSkeleton } from "../administration/AdministrationShell";
+import { AdministrationWorkspace } from "../administration/AdministrationWorkspace";
 import { AuthenticationBoundary } from "../components/auth/AuthenticationBoundary";
 import { CenterLoader } from "../components/CenterLoader";
+import { DatasetsSkeleton } from "../datasets/DatasetsSkeleton";
 import Layout from "../layouts/Layout";
-import { ProjectOrganisationBoundary } from "../projects/ProjectOrganisationBoundary";
+import {
+  ProjectOrganisationBoundary,
+  ProjectsSkeleton,
+} from "../projects/ProjectOrganisationBoundary";
 import { ApiClientReadyBoundary, ApiClientSetup } from "./ApiClientReadyBoundary";
 import { type FamilyPagePolicy } from "./familyRoute";
 import { FamilyRouteGate, FamilyRouteResolver } from "./FamilyRouteResolution";
@@ -21,14 +27,15 @@ const EventStream = dynamic(
 /**
  * What a family puts around its own content, for the families that need anything at all.
  *
- * Only Projects does: its content may not mount until the URL project's owning organisation has
- * been adopted. A family with nothing to add is absent here rather than named by a component that
- * hands its children straight back, so this map says which families have a boundary rather than
- * making every family look like it has one.
+ * Projects' content may not mount until the URL project's owning organisation has been adopted.
+ * Administration's shell is its whole workspace, so its rail and a unit's section strip outlive the
+ * page component that changes on every section change. A family with nothing to add is absent here
+ * rather than named by a component that hands its children straight back, so this map says which
+ * families have a boundary rather than making every family look like it has one.
  */
 const familyShells: Partial<
   Record<FamilyPagePolicy["kind"], ComponentType<{ children: ReactNode }>>
-> = { projects: ProjectOrganisationBoundary };
+> = { administration: AdministrationWorkspace, projects: ProjectOrganisationBoundary };
 
 /**
  * What every authenticated page is wrapped in, whatever it addresses.
@@ -56,9 +63,25 @@ export const createPublicComposition = (children: ReactNode) => (
   </>
 );
 
+/**
+ * The page a family is about to show, shaped from its policy alone, for every gate it passes on the
+ * way: the route, the session, the API clients, and the family's own suspense. One skeleton held
+ * through all of them means the content arrives into its own shape rather than replacing a spinner.
+ */
+const familySkeleton = (policy: FamilyPagePolicy) => {
+  switch (policy.kind) {
+    case "administration":
+      return <AdministrationSkeleton />;
+    case "datasets":
+      return <DatasetsSkeleton section={policy.section} />;
+    case "projects":
+      return <ProjectsSkeleton section={policy.section} />;
+  }
+};
+
 export const createApplicationComposition = (children: ReactNode) => (
-  <AuthenticationBoundary>
-    <ApiClientReadyBoundary>
+  <AuthenticationBoundary fallback={<CenterLoader />}>
+    <ApiClientReadyBoundary fallback={<CenterLoader />}>
       <ApplicationShell>{children}</ApplicationShell>
     </ApiClientReadyBoundary>
   </AuthenticationBoundary>
@@ -66,10 +89,11 @@ export const createApplicationComposition = (children: ReactNode) => (
 
 export const createFamilyComposition = (policy: FamilyPagePolicy, children: ReactNode) => {
   const FamilyShell = familyShells[policy.kind] ?? Fragment;
+  const skeleton = familySkeleton(policy);
   return (
-    <FamilyRouteGate>
-      <AuthenticationBoundary>
-        <ApiClientReadyBoundary>
+    <FamilyRouteGate fallback={skeleton}>
+      <AuthenticationBoundary fallback={skeleton}>
+        <ApiClientReadyBoundary fallback={skeleton}>
           <ApplicationShell>
             {/*
               Keyed on the family alone. Keeping the isolation that matters — a crashed workspace
@@ -78,7 +102,7 @@ export const createFamilyComposition = (policy: FamilyPagePolicy, children: Reac
               page component, so React still unmounts the previous section's own content.
             */}
             <ErrorBoundary fallback={<NextError statusCode={500} />} key={policy.kind}>
-              <Suspense fallback={<CenterLoader />}>
+              <Suspense fallback={skeleton}>
                 <FamilyShell>{children}</FamilyShell>
               </Suspense>
             </ErrorBoundary>

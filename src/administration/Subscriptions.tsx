@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { type ReactElement, useState } from "react";
 
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
-import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
@@ -11,6 +10,14 @@ import { useRouter } from "next/router";
 import { z } from "zod/mini";
 
 import { DataTable } from "../components/DataTable";
+import {
+  AddIcon,
+  ChargesIcon,
+  DeleteIcon,
+  ProjectIcon,
+  StorageIcon,
+  SubscriptionIcon,
+} from "../components/icons";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
@@ -19,7 +26,7 @@ import { NavigationTab } from "../layouts/navigation/NavigationTab";
 import { projectLinks } from "../projects/routes";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
-import { useAccessFacts, useAddressedProduct, useAddressedUnitProducts } from "./accessFacts";
+import { addressedProductRead, addressedUnitProductsRead, useAccessFacts } from "./accessFacts";
 import { type AdministrationCapability } from "./capabilities";
 import { SubscriptionChargeLedger } from "./ChargeLedgers";
 import { administrationResourceLabel } from "./failures";
@@ -48,6 +55,7 @@ import {
   describeSubscription,
   type Subscription,
   type SubscriptionFacts,
+  type SubscriptionKind,
   subscriptionKindLabel,
   type SubscriptionOrganisationOwner,
   type SubscriptionUnitOwner,
@@ -175,6 +183,7 @@ const CreateDatasetStorageSubscriptionAction = ({
         id={`create-subscription-${unit.id}`}
         open={open}
         submitDisabled={!form.state.canSubmit}
+        submitIcon={<AddIcon />}
         submitText="Create"
         title={`Create dataset storage subscription in ${unit.name}`}
         onClose={() => setOpen(false)}
@@ -219,6 +228,12 @@ const CreateDatasetStorageSubscriptionAction = ({
 /** One row of a unit's subscription list, as the unit's own product read reports it. */
 type SubscriptionRow = SubscriptionFacts & { href: string };
 
+const subscriptionKindIcons: Record<SubscriptionKind, ReactElement> = {
+  "dataset-storage": <StorageIcon fontSize="small" />,
+  "project-tier": <ProjectIcon fontSize="small" />,
+  unrecognised: <SubscriptionIcon fontSize="small" />,
+};
+
 const rowHelper = createColumnHelper<SubscriptionRow>();
 const subscriptionColumns = [
   rowHelper.accessor("name", {
@@ -227,7 +242,16 @@ const subscriptionColumns = [
       <AdministrationLink href={row.original.href}>{row.original.name}</AdministrationLink>
     ),
   }),
-  rowHelper.accessor((row) => subscriptionKindLabel[row.kind], { header: "Kind", id: "kind" }),
+  rowHelper.accessor((row) => subscriptionKindLabel[row.kind], {
+    cell: ({ getValue, row }) => (
+      <Box component="span" sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
+        {subscriptionKindIcons[row.original.kind]}
+        {getValue()}
+      </Box>
+    ),
+    header: "Kind",
+    id: "kind",
+  }),
   rowHelper.accessor((row) => row.claim?.name ?? row.claim?.serviceId ?? "—", {
     header: "Claim",
     id: "claim",
@@ -255,7 +279,6 @@ export const UnitSubscriptions = ({
   organisation?: OrganisationAllDetail;
   unit: UnitAllDetail;
 }) => {
-  const addressed = useAddressedUnitProducts(unit.id);
   const callerFacts = useSubscriptionCallerFacts();
   const facts = callerFacts({ organisation, unit });
 
@@ -272,9 +295,12 @@ export const UnitSubscriptions = ({
         />
       </Box>
       <AddressedResourceView
-        addressed={addressed}
         identity={() => unit.id}
+        read={addressedUnitProductsRead(unit.id)}
         section="Subscriptions"
+        skeleton={
+          <DataTable isLoading columns={subscriptionColumns} searchLabel="Search subscriptions" />
+        }
         subject="unit"
       >
         {(products) => {
@@ -323,7 +349,8 @@ const ClaimInformation = ({
     const { name, projectId, serviceId } = subscription.claim;
     return (
       <Stack spacing={1}>
-        <Typography>
+        <Typography sx={{ alignItems: "center", display: "flex", gap: 1 }}>
+          <ProjectIcon color="action" fontSize="small" />
           This subscription is claimed by {name ?? "a project"} ({serviceId}).
         </Typography>
         {projectId ? (
@@ -345,13 +372,14 @@ const ClaimInformation = ({
       <CapabilityAction capability={capability}>
         {({ disabled }) =>
           disabled ? (
-            <Button disabled variant="contained">
+            <Button disabled startIcon={<AddIcon />} variant="contained">
               Create linked project
             </Button>
           ) : (
             <Button
               component={Link}
               href={projectLinks.create({ subscriptionId: subscription.productId })}
+              startIcon={<AddIcon />}
               variant="contained"
             >
               Create linked project
@@ -521,7 +549,7 @@ const DeleteSubscriptionAction = ({
             <Button
               color="error"
               disabled={disabled}
-              startIcon={<DeleteForeverIcon />}
+              startIcon={<DeleteIcon />}
               variant="outlined"
               onClick={() => openModal()}
             >
@@ -607,12 +635,10 @@ const SubscriptionDetail = ({
  * already names both the unit and the product.
  */
 export const SubscriptionSection = ({ route }: { route: SubscriptionRoute }) => {
-  const addressed = useAddressedProduct(route.productId);
-
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={(subscription) => subscription.product.id}
+      read={addressedProductRead(route.productId)}
       section={section}
       subject="subscription"
     >
@@ -620,7 +646,10 @@ export const SubscriptionSection = ({ route }: { route: SubscriptionRoute }) => 
         const subscription = describeSubscription(product);
         return (
           <>
-            <ResourceChip label={subscriptionKindLabel[subscription.kind]} />
+            <ResourceChip
+              icon={subscriptionKindIcons[subscription.kind]}
+              label={subscriptionKindLabel[subscription.kind]}
+            />
             <ResourceIdentity id={subscription.productId} name={subscription.name} type="Product" />
             <Stack
               aria-label="Subscription sections"
@@ -632,6 +661,7 @@ export const SubscriptionSection = ({ route }: { route: SubscriptionRoute }) => 
                 <NavigationTab
                   active={route.kind === section.key}
                   href={subscriptionSectionHref(section.key, route.unitId, route.productId)}
+                  icon={section.key === "subscription" ? <SubscriptionIcon /> : <ChargesIcon />}
                   key={section.key}
                   label={section.label}
                 />

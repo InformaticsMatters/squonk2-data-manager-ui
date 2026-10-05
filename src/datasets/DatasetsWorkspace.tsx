@@ -1,27 +1,82 @@
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-import { Container, Typography } from "@mui/material";
+import { getGetUnitsSuspenseQueryOptions } from "@/api/account-server/unit";
+import { getGetVersionsSuspenseQueryOptions } from "@/api/data-manager/dataset";
+import { getGetProjectsSuspenseQueryOptions } from "@/api/data-manager/project";
+import { getGetFileTypesSuspenseQueryOptions } from "@/api/data-manager/type";
+import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
+
+import { Container, Skeleton, Typography } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { ModalWrapper } from "../components/modals/ModalWrapper";
+import { Loading } from "../components/skeletons";
 import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
+import { useSettledQueries, useSettledQuery } from "../hooks/useSettledQuery";
 import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
+import { DatasetsListingSkeleton } from "./DatasetsSkeleton";
 import { type DatasetDeletionDestination } from "./mutations";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
+import { datasetInventoryReads } from "./useDatasetVersionBilling";
 import { useDatasetVersionResolution } from "./useDatasetVersionResolution";
 
-const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index" }> }) => {
+type DetailRoute = Exclude<DatasetRoute, { kind: "index" }>;
+
+/** The details dialog before its reads have answered, shaped like the sections it will hold. */
+const DatasetDetailsSkeleton = ({ onClose }: { onClose: () => void }) => (
+  <ModalWrapper
+    open
+    DialogProps={{ fullScreen: true }}
+    id="dataset-details-loading"
+    title="Dataset"
+    onClose={onClose}
+  >
+    <Container maxWidth="md">
+      <Loading>
+        {Array.from({ length: 5 }, (_, index) => (
+          <Typography component="div" key={index} sx={{ mb: 3 }} variant="h5">
+            <Skeleton width={180} />
+            <Skeleton height={56} variant="rounded" />
+          </Typography>
+        ))}
+      </Loading>
+    </Container>
+  </ModalWrapper>
+);
+
+/**
+ * Every read the details make, started together beside the dataset's own, so the dialog opens once
+ * with all of it rather than filling in section by section. The sections still read these with
+ * their own hooks, and find them answered.
+ */
+const useDatasetDetailsReads = (datasetId: string) => {
+  const unitsRead = getGetUnitsSuspenseQueryOptions();
+  useSettledQueries([
+    getGetVersionsSuspenseQueryOptions(datasetId),
+    unitsRead,
+    getGetProjectsSuspenseQueryOptions(),
+    getGetFileTypesSuspenseQueryOptions(),
+    getGetUsersSuspenseQueryOptions(),
+  ]);
+  // The inventory is asked once per scope the unit index names, so it can only start once that has
+  // answered.
+  useSettledQueries(datasetInventoryReads(useSettledQuery(unitsRead).data?.units ?? []));
+};
+
+const DatasetDetail = ({ route }: { route: DetailRoute }) => {
   const router = useRouter();
+  useDatasetDetailsReads(route.datasetId);
   const requestedVersion = route.kind === "dataset" ? undefined : route.datasetVersion;
-  const { error, isFetching, isLoading, refetch, resolution } = useDatasetVersionResolution(
+  const { error, isFetching, refetch, resolution } = useDatasetVersionResolution(
     route.datasetId,
     requestedVersion,
   );
   const state = datasetListState(route);
   const canonicalHref =
-    route.kind === "dataset" && resolution?.kind === "resolved"
+    route.kind === "dataset" && resolution.kind === "resolved"
       ? datasetLinks.version(route.datasetId, resolution.version.version, state)
       : undefined;
 
@@ -36,8 +91,6 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
       error={error}
       errorMessage="Dataset data could not be loaded. Retry this dataset without changing the requested version."
       errorSx={{ position: "fixed", inset: 16, zIndex: (theme) => theme.zIndex.modal + 1 }}
-      isLoading={isLoading}
-      isPending={!!canonicalHref}
       resolution={resolution}
       onRetry={() => void refetch()}
     >
@@ -67,6 +120,7 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
 };
 
 export const DatasetsWorkspace = () => {
+  const router = useRouter();
   const familyRoute = useFamilyRoute();
   const route = familyRoute.localNotFound ? null : familyRoute.route;
   if (!route || !("kind" in route) || !["index", "dataset", "version"].includes(route.kind)) {
@@ -80,9 +134,23 @@ export const DatasetsWorkspace = () => {
         <Typography gutterBottom component="h1" variant="h3">
           Datasets
         </Typography>
-        <DatasetsTable route={datasetRoute} />
+        <Suspense fallback={<DatasetsListingSkeleton />}>
+          <DatasetsTable route={datasetRoute} />
+        </Suspense>
       </Container>
-      {datasetRoute.kind === "index" ? null : <DatasetDetail route={datasetRoute} />}
+      {datasetRoute.kind === "index" ? null : (
+        <Suspense
+          fallback={
+            <DatasetDetailsSkeleton
+              onClose={() =>
+                void router.replace(datasetLinks.index(datasetListState(datasetRoute)) as never)
+              }
+            />
+          }
+        >
+          <DatasetDetail route={datasetRoute} />
+        </Suspense>
+      )}
     </>
   );
 };

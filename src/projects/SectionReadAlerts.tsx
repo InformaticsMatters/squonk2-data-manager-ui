@@ -1,6 +1,7 @@
 import { Alert, Button } from "@mui/material";
 
 import { AuthButton } from "../components/auth/AuthButton";
+import { RetryIcon } from "../components/icons";
 import { type SectionReadReport } from "./sectionReads";
 
 /**
@@ -40,7 +41,7 @@ export const SectionReadAlerts = ({
     {report.retryable ? (
       <Alert
         action={
-          <Button color="inherit" size="small" onClick={onRetry}>
+          <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={onRetry}>
             Retry
           </Button>
         }

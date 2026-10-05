@@ -48,9 +48,15 @@ export const ProjectHeading = ({ projectId }: { projectId: string }) => {
     );
   }
   return (
+    // Each placeholder sits in the line it stands in for, so the strip is the same height before and
+    // after the project arrives.
     <Box aria-label="Loading project" component="span" role="status" sx={{ display: "block" }}>
-      <Skeleton sx={{ fontWeight: 850 }} variant="text" width={180} />
-      <Skeleton sx={{ fontSize: 12 }} variant="text" width={120} />
+      <Typography component="span" sx={{ display: "block", fontWeight: 850 }}>
+        <Skeleton variant="text" width={180} />
+      </Typography>
+      <Typography component="span" sx={{ display: "block", fontSize: 12 }}>
+        <Skeleton variant="text" width={120} />
+      </Typography>
     </Box>
   );
 };

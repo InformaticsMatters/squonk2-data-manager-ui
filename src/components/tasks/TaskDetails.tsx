@@ -4,6 +4,7 @@ import { Alert, Button } from "@mui/material";
 
 import { useResultTask } from "../../projects/useResultTask";
 import { CenterLoader } from "../CenterLoader";
+import { RetryIcon } from "../icons";
 import { TaskProgress } from "./TaskProgress";
 
 export interface TaskDetailsProps {
@@ -29,7 +30,7 @@ export const TaskDetails = ({ taskId }: TaskDetailsProps) => {
     return read.readState.kind === "recoverable" ? (
       <Alert
         action={
-          <Button color="inherit" size="small" onClick={handleRetry}>
+          <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={handleRetry}>
             Retry
           </Button>
         }

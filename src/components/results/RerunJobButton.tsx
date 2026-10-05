@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
 import { type RerunTarget } from "../../projects/resultRerun";
 import { projectLinks, type ResultsState } from "../../projects/routes";
+import { RerunIcon } from "../icons";
 
 export interface RerunJobButtonProps {
   /**
@@ -32,6 +33,7 @@ export const RerunJobButton = ({ capability, resultsState, target }: RerunJobBut
     <Button
       color="primary"
       disabled={!capabilityIsEnabled(capability)}
+      startIcon={<RerunIcon />}
       onClick={() =>
         void push(
           projectLinks.resultRerun(target.projectId, target.instanceId, resultsState) as never,

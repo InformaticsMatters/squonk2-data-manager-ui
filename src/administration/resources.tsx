@@ -1,13 +1,27 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode, Suspense } from "react";
 
-import { Alert, Box, Chip, Divider, Link as MuiLink, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Chip,
+  Divider,
+  Link as MuiLink,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { hashKey, type UseSuspenseQueryOptions } from "@tanstack/react-query";
 import Link from "next/link";
 
-import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
-import { CenterLoader } from "../components/CenterLoader";
-import { type AddressedResource } from "./accessFacts";
+import {
+  classifyTransportFailure,
+  type TransportFailure,
+} from "../api/runtime/classifyTransportFailure";
+import { IdentitySkeleton } from "../components/skeletons";
+import { useSettledQuery } from "../hooks/useSettledQuery";
 import { type AdministrationCapability } from "./capabilities";
 import {
+  administrationReadIsAuthoritative,
   type AdministrationReadSubject,
   decideAdministrationReadFailure,
   presentAdministrationFailure,
@@ -65,9 +79,9 @@ export const Section = ({ children, title }: { children: ReactNode; title: strin
   </Box>
 );
 
-export const ResourceChip = ({ label }: { label: string }) => (
+export const ResourceChip = ({ icon, label }: { icon?: ReactElement; label: string }) => (
   <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1 }}>
-    <Chip label={label} size="small" variant="outlined" />
+    <Chip icon={icon} label={label} size="small" variant="outlined" />
   </Stack>
 );
 
@@ -75,7 +89,20 @@ export const ResourceChip = ({ label }: { label: string }) => (
 export const PendingResource = ({ section }: { section: string }) => (
   <>
     <PageTitle>{section}</PageTitle>
-    <CenterLoader />
+    <IdentitySkeleton />
+  </>
+);
+
+/**
+ * A section that has not answered, heading and all: the frame's stand-in for whatever suspends
+ * without a skeleton of its own, and the organisation sections' while the masthead has none yet.
+ */
+export const SectionSkeleton = () => (
+  <>
+    <Typography component="div" sx={{ mb: 2 }} variant="h4">
+      <Skeleton width={240} />
+    </Typography>
+    <IdentitySkeleton />
   </>
 );
 
@@ -125,8 +152,43 @@ export const ResourceIdentity = ({
   </>
 );
 
+/** The generated suspense read of one addressed resource. */
+type AddressedRead<TResource> = UseSuspenseQueryOptions<any, any, TResource>;
+
 /**
- * Renders whatever the addressed resource itself answered.
+ * The addressed resource once it has answered. A refusal is the resource's own answer, so it is
+ * rendered rather than thrown; every other failure is thrown to the frame's retry boundary.
+ */
+const AddressedResourceAnswer = <TResource,>({
+  children,
+  degraded,
+  identity,
+  read,
+  section,
+  subject,
+}: {
+  children: (resource: TResource) => ReactNode;
+  degraded?: (failure: TransportFailure) => ReactNode;
+  identity: (resource: TResource) => string;
+  read: AddressedRead<TResource>;
+  section: string;
+  subject: AdministrationReadSubject;
+}) => {
+  const answer = useSettledQuery(read, (error) => !administrationReadIsAuthoritative(error));
+
+  if (answer.isError) {
+    const failure = classifyTransportFailure(answer.error);
+    return degraded && decideAdministrationReadFailure(subject, failure) === "degrade" ? (
+      degraded(failure)
+    ) : (
+      <UnavailableResource failure={failure} section={section} />
+    );
+  }
+  return <Fragment key={identity(answer.data)}>{children(answer.data)}</Fragment>;
+};
+
+/**
+ * Renders whatever the addressed resource itself answered, behind a skeleton until it has.
  *
  * An authoritative refusal costs the screen what the refused subject was carrying, and no more. A
  * refused unit or subscription replaces the page, because a resource the caller cannot read has no
@@ -134,36 +196,34 @@ export const ResourceIdentity = ({
  * the screen still shows, which is how the default organisation's refused detail read stops taking
  * away the page a caller has to reach to create their first unit.
  *
+ * The read suspends like a suspense read, but settles on a refusal rather than throwing it, so an
+ * ordinary answer is never reported as a crash; a transport fact worth retrying still goes on to
+ * the frame's retry boundary. The skeleton is keyed by the read, so moving to another resource
+ * waits for that resource rather than showing the previous one.
+ *
  * Keying the rendered resource by its identity keeps what the screen holds owned by the resource in
  * the address bar, so a route change never carries one resource's entered values into another's.
  */
 export const AddressedResourceView = <TResource,>({
-  addressed,
-  children,
-  degraded,
-  identity,
-  section,
-  subject,
+  skeleton,
+  ...answer
 }: {
-  addressed: AddressedResource<TResource>;
   children: (resource: TResource) => ReactNode;
   /** What survives a refusal this subject degrades rather than replaces. */
   degraded?: (failure: TransportFailure) => ReactNode;
   /** The resource's own identity, which is what the rendered content is keyed by. */
   identity: (resource: TResource) => string;
-  subject: AdministrationReadSubject;
+  read: AddressedRead<TResource>;
   /** What the section is called, so a state that has no resource yet still has a heading. */
   section: string;
-}) => {
-  if (addressed.kind === "pending") {
-    return <PendingResource section={section} />;
-  }
-  if (addressed.kind === "unavailable") {
-    return degraded && decideAdministrationReadFailure(subject, addressed.failure) === "degrade" ? (
-      degraded(addressed.failure)
-    ) : (
-      <UnavailableResource failure={addressed.failure} section={section} />
-    );
-  }
-  return <Fragment key={identity(addressed.resource)}>{children(addressed.resource)}</Fragment>;
-};
+  /** Stands in for the content until the read answers; the section's identity block by default. */
+  skeleton?: ReactNode;
+  subject: AdministrationReadSubject;
+}) => (
+  <Suspense
+    fallback={skeleton ?? <PendingResource section={answer.section} />}
+    key={hashKey(answer.read.queryKey)}
+  >
+    <AddressedResourceAnswer {...answer} />
+  </Suspense>
+);

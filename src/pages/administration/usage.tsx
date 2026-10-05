@@ -1,7 +1,7 @@
-import { AdministrationWorkspace } from "../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
 
-const OrganisationUsagePage = () => <AdministrationWorkspace />;
+// The family shell renders the workspace this address names; the page itself is only the address.
+const OrganisationUsagePage = () => null;
 
 export default withPagePolicy(
   pagePolicies.administration("organisation-usage"),

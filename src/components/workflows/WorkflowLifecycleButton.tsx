@@ -7,6 +7,7 @@ import {
   type ResultWorkflowLifecycle,
   resultWorkflowLifecycleAction,
 } from "../../projects/workflowFacts";
+import { DeleteIcon, StopIcon } from "../icons";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
 export interface WorkflowLifecycleButtonProps {
@@ -51,6 +52,7 @@ export const WorkflowLifecycleButton = ({
   return (
     <WarningDeleteButton
       modalId={`end-workflow-${runningWorkflowId}`}
+      submitIcon={action === "delete" ? <DeleteIcon /> : <StopIcon />}
       submitText={verb}
       title={`${verb} Workflow`}
       tooltipText={`${verb} this workflow`}
@@ -71,6 +73,7 @@ export const WorkflowLifecycleButton = ({
       {({ openModal }) => (
         <Button
           disabled={action === undefined || !capabilityIsEnabled(capability)}
+          startIcon={action === "delete" ? <DeleteIcon /> : <StopIcon />}
           onClick={openModal}
         >
           {verb}

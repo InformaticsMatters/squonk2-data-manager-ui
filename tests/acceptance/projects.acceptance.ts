@@ -4,6 +4,7 @@ import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreatio
 import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
 import { fixtureIds, rejectedProjectName } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 
 test.describe.configure({ mode: "serial" });
 
@@ -1442,6 +1443,10 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   // exactly where they left them.
   await page.getByRole("button", { name: "Change organisation" }).click();
   await page.getByRole("option", { name: /Acceptance Organisation/u }).click();
+  // The switch lands once its navigation to Home has, which a navigation of our own would cancel.
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Acceptance Organisation",
+  );
   await page.goto("projects");
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
@@ -1559,6 +1564,14 @@ test("a project whose subscription is refused stays open, with the spends it can
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`, {
     params: { status: 403 },
   });
+  // The refusal is an answer, so the application logs nothing as an error; the browser's own line
+  // for the refused request is not the application's.
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) {
+      errors.push(message.text());
+    }
+  });
   await login(page, `projects/${fixtureIds.project}/files`, testInfo);
 
   // The project is open, named, and listing its files: a refused subscription is not a lost project.
@@ -1602,4 +1615,76 @@ test("a project whose subscription is refused stays open, with the spends it can
   await expect(factRow(page, "Owning organisation")).toContainText(fixtureIds.organisation);
   await expect(factRow(page, "Product ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
+  expect(errors).toEqual([]);
+});
+
+test("a subscription read that merely failed is retried in place and the project gains its ancestry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}`);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`, {
+    params: { status: 503 },
+  });
+  await login(page, `projects/${fixtureIds.project}/manage`, testInfo);
+
+  await expect(
+    page.getByText(
+      "This project's subscription could not be read, so its coin usage is not shown.",
+    ),
+  ).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+
+  await expect(page.getByRole("heading", { name: "Coin usage" })).toBeVisible();
+  await expect(page.getByText("This project's subscription could not be read")).toHaveCount(0);
+});
+
+test("Manage arrives with the directory its membership lists offer", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=manage-populated`,
+  );
+  const releaseUsers = await holdReads(page, `${acceptanceUrls.dataManager}/user`);
+  await login(page, managePath, testInfo);
+
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toHaveCount(0);
+  await releaseUsers();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  for (const role of ["Administrators", "Editors", "Observers"]) {
+    await expect(members(page, role).getByRole("combobox")).toBeEnabled();
+  }
+});
+
+test("a project page holds the project strip's place from its first frame", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+  // Every height the masthead takes while the page loads, from the first frame it paints.
+  await page.addInitScript(() => {
+    const heights: number[] = [];
+    Object.assign(globalThis, { mastheadHeights: heights });
+    const sample = () => {
+      const height = document.querySelector("header")?.getBoundingClientRect().height;
+      if (height !== undefined && heights.at(-1) !== height) {
+        heights.push(height);
+      }
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+
+  await page.goto(`projects/${fixtureIds.project}/files`);
+  await expect(page.getByRole("button", { name: "Change project" })).toBeVisible();
+  const heights = await page.evaluate(
+    () => (globalThis as unknown as { mastheadHeights: number[] }).mastheadHeights,
+  );
+  expect(heights).toHaveLength(1);
 });

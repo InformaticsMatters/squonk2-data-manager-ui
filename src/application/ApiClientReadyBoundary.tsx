@@ -3,7 +3,6 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Alert } from "@mui/material";
 
 import { AuthButton } from "../components/auth/AuthButton";
-import { CenterLoader } from "../components/CenterLoader";
 import { useSetupApiClients } from "../hooks/useSetupApiClients";
 import { authClient } from "../lib/auth-client";
 import {
@@ -16,7 +15,14 @@ export const ApiClientSetup = () => {
   return null;
 };
 
-export const ApiClientReadyBoundary = ({ children }: { children: ReactNode }) => {
+/** `fallback` stands in for the page until the API clients hold a token. */
+export const ApiClientReadyBoundary = ({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback: ReactNode;
+}) => {
   const status = useSetupApiClients();
   // Whether this mount has already decided what to do about a failure. The claim itself is spent
   // once for the whole tab, so re-entering the effect must not read a claim this boundary made as
@@ -69,7 +75,7 @@ export const ApiClientReadyBoundary = ({ children }: { children: ReactNode }) =>
     );
   }
   if (status !== "ready") {
-    return <CenterLoader />;
+    return fallback;
   }
   return children;
 };

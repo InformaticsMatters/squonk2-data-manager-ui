@@ -1,5 +1,6 @@
 import { Alert, Button, Stack } from "@mui/material";
 
+import { PersonalUnitIcon } from "../components/icons";
 import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
 
 /**
@@ -16,7 +17,12 @@ export const PersonalUnitCreation = () => {
 
   return (
     <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
-      <Button disabled={creating} variant="contained" onClick={() => void createPersonalUnit()}>
+      <Button
+        disabled={creating}
+        startIcon={<PersonalUnitIcon />}
+        variant="contained"
+        onClick={() => void createPersonalUnit()}
+      >
         {creating ? "Creating..." : "Create personal unit"}
       </Button>
       {state.kind === "failed" ? (

@@ -1,4 +1,6 @@
-import { useGetUserAccount } from "@/api/data-manager/user";
+import { getGetUserAccountSuspenseQueryOptions } from "@/api/data-manager/user";
+
+import { useQuery } from "@tanstack/react-query";
 
 import {
   type ProjectCapabilityFacts,
@@ -7,6 +9,16 @@ import {
 } from "./capabilities";
 import { describeProjectSubscription, type ProjectSubscriptionFacts } from "./projectSubscription";
 import { type ProjectWorkspace, useRouteProject } from "./useRouteProject";
+
+/**
+ * The caller's own account, which decides their roles in the project. It is read in parallel with
+ * the project and the workspace waits for it, so a section mounts with confirmed facts rather than
+ * inserting what the caller may not do once the account arrives. A failed read still mounts the
+ * workspace, whose facts then stay `stale` and defer to the server.
+ */
+export const callerAccountRead = getGetUserAccountSuspenseQueryOptions(undefined, {
+  query: { retry: false },
+});
 
 /**
  * Everything Manage reads: the resolved workspace of the project in the URL, the caller's roles in
@@ -19,18 +31,20 @@ export type ProjectFacts = ProjectCapabilityFacts &
 
 /**
  * Resolves those facts from the project in the URL and the caller's own generated account resource.
- * Facts stay `stale` until the account answers, so an unresolved caller defers to server authority
- * instead of guessing at membership. Returns `undefined` until the project workspace has mounted.
+ * The workspace mounts only once the account has settled, so facts are `current` from the first
+ * render; they stay `stale` only where the account could not be read, and then an unresolved
+ * caller defers to server authority instead of guessing at membership. Only a section beneath the
+ * project workspace may ask.
  *
  * A project whose ancestry could not be read still has facts: it has its own membership, roles and
  * privacy, and only the subscription is missing from them.
  */
-export const useProjectFacts = (): ProjectFacts | undefined => {
+export const useProjectFacts = (): ProjectFacts => {
   const { ancestry, project } = useRouteProject();
-  const account = useGetUserAccount(undefined, { query: { retry: false } });
+  const account = useQuery(callerAccountRead);
 
   if (!ancestry || !project) {
-    return undefined;
+    throw new Error("Project facts are only available beneath the project workspace");
   }
 
   const username = account.data?.user.username;

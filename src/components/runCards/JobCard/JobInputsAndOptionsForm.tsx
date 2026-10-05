@@ -5,6 +5,7 @@ import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
 import { type InputData } from "../../../projects/runLaunchForm";
+import { formTemplates } from "../../formTemplates";
 import { JobInputFields } from "./JobInputFields";
 
 interface JobInputsAndOptionsFormProps {
@@ -66,6 +67,7 @@ export const JobInputsAndOptionsForm = ({
               ref={formRef}
               schema={options}
               showErrorList="bottom"
+              templates={formTemplates}
               uiSchema={{ "ui:order": order }}
               validator={validator}
               onChange={(event) => setOptionsFormData(event.formData)}

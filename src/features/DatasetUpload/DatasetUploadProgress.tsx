@@ -1,5 +1,6 @@
 import { Alert, Button, LinearProgress, Typography } from "@mui/material";
 
+import { RetryIcon } from "../../components/icons";
 import {
   datasetUploadIsRetryable,
   type DatasetUploadRecord,
@@ -62,6 +63,7 @@ export const DatasetUploadProgress = ({
               aria-label={`Retry ${name}`}
               color="inherit"
               size="small"
+              startIcon={<RetryIcon />}
               onClick={(event) => {
                 event.stopPropagation();
                 onRetry();

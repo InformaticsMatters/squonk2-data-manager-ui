@@ -2,15 +2,8 @@ import { type ReactNode } from "react";
 
 import { type UnitAllDetail } from "@/api/account-server";
 import { getGetProductQueryKey } from "@/api/account-server/product";
+import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
 
-import {
-  ContentCopy,
-  FolderOutlined,
-  LockOutlined,
-  PublicOutlined,
-  Storage,
-  TrendingUp,
-} from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -32,10 +25,30 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 import { administrationLinks } from "../administration/routes";
-import { CenterLoader } from "../components/CenterLoader";
+import {
+  AvailableIcon,
+  BurnRateIcon,
+  CoinsIcon,
+  CopyIcon,
+  FilesIcon,
+  OrganisationIcon,
+  PredictedSpendIcon,
+  PrivateIcon,
+  ProcessingIcon,
+  ProjectIcon,
+  PublicIcon,
+  RetryIcon,
+  RunIcon,
+  StorageIcon,
+  UnavailableIcon,
+  UnitIcon,
+} from "../components/icons";
+import { RoleIcon, type RoleLabel } from "../components/kindIcons";
+import { useSettledQueries } from "../hooks/useSettledQuery";
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
+  capabilityIsEnabled,
   capabilityReason,
   evaluateProjectAdministratorsCapability,
   evaluateProjectDeletionCapability,
@@ -61,7 +74,7 @@ const atLimitMessage = "This project's subscription is at its coin limit.";
 const coinFormatter = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 20 });
 const projectTierChipStyles: Record<string, { backgroundColor: string; color: string }> = {
   Bronze: { backgroundColor: "#cd7f32", color: "#1a1a1a" },
-  Evaluation: { backgroundColor: "#1976d2", color: "#ffffff" },
+  Evaluation: { backgroundColor: "#00796b", color: "#ffffff" },
   Gold: { backgroundColor: "#ffd700", color: "#1a1a1a" },
   Silver: { backgroundColor: "#c0c0c0", color: "#1a1a1a" },
 };
@@ -78,7 +91,7 @@ const heldRoles = (roles: ProjectRoles) =>
     roles.isCreator ? "Creator" : undefined,
     roles.isEditor ? "Editor" : undefined,
     roles.isObserver ? "Observer" : undefined,
-  ].filter((role): role is string => role !== undefined);
+  ].filter((role): role is RoleLabel => role !== undefined);
 
 const Fact = ({ label, value }: { label: string; value: ReactNode }) => (
   <Stack
@@ -133,9 +146,11 @@ const UsageTile = ({
 
 const CapabilitySummary = ({
   capability,
+  icon,
   label,
 }: {
   capability: ProjectCapability;
+  icon: ReactNode;
   label: string;
 }) => {
   if (capability.status === "hidden") {
@@ -146,11 +161,15 @@ const CapabilitySummary = ({
     <Stack component="li" direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
       <Chip
         color={available ? "success" : "default"}
+        icon={available ? <AvailableIcon /> : <UnavailableIcon />}
         label={available ? "Available" : "Unavailable"}
         size="small"
       />
       <Box>
-        <Typography variant="body2">{label}</Typography>
+        <Typography sx={{ alignItems: "center", display: "flex", gap: 0.5 }} variant="body2">
+          {icon}
+          {label}
+        </Typography>
         {capabilityReason(capability) ? (
           <Typography color="text.secondary" variant="caption">
             {capabilityReason(capability)}
@@ -184,7 +203,7 @@ const Identifier = ({ label, value }: { label: string; value: string }) => (
         size="small"
         onClick={() => void navigator.clipboard.writeText(value).catch(() => undefined)}
       >
-        <ContentCopy fontSize="inherit" />
+        <CopyIcon fontSize="inherit" />
       </IconButton>
     </Tooltip>
   </Stack>
@@ -217,7 +236,13 @@ const SubscriptionCard = ({
           spacing={1}
           sx={{ alignItems: { sm: "baseline" }, mb: 1 }}
         >
-          <Typography component="h2" id="coin-usage-heading" variant="h6">
+          <Typography
+            component="h2"
+            id="coin-usage-heading"
+            sx={{ alignItems: "center", display: "flex", gap: 1 }}
+            variant="h6"
+          >
+            <CoinsIcon />
             Coin usage
           </Typography>
           <Box sx={{ flex: 1 }} />
@@ -276,7 +301,7 @@ const SubscriptionCard = ({
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <UsageTile
               caption="coins per day"
-              icon={<TrendingUp fontSize="small" />}
+              icon={<BurnRateIcon fontSize="small" />}
               label="Burn rate"
               value={formatCoins(subscription.burnRate)}
             />
@@ -284,6 +309,7 @@ const SubscriptionCard = ({
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <UsageTile
               caption="coins this billing period"
+              icon={<PredictedSpendIcon fontSize="small" />}
               label="Predicted spend"
               value={formatCoins(subscription.prediction)}
             />
@@ -291,7 +317,7 @@ const SubscriptionCard = ({
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <UsageTile
               caption={`${formatCoins(subscription.storageCoinsUsed)} coins`}
-              icon={<Storage fontSize="small" />}
+              icon={<StorageIcon fontSize="small" />}
               label="Storage"
               value={subscription.storageSize}
             />
@@ -300,6 +326,7 @@ const SubscriptionCard = ({
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <UsageTile
                 caption="coins"
+                icon={<ProcessingIcon fontSize="small" />}
                 label="Instance spend"
                 value={formatCoins(subscription.instanceCoinsUsed)}
               />
@@ -354,7 +381,7 @@ const UnavailableSubscriptionCard = ({
       <Alert
         action={
           kind === "unreadable" ? (
-            <Button color="inherit" size="small" onClick={onRetry}>
+            <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={onRetry}>
               Retry
             </Button>
           ) : undefined
@@ -397,6 +424,14 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
     privacy: evaluateProjectPrivacyCapability(facts),
   };
   const roles = heldRoles(facts.roles);
+  // A membership list the caller may change offers the user directory, so Manage arrives with it
+  // rather than with lists that only become usable once it lands.
+  const membersEditable = [
+    capabilities.administrators,
+    capabilities.editors,
+    capabilities.observers,
+  ].some((capability) => capabilityIsEnabled(capability));
+  useSettledQueries(membersEditable ? [getGetUsersSuspenseQueryOptions()] : []);
 
   return (
     <Box>
@@ -405,8 +440,14 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
       <Typography gutterBottom component="h1" variant="h4">
         Manage
       </Typography>
-      <Typography color="text.secondary" variant="body2">
-        {organisationLabel} › {unitLabel}
+      <Typography
+        color="text.secondary"
+        sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 0.5 }}
+        variant="body2"
+      >
+        <OrganisationIcon fontSize="small" />
+        {organisationLabel} › <UnitIcon fontSize="small" />
+        {unitLabel}
       </Typography>
       <Stack
         direction={{ xs: "column", sm: "row" }}
@@ -414,7 +455,7 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
         sx={{ alignItems: { sm: "center" }, mb: 3, mt: 0.5 }}
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", flex: 1, minWidth: 0 }}>
-          <FolderOutlined color="action" />
+          <ProjectIcon color="action" />
           <Typography
             component="h2"
             sx={{ fontWeight: 600, minWidth: 0, overflowWrap: "anywhere" }}
@@ -431,12 +472,20 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
         >
           <Chip
             color={project.private ? "default" : "info"}
-            icon={project.private ? <LockOutlined /> : <PublicOutlined />}
+            icon={project.private ? <PrivateIcon /> : <PublicIcon />}
             label={project.private ? "Private" : "Public"}
             size="small"
           />
           {roles.length > 0 ? (
-            roles.map((role) => <Chip color="primary" key={role} label={role} size="small" />)
+            roles.map((role) => (
+              <Chip
+                color="primary"
+                icon={<RoleIcon role={role} />}
+                key={role}
+                label={role}
+                size="small"
+              />
+            ))
           ) : (
             <Chip label="No project role" size="small" variant="outlined" />
           )}
@@ -561,8 +610,16 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
                 What you can do here
               </Typography>
               <Stack component="ul" spacing={1.5} sx={{ listStyle: "none", m: 0, p: 0 }}>
-                <CapabilitySummary capability={capabilities.files} label="Change files" />
-                <CapabilitySummary capability={capabilities.execution} label="Run work" />
+                <CapabilitySummary
+                  capability={capabilities.files}
+                  icon={<FilesIcon fontSize="small" />}
+                  label="Change files"
+                />
+                <CapabilitySummary
+                  capability={capabilities.execution}
+                  icon={<RunIcon fontSize="small" />}
+                  label="Run work"
+                />
               </Stack>
             </CardContent>
           </Card>
@@ -608,7 +665,7 @@ export const ProjectManage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
-      {facts ? <ProjectManageContent facts={facts} /> : <CenterLoader />}
+      <ProjectManageContent facts={facts} />
     </Container>
   );
 };

@@ -1,13 +1,14 @@
 import { Container, Grid } from "@mui/material";
 import { RoleWarning } from "../components/auth/RoleWarning";
-import Head from "next/head";
+import { PageHead } from "../components/PageHead";
 import { DocsIndexList } from "../components/DocsIndexList";
 import { Motd } from "../components/Motd";
 import { AuthenticatedHomeRecents } from "../components/home/AuthenticatedHomeRecents";
 
-<Head>
-  <title>Data Manager</title>
-</Head>
+<PageHead
+  parts={[]}
+  description="Run scientific workflows, such as virtual screening, on your data in a managed environment with the Squonk Data Manager."
+/>
 
 <RoleWarning />
 

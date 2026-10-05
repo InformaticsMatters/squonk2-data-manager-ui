@@ -4,6 +4,7 @@ import { gunzipSync } from "node:zlib";
 import { fixtureIds } from "./services/fixtures";
 import { type AttachmentRecord } from "./services/state";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
@@ -708,5 +709,81 @@ test("the dataset file name is drawn in the application's own link colour", asyn
   await expect(page.getByRole("link", { name: "acceptance-dataset-v2.sdf" })).toHaveCSS(
     "color",
     await linkColour(page),
+  );
+});
+
+/**
+ * Records, from the first paint of every document from here on, whether a page-sized spinner ever
+ * stood in for anything once the Datasets workspace had mounted. The sign-in shell's own loader
+ * comes before the workspace, and the upload action's 1rem placeholder is not page-sized.
+ */
+const watchForSpinners = (page: Page) =>
+  page.addInitScript(() => {
+    new MutationObserver(() => {
+      if (document.querySelector("h1")?.textContent !== "Datasets") {
+        return;
+      }
+      const spinners = document.querySelectorAll(".MuiCircularProgress-root");
+      if ([...spinners].some((spinner) => spinner.getBoundingClientRect().width >= 40)) {
+        Object.assign(globalThis, { spinnerSeen: true });
+      }
+    }).observe(document, { childList: true, subtree: true });
+  });
+
+const spinnerSeen = (page: Page) =>
+  page.evaluate(() => (globalThis as { spinnerSeen?: boolean }).spinnerSeen === true);
+
+test("the listing and its filter options arrive together, and a filter never empties it", async ({
+  page,
+}, testInfo) => {
+  const releaseTypes = await holdReads(page, `${acceptanceUrls.dataManager}/type`);
+  await login(page, "datasets", testInfo);
+
+  // The file-type options have not answered, so neither has the listing they filter.
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toBeVisible();
+  await expect(page.getByText("globally-shared.csv", { exact: true })).not.toBeVisible();
+  await releaseTypes();
+  await expect(page.getByText("globally-shared.csv", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Filter by file type")).toBeEnabled();
+  await expect(page.getByLabel("Filter by owner")).toBeEnabled();
+
+  const releaseList = await holdReads(page, /\/dataset\?/u);
+  await page.getByLabel("Filter by file type").click();
+  await page.getByRole("option", { name: "chemical/x-mdl-sdfile" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets?type=chemical%2Fx-mdl-sdfile`);
+
+  // The previous rows stay on screen until the filtered ones arrive.
+  await expect(page.getByText("globally-shared.csv", { exact: true })).toBeVisible();
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toHaveCount(0);
+  await releaseList();
+  await expect(page.getByRole("link", { name: "acceptance-dataset-v2.sdf" })).toBeVisible();
+});
+
+test("opening a dataset shows one skeleton, then the full details", async ({
+  page,
+  request,
+}, testInfo) => {
+  await watchForSpinners(page);
+  // The billing unit a new version inherits is one of the details, so nothing is shown before it.
+  const releaseInventory = await holdReads(page, `${acceptanceUrls.dataManager}/inventory/user**`);
+  await login(page, `datasets/${fixtureIds.dataset}`, testInfo);
+
+  await expect(page.getByRole("dialog").getByRole("status", { name: "Loading" })).toBeVisible();
+  await expect(page.getByText("Working Version")).not.toBeVisible();
+  await releaseInventory();
+
+  const dialog = page.getByRole("dialog", { name: "Dataset acceptance-dataset-v2.sdf" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("Working Version")).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/2`);
+  await expect(page.getByRole("status", { name: "Loading" })).toHaveCount(0);
+  expect(await spinnerSeen(page)).toBe(false);
+
+  // The dataset is read by itself, not found by reading every dataset.
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}`)
+    .then((response) => response.json() as Promise<{ requests: { path: string }[] }>);
+  expect(diagnostics.requests.map(({ path }) => path)).toContain(
+    `/dataset/${fixtureIds.dataset}/versions`,
   );
 });

@@ -215,6 +215,15 @@ test("the default organisation loads without the reads it refuses", async ({ pag
   const subject = subjectFor(testInfo);
   await login(page, "administration", testInfo);
   await workAs(page, "Default Organisation");
+  // A refusal is an answer, not a crash: the application logs nothing as an error, which is what
+  // the Next.js development overlay reports as an unhandled runtime error. The browser's own line
+  // for each refused request is not the application's.
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) {
+      errors.push(message.text());
+    }
+  });
   await page.goto("administration");
 
   // The organisation resource itself is refused to an ordinary caller, and the page survives it.
@@ -240,6 +249,7 @@ test("the default organisation loads without the reads it refuses", async ({ pag
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Create personal unit" })).toBeDisabled();
   await expect(page.getByText("You already have a personal unit.")).toBeVisible();
+  expect(errors).toEqual([]);
 });
 
 test("a caller with no personal unit creates one where they actually land", async ({
@@ -324,6 +334,24 @@ test("a recoverable failure keeps the workspace and recovers in place", async ({
   await page.getByRole("button", { name: "Retry" }).click();
   await expect(page.getByRole("heading", { name: /Total charges/u })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges?billing-cycle=-2`);
+});
+
+test("a section's failure does not follow the caller to another section", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/charge-failure?status=503`);
+  await login(page, "administration/charges", testInfo);
+  await expect(page.getByText("The Administration service failed to respond.")).toBeVisible();
+
+  // The frame outlives the section change, so the failure has to be cleared rather than unmounted.
+  await page
+    .getByRole("navigation", { name: "Administration" })
+    .getByRole("link", { name: "Usage & Inventory" })
+    .click();
+  await expect(page.getByRole("heading", { name: "Usage & Inventory" })).toBeVisible();
+  await expect(page.getByText("The Administration service failed to respond.")).toHaveCount(0);
 });
 
 test("a refused report is presented where the report is", async ({ page, request }, testInfo) => {

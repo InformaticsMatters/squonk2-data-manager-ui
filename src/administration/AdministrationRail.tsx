@@ -1,33 +1,34 @@
 import { useGetOrganisationUnits } from "@/api/account-server/unit";
 
 import {
-  BusinessRounded,
-  FolderSharedRounded,
-  LockOutlined,
-  PaymentsOutlined,
-  PersonRounded,
-  PublicOutlined,
-  QueryStatsOutlined,
-  SearchRounded,
-} from "@mui/icons-material";
-import {
   Alert,
   Box,
   Divider,
   InputAdornment,
-  LinearProgress,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
   Paper,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import {
+  ChargesIcon,
+  OrganisationIcon,
+  PersonalUnitIcon,
+  PrivateIcon,
+  PublicIcon,
+  SearchIcon,
+  UnitIcon,
+  UsageIcon,
+} from "../components/icons";
+import { Loading } from "../components/skeletons";
 import { useDraftValue } from "../hooks/useDraftValue";
 import { retryAdministrationRead, useAccessFacts } from "./accessFacts";
 import { administrationLinks, type AdministrationRoute } from "./routes";
@@ -35,10 +36,10 @@ import { organisationChargesAreOffered } from "./scope";
 import { buildUnitIndex, type UnitIndexRow } from "./unitIndex";
 
 /** The rail is sized by its content and capped below the viewport, which is what makes it stick. */
-const RAIL_WIDTH = 288;
+export const RAIL_WIDTH = 288;
 // Capped well below the viewport, and floored beneath by the content pane, so the row holding the
 // rail is always taller than the rail itself — which is the whole of what makes it stick.
-const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
+export const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
 
 /**
  * Which rail entry the current route selects. The rail is a set of links and the current
@@ -96,11 +97,7 @@ const UNITS_UNREADABLE = "The units of this organisation could not be listed.";
 const UnitRow = ({ row, selected }: { row: UnitIndexRow; selected: boolean }) => (
   <ListItemButton component={Link} href={row.href as never} selected={selected}>
     <ListItemIcon sx={{ minWidth: 34 }}>
-      {row.isPersonal ? (
-        <PersonRounded fontSize="small" />
-      ) : (
-        <FolderSharedRounded fontSize="small" />
-      )}
+      {row.isPersonal ? <PersonalUnitIcon fontSize="small" /> : <UnitIcon fontSize="small" />}
     </ListItemIcon>
     <ListItemText
       primary={row.unitName}
@@ -108,11 +105,23 @@ const UnitRow = ({ row, selected }: { row: UnitIndexRow; selected: boolean }) =>
       slotProps={{ primary: { noWrap: true }, secondary: { noWrap: true } }}
     />
     {row.isPrivate ? (
-      <LockOutlined sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Private" />
+      <PrivateIcon sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Private" />
     ) : (
-      <PublicOutlined sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Public" />
+      <PublicIcon sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Public" />
     )}
   </ListItemButton>
+);
+
+/** The unit list before it has answered: rows shaped like `UnitRow`, under the real heading. */
+const UnitRowsSkeleton = () => (
+  <Loading>
+    {Array.from({ length: 3 }, (_, index) => (
+      <Box key={index} sx={{ px: 2, py: 0.75 }}>
+        <Skeleton width="60%" />
+        <Skeleton width="30%" />
+      </Box>
+    ))}
+  </Loading>
 );
 
 /**
@@ -147,7 +156,7 @@ export const AdministrationRail = ({
   const organisationEntries = [
     {
       href: administrationLinks.overview(),
-      icon: <BusinessRounded fontSize="small" />,
+      icon: <OrganisationIcon fontSize="small" />,
       key: "organisation:overview",
       label: "Overview",
     },
@@ -157,7 +166,7 @@ export const AdministrationRail = ({
       ? [
           {
             href: administrationLinks.organisationCharges(),
-            icon: <PaymentsOutlined fontSize="small" />,
+            icon: <ChargesIcon fontSize="small" />,
             key: "organisation:charges",
             label: "Charges",
           },
@@ -165,7 +174,7 @@ export const AdministrationRail = ({
       : []),
     {
       href: administrationLinks.organisationUsage(),
-      icon: <QueryStatsOutlined fontSize="small" />,
+      icon: <UsageIcon fontSize="small" />,
       key: "organisation:usage",
       label: "Usage & Inventory",
     },
@@ -241,7 +250,7 @@ export const AdministrationRail = ({
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchRounded fontSize="small" />
+                  <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
             },
@@ -253,7 +262,6 @@ export const AdministrationRail = ({
       {/* Only the unit list scrolls, so the organisation entries and the search field hold their
           position however many units the organisation has. */}
       <Box sx={{ flexGrow: 1, minHeight: 0, overflowY: "auto" }}>
-        {isPending ? <LinearProgress /> : null}
         {isError ? (
           <Alert severity="warning" sx={{ m: 1.5 }}>
             {UNITS_UNREADABLE}
@@ -269,6 +277,7 @@ export const AdministrationRail = ({
             <UnitRow key={row.unitId} row={row} selected={selected === `unit:${row.unitId}`} />
           ))}
         </List>
+        {isPending ? <UnitRowsSkeleton /> : null}
         {emptiness && !isPending && !isError ? (
           <Typography color="text.secondary" sx={{ p: 1.5 }} variant="body2">
             {unitIndexEmptiness[emptiness]}

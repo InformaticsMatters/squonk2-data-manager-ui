@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { DeleteForever as DeleteForeverIcon, Edit as EditIcon } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, TextField, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
@@ -9,6 +8,7 @@ import { useDraftValue } from "../hooks/useDraftValue";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useIsASketcherOpen } from "../state/sketcherState";
 import { CenterLoader } from "./CenterLoader";
+import { ClearIcon, EditIcon } from "./icons";
 import { type SketcherProps } from "./Sketcher";
 
 const Sketcher = dynamic<SketcherProps>(() => import("./Sketcher").then((mod) => mod.Sketcher), {
@@ -87,7 +87,7 @@ export const SMILESInput = ({
       <>
         <Tooltip title="Delete this molecule">
           <IconButton sx={{ mr: 1 }} onClick={onDelete}>
-            <DeleteForeverIcon />
+            <ClearIcon />
           </IconButton>
         </Tooltip>
         <TextField label="SMILES" value={smiles} onChange={(event) => onSave(event.target.value)} />

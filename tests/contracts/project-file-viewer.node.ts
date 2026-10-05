@@ -9,10 +9,12 @@ import {
   fileViewersFor,
   isCompressedFileName,
   offersFileViewer,
+  opensInBrowserTab,
   resolveFileViewerDelivery,
 } from "../../src/projects/fileViewers";
 import {
   parseProjectRoute,
+  projectFileBrowserPath,
   projectFileResourcePath,
   projectFileTransportLinks,
   projectLinks,
@@ -63,11 +65,33 @@ test.describe("Viewed file identity", () => {
     expect(offersFileViewer("notes.txt", "browser")).toBe(true);
   });
 
+  test("offers the Markdown Viewer first, and only for Markdown files", () => {
+    for (const name of ["README.md", "notes.markdown", "GUIDE.MD", "Notes.Markdown"]) {
+      expect(fileViewersFor(name), name).toEqual(["markdown", "text", "browser"]);
+      expect(offersFileViewer(name, "markdown"), name).toBe(true);
+    }
+    for (const name of ["notes.txt", "notes.md.gz", "readme", "notes.mdx", "md"]) {
+      expect(fileViewersFor(name), name).not.toContain("markdown");
+      expect(offersFileViewer(name, "markdown"), name).toBe(false);
+    }
+  });
+
   test("reads compression off the name the Data Manager holds the file under", () => {
     expect(isCompressedFileName("poses.sdf.gz")).toBe(true);
     expect(isCompressedFileName("poses.sdf.gzip")).toBe(true);
     expect(isCompressedFileName("poses.sdf")).toBe(false);
     expect(isCompressedFileName("notes.gz.txt")).toBe(false);
+  });
+
+  test("opens the files the browser renders natively in their own tab", () => {
+    expect(opensInBrowserTab("config.json")).toBe(true);
+    expect(opensInBrowserTab("/reports/index.html")).toBe(true);
+    expect(opensInBrowserTab("REPORT.HTM")).toBe(true);
+    expect(opensInBrowserTab("config.meta.json")).toBe(true);
+    expect(opensInBrowserTab("notes.txt")).toBe(false);
+    expect(opensInBrowserTab("config.json.gz")).toBe(false);
+    expect(offersFileViewer("index.html", "browser")).toBe(false);
+    expect(offersFileViewer("index.html", "text")).toBe(true);
   });
 });
 
@@ -206,7 +230,7 @@ test.describe("File viewer routes", () => {
   });
 
   test("a named viewer round trips without replacement", () => {
-    for (const viewer of ["browser"] as const) {
+    for (const viewer of ["browser", "markdown"] as const) {
       expect(
         parseProjectRoute(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer })),
         viewer,
@@ -253,9 +277,7 @@ test.describe("Project file transport contract", () => {
       withEnvBasePath("/data-manager-ui", () =>
         projectFileTransportLinks.browserView(projectId, "/inputs/poses.sdf"),
       ),
-    ).toBe(
-      `/data-manager-ui/api/viewer-proxy/project/${projectId}/file?path=%2Finputs&file=poses.sdf`,
-    );
+    ).toBe(`/data-manager-ui/api/viewer-proxy/project/${projectId}/files/inputs/poses.sdf`);
     expect(
       withEnvBasePath("/data-manager-ui", () =>
         projectFileTransportLinks.download(projectId, "/inputs/poses.sdf"),
@@ -266,11 +288,20 @@ test.describe("Project file transport contract", () => {
     ).toBe(`/api/dm-api/project/${projectId}/file?path=%2F&file=notes.txt`);
   });
 
+  test("the browser transport encodes each name of the path, never its separators", () => {
+    expect(projectFileBrowserPath(projectId, "/my inputs/a#b?.html")).toBe(
+      `/project/${projectId}/files/my%20inputs/a%23b%3F.html`,
+    );
+  });
+
   test("transport builders reject identity they cannot address", () => {
     expect(() => projectFileResourcePath("not-a-project", "/notes.txt")).toThrow();
     expect(() => projectFileResourcePath(projectId, "/")).toThrow();
     expect(() => projectFileResourcePath(projectId, "notes.txt")).toThrow();
     expect(() => projectFileTransportLinks.browserView(projectId, "/")).toThrow();
+    expect(() =>
+      projectFileTransportLinks.browserView(projectId, "/inputs/../notes.txt"),
+    ).toThrow();
     expect(() => projectFileTransportLinks.download(projectId, "/inputs/../notes.txt")).toThrow();
   });
 });

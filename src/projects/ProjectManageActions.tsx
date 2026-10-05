@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Alert, Box, Button, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { DeleteIcon } from "../components/icons";
+import { RoleIcon, type RoleLabel } from "../components/kindIcons";
 import { ManageUsers } from "../components/ManageUsers";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { isProductId, isProjectId, isTaskId } from "../routing/identifiers";
@@ -130,6 +132,12 @@ const roleTitles: Record<ProjectRole, string> = {
   observer: "Observers",
 };
 
+const roleLabels: Record<ProjectRole, RoleLabel> = {
+  administrator: "Administrator",
+  editor: "Editor",
+  observer: "Observer",
+};
+
 /**
  * One of the project's membership lists. The list as displayed and as edited is the whole input:
  * the command decides which user changed, so this control never has to work it out, and it stays
@@ -162,6 +170,7 @@ export const ProjectMembersControl = ({
       <ManageUsers
         disabled={!capabilityIsEnabled(capability)}
         helperText={capabilityReason(capability)}
+        icon={<RoleIcon fontSize="small" role={roleLabels[role]} />}
         inputValue={input}
         isLoading={isPending}
         title={roleTitles[role]}
@@ -281,6 +290,7 @@ export const ProjectDeletionControl = ({
           <Button
             color="error"
             disabled={!capabilityIsEnabled(capability) || lifecycle.kind === "requesting"}
+            startIcon={<DeleteIcon />}
             variant="outlined"
             onClick={openModal}
           >

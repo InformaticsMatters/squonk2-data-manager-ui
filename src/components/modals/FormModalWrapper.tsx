@@ -19,6 +19,10 @@ export interface FormModalWrapperProps extends BaseModalWrapperProps {
    */
   submitText: string;
   /**
+   * Icon displayed before the submit text. Every primary action has one.
+   */
+  submitIcon: ReactNode;
+  /**
    * Text displayed in the close button. Defaults to "Close"
    */
   closeText?: string;
@@ -56,6 +60,7 @@ export const FormModalWrapper = ({
   id,
   title,
   submitText,
+  submitIcon,
   closeText,
   open,
   onClose,
@@ -77,6 +82,7 @@ export const FormModalWrapper = ({
         id={id}
         open={open}
         submitDisabled={!form.state.canSubmit || !!form.state.isSubmitting}
+        submitIcon={submitIcon}
         submitText={submitText}
         title={title}
         onClose={onClose}

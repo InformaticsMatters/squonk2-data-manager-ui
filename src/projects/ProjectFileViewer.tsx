@@ -1,12 +1,13 @@
 import { type ReactNode } from "react";
 
-import { ArrowBack, OpenInNew } from "@mui/icons-material";
 import { Box, Button, Container, Link, Typography } from "@mui/material";
 import NextError from "next/error";
 import A from "next/link";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { BackIcon, ExternalLinkIcon } from "../components/icons";
+import { PageHead } from "../components/PageHead";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
@@ -20,10 +21,13 @@ import {
   isCompressedFileName,
   offersFileViewer,
 } from "./fileViewers";
+import { MarkdownViewer } from "./MarkdownViewer";
 import { ProjectFilesSection } from "./ProjectFiles";
+import { FileViewerIcon, fileViewerLink } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
+import { useRouteProject } from "./useRouteProject";
 
 type FileViewRoute = Extract<ProjectRoute, { kind: "file-view" }>;
 
@@ -120,33 +124,36 @@ const FileViewerFrame = ({
   file: FilesystemFile;
   projectId: ProjectId;
   viewer: FileViewer;
-}) => (
-  <Container maxWidth="xl" sx={{ py: 3 }}>
-    <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-      <Button
-        replace
-        component={A}
-        href={projectLinks.files(projectId, { path: file.directory })}
-        startIcon={<ArrowBack />}
-      >
-        Back to files
-      </Button>
-      {fileViewersFor(file.name).map((offered) => (
+}) => {
+  const { project } = useRouteProject();
+  return (
+    <Container maxWidth="xl" sx={{ py: 3 }}>
+      <PageHead parts={[file.name, project?.name ?? "Projects"]} />
+      <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
         <Button
           replace
           component={A}
-          href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
-          key={offered}
-          size="small"
-          variant={offered === viewer ? "contained" : "outlined"}
+          href={projectLinks.files(projectId, { path: file.directory })}
+          startIcon={<BackIcon />}
         >
-          {fileViewerLabels[offered].name}
+          Back to files
         </Button>
-      ))}
-    </Box>
-    {children}
-  </Container>
-);
+        {fileViewersFor(file.name).map((offered) => (
+          <Button
+            {...fileViewerLink(projectId, file.path, offered, { replace: true })}
+            key={offered}
+            size="small"
+            startIcon={<FileViewerIcon viewer={offered} />}
+            variant={offered === viewer ? "contained" : "outlined"}
+          >
+            {fileViewerLabels[offered].name}
+          </Button>
+        ))}
+      </Box>
+      {children}
+    </Container>
+  );
+};
 
 const FileViewerBody = ({
   delivery,
@@ -183,6 +190,12 @@ const FileViewerBody = ({
       ) : (
         <NextError statusCode={500} />
       );
+    case "markdown":
+      return delivery.kind === "content" ? (
+        <MarkdownViewer {...delivery.content} directory={file.directory} projectId={projectId} />
+      ) : (
+        <NextError statusCode={500} />
+      );
     case "browser":
       return <BrowserFile file={file} projectId={projectId} />;
   }
@@ -209,7 +222,7 @@ const BrowserFile = ({ file, projectId }: { file: FilesystemFile; projectId: Pro
           target="_blank"
         >
           Open in a new tab
-          <OpenInNew fontSize="inherit" />
+          <ExternalLinkIcon fontSize="inherit" />
         </Link>
       </Box>
       {/* A project's files are content this application does not control, and the proxy serves them

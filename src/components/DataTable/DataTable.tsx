@@ -1,22 +1,19 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  ExpandLess,
-  ExpandMore as ExpandMoreIcon,
-  SearchRounded as SearchRoundedIcon,
-} from "@mui/icons-material";
 import {
   Alert,
   Box,
   IconButton,
   InputAdornment,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
   type TableCellProps as MuiCellProps,
   TableContainer,
   TableHead,
+  TablePagination,
   type TableProps as MuiTableProps,
   TableRow,
   type TableRowProps as MuiRowProps,
@@ -38,17 +35,39 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type Row,
+  type RowData,
   type RowSelectionState,
   type SortingState,
-  type Table as RTable,
   useReactTable,
 } from "@tanstack/react-table";
 
+import { CollapseIcon, ExpandIcon, SearchIcon } from "../icons";
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
 const DEBUG = process.env.NODE_ENV === "development";
+
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line unused-imports/no-unused-vars -- the names must match the declaration merged with
+  interface ColumnMeta<TData extends RowData, TValue> {
+    /**
+     * The column's width, as a CSS length. A table with any declared width is laid out from its
+     * headings alone rather than from its rows, so it is the same width loading as loaded: the
+     * columns without one share what the declared ones leave.
+     */
+    width?: string;
+  }
+}
+
+/** The leading control columns' widths: the control, and a small cell's padding either side. */
+const expanderWidth = "72px";
+const selectionWidth = "70px";
+
+/** Below this a table laid out from its headings scrolls rather than crushing its columns. */
+const fixedLayoutMinWidth = 900;
 
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
@@ -113,9 +132,14 @@ export interface DataTableProps<Data extends Record<string, any>> {
    */
   customRowProps?: MuiRowProps | ((row: Row<Data>) => MuiRowProps);
   /**
-   * If true, displays the loading icon.
+   * If true, the body holds placeholder rows under the real headings until the data arrives.
    */
   isLoading?: boolean;
+  /**
+   * The height, in pixels, of the placeholder rows a loading listing shows: the height its controls
+   * give its real rows, which placeholders holding no controls cannot arrive at for themselves.
+   */
+  loadingRowHeight?: number;
   /**
    * If truthy, displays the provided `error`.
    */
@@ -139,7 +163,13 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const truncate = <Data,>(table: RTable<Data>) => table.getRowModel().rows.slice(0, 100);
+/**
+ * Rows per page. A page counts only top-level rows, so a row and its sub rows share a page.
+ */
+const pageSize = 100;
+
+/** Placeholder rows a loading listing previews, enough to fill a table without a scrollbar. */
+const loadingRowCount = 5;
 
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
@@ -159,6 +189,8 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customCellProps,
     customRowProps,
     error,
+    isLoading,
+    loadingRowHeight,
     searchLabel = "search",
     searchValue,
     onSearchChange,
@@ -171,6 +203,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize });
 
   const paddedColumns = useMemo(() => {
     const workingColumns = [...columns];
@@ -178,17 +211,18 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       workingColumns.unshift({
         id: "expander",
         enableSorting: false,
+        meta: { width: expanderWidth },
         header: ({ table }) => (
           <Box sx={{ display: "flex" }}>
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
-              {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
+              {table.getIsAllRowsExpanded() ? <CollapseIcon /> : <ExpandIcon />}
             </IconButton>
           </Box>
         ),
         cell: ({ row }) =>
           row.getCanExpand() ? (
             <IconButton sx={{ display: "flex" }} onClick={row.getToggleExpandedHandler()}>
-              {row.getIsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
+              {row.getIsExpanded() ? <CollapseIcon /> : <ExpandIcon />}
             </IconButton>
           ) : null,
       });
@@ -197,17 +231,18 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         workingColumns.unshift({
           id: "selection",
           enableSorting: false,
+          meta: { width: selectionWidth },
           header: ({ table }) => (
             <IndeterminateCheckbox
-              checked={table.getIsAllRowsSelected()}
-              indeterminate={table.getIsSomeRowsSelected()}
+              checked={table.getIsAllPageRowsSelected()}
+              indeterminate={table.getIsSomePageRowsSelected()}
               onChange={(event, checked) => {
-                table.getToggleAllRowsSelectedHandler()(event);
-                const rows = truncate(table);
-                onSelection &&
-                  rows
-                    .filter((row) => row.getIsSelected())
-                    .forEach((row) => onSelection(row.original, checked));
+                // Only the rows on this page are toggled, so everything selected was on screen
+                table.getToggleAllPageRowsSelectedHandler()(event);
+                table
+                  .getRowModel()
+                  .rows.filter((row) => row.depth === 0)
+                  .forEach((row) => onSelection?.(row.original, checked));
               }}
             />
           ),
@@ -244,6 +279,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       columnFilters,
       expanded,
       rowSelection,
+      pagination,
     },
     initialState: {
       rowSelection: initialSelection
@@ -256,6 +292,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    autoResetPageIndex: false,
+    paginateExpandedRows: false,
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -264,12 +303,39 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
     getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     debugTable: DEBUG,
     debugHeaders: DEBUG,
     debugColumns: DEBUG,
   });
 
-  const rows = truncate(table);
+  // A new search, sort or filter starts again from the first page and drops the selection, since
+  // each can hide or move selected rows off the page. The search may also arrive through the URL.
+  const filter = searchValue ?? globalFilter;
+  const view = useRef({ columnFilters, filter, sorting });
+  useEffect(() => {
+    const previous = view.current;
+    if (
+      previous.filter === filter &&
+      previous.sorting === sorting &&
+      previous.columnFilters === columnFilters
+    ) {
+      return;
+    }
+    view.current = { columnFilters, filter, sorting };
+    setPagination((current) => ({ ...current, pageIndex: 0 }));
+    table.getSelectedRowModel().flatRows.forEach((row) => onSelection?.(row.original, false));
+    setRowSelection({});
+  }, [columnFilters, filter, onSelection, sorting, table]);
+
+  // A refresh keeps the page, but one the listing has shrunk away from moves back to its last page
+  const lastPageIndex = Math.max(table.getPageCount() - 1, 0);
+  if (pagination.pageIndex > lastPageIndex) {
+    setPagination({ ...pagination, pageIndex: lastPageIndex });
+  }
+
+  const rows = table.getRowModel().rows;
+  const hasDeclaredWidths = columns.some((column) => column.meta?.width !== undefined);
 
   const tableContents = (
     <>
@@ -284,14 +350,16 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchRoundedIcon />
+                      <SearchIcon />
                     </InputAdornment>
                   ),
                 },
 
                 htmlInput: { "aria-label": searchLabel },
               }}
-              sx={{ ml: "auto" }}
+              // Its own width whatever the toolbar holds beside it, so it does not narrow when that
+              // content arrives after the listing's placeholder.
+              sx={{ flexShrink: 0, ml: "auto" }}
               value={searchValue ?? globalFilter}
               onChange={(event) => {
                 setGlobalFilter(event.target.value);
@@ -302,7 +370,14 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         </Toolbar>
       ) : null}
       {ToolbarActionChild ? <Toolbar>{ToolbarActionChild}</Toolbar> : null}
-      <Table size="small" {...customTableProps}>
+      <Table
+        size="small"
+        {...customTableProps}
+        sx={[
+          hasDeclaredWidths && { minWidth: fixedLayoutMinWidth, tableLayout: "fixed" },
+          ...(Array.isArray(customTableProps?.sx) ? customTableProps.sx : [customTableProps?.sx]),
+        ]}
+      >
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -311,6 +386,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                   className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
                   colSpan={header.colSpan}
                   key={header.id}
+                  sx={{ width: header.column.columnDef.meta?.width }}
                 >
                   {header.isPlaceholder ? null : (
                     <Box sx={{ textWrap: "nowrap" }}>
@@ -340,35 +416,66 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
             </TableRow>
           ))}
         </TableHead>
-        <TableBody>
-          {rows.map((row) => {
-            const rowProps =
-              typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
-            return (
-              <TableRow {...rowProps} key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <TableCell
-                      {...customCellProps}
-                      key={cell.id}
-                      sx={(theme) => ({
-                        pl: cell.column.getCanSort() ? theme.spacing(2 + 2 * row.depth) : undefined,
-                      })}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        <TableBody aria-busy={isLoading} aria-label={isLoading ? "Loading" : undefined}>
+          {isLoading
+            ? Array.from({ length: loadingRowCount }, (_, index) => (
+                <TableRow key={index} sx={{ height: loadingRowHeight }}>
+                  {table.getVisibleLeafColumns().map((column) => (
+                    <TableCell {...customCellProps} key={column.id}>
+                      <Skeleton />
                     </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
+                  ))}
+                </TableRow>
+              ))
+            : rows.map((row) => {
+                const rowProps =
+                  typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
+                return (
+                  <TableRow {...rowProps} key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          {...customCellProps}
+                          key={cell.id}
+                          sx={(theme) => ({
+                            pl: cell.column.getCanSort()
+                              ? theme.spacing(2 + 2 * row.depth)
+                              : undefined,
+                          })}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
         </TableBody>
       </Table>
+      {/* Held at the foot of a container taller than the listing, such as Files, and sticky so it
+      stays in view there when the listing overflows */}
+      <TablePagination
+        component="div"
+        count={table.getRowCount()}
+        page={pagination.pageIndex}
+        rowsPerPage={pageSize}
+        rowsPerPageOptions={[]}
+        sx={{
+          backgroundColor: "background.paper",
+          bottom: 0,
+          flexShrink: 0,
+          mt: "auto",
+          position: "sticky",
+        }}
+        onPageChange={(_, page) => table.setPageIndex(page)}
+      />
     </>
   );
 
   return tableContainer ? (
-    <TableContainer component={Paper}>{tableContents}</TableContainer>
+    <TableContainer component={Paper} sx={{ display: "flex", flexDirection: "column" }}>
+      {tableContents}
+    </TableContainer>
   ) : (
     tableContents
   );

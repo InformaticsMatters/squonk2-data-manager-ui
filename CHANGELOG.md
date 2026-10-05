@@ -1,3 +1,76 @@
+# [7.1.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.6...7.1.0-dev.7) (2026-10-05)
+
+
+### Bug Fixes
+
+* settle refused reads as answers rather than throwing them ([6bcdb6a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6bcdb6ab74664ae181abb9ea18d63a3cb4c52d57))
+
+
+### Features
+
+* add the section boundary, DataTable skeleton rows and skeleton building blocks ([a7294d4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a7294d4a314fb26c63ca49c86bf52dad5214e8c7)), closes [#1983](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1983)
+* Administration sections suspend inside a frame that never unmounts ([bd16098](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/bd16098777f094253de4ef7c11cd15b312eb7ea1)), closes [#2112](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2112)
+* Datasets list and details resolve together behind one skeleton ([6d7e065](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6d7e065d7fd4acaf3e956bc9371953f6e0ff6550)), closes [#2113](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2113)
+* hold each page's shape from its first paint so content does not move as it loads ([b96f5c3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b96f5c39e68b255dbb12a633105089485b6030b0))
+* project sections resolve behind one skeleton shaped like the section ([eb39b46](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eb39b46151004b455c45b14efcc5a4301f04deab)), closes [#2114](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2114)
+* resolve the project workspace's project, product and account together ([5a3b7cd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5a3b7cdbf8d82c5c075bfd44f297870d40c45593)), closes [#2110](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2110)
+* stop Home and the masthead moving content down on load ([5fa888e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5fa888e928e09049d8dfb50918af7e8a9e716839)), closes [#2111](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2111)
+
+# [7.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.5...7.1.0-dev.6) (2026-10-03)
+
+
+### Bug Fixes
+
+* restore node contract tests broken by project tier changes ([5848b8a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5848b8af659af409c59d8bafc08157bbb47bae77))
+
+# [7.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.4...7.1.0-dev.5) (2026-10-03)
+
+
+### Features
+
+* keep the browsed directory across a job's file inputs ([97c635c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/97c635c486793b808cb1c5ff0559803f0f0f4aa9)), closes [#1278](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1278)
+
+# [7.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.3...7.1.0-dev.4) (2026-10-03)
+
+
+### Features
+
+* resolve links and images inside markdown project files ([2810625](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2810625e7d220b2c2686334e29c3acce9da039fe)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+* show a directory's README below its file listing ([7a50190](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7a5019035ea10644e2d2419fcdf8a68436ee8b9d)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+* show markdown project files in a formatted markdown viewer ([a4bf8dd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a4bf8ddc5432983beb08bb55ec18c102384d5600)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+
+# [7.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.2...7.1.0-dev.3) (2026-10-03)
+
+
+### Features
+
+* address browser-viewed project files by path so relative references resolve ([c7f2ff6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c7f2ff689c3e9d8fffc968f7ee3c02c30d15b4cd))
+* give json and html files no in-app browser viewer address ([aa968ef](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa968efe375d385cd0ec3dc1fc7ecea756dd89e2)), closes [#374](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/374)
+* open the browser viewer of json and html files in a new tab ([2f8c0ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2f8c0ec0f9204d09bcf4dc0b65a2a3e4bf186b72))
+
+# [7.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.1...7.1.0-dev.2) (2026-10-03)
+
+
+### Bug Fixes
+
+* refuse to start a server missing its required environment ([e92fba2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e92fba2decd08d315f62b264a69fe095afd68fed)), closes [#62](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/62)
+
+# [7.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0...7.1.0-dev.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* **DataTable:** anchor the page controls to the foot of the container ([e0cf86a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e0cf86a0860d8736debde8ecef8cd56a3f57ae42))
+* **DataTable:** paginate instead of silently truncating at 100 rows ([9106ef7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9106ef7bc5031fce484840945c3507a9d0c9eb3d)), closes [#2021](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2021)
+* **DataTable:** reset the page and selection however the search changes ([8ca190d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8ca190deb2b62ef5954ea63ed637de94d5bf1723))
+
+
+### Features
+
+* give every page a title, public pages a description, and the app its own favicon ([d913889](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d9138892f9da4f373054ee590a7f0ade664ca92e)), closes [#16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/16)
+* name the project in the titles of its pages ([42e3df5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/42e3df5eb2537998b235c7ed966279fcea1f7a05)), closes [#16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/16)
+* replace Material icons with Lucide ([5c8f0c5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c8f0c57273f18198882241cd2c49331c3557ffe))
+
 # [7.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.2...7.0.0) (2026-09-29)
 
 

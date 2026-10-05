@@ -14,7 +14,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel: a cancelled run can publish a release and skip its deployment.
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -38,7 +39,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6.0.10
+        uses: pnpm/action-setup@v6.1.0
         with:
           run_install: false
 
@@ -96,7 +97,7 @@ jobs:
             type=raw,value=latest,enable=${{ !contains(needs.release.outputs.new_release_version, '-dev.') }}
 
       - name: Build and push image
-        uses: docker/build-push-action@v7.3.0
+        uses: docker/build-push-action@v7.4.0
         with:
           context: .
           file: ./Dockerfile

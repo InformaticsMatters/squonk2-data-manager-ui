@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 
 import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
-import { BackupRounded as BackupRoundedIcon } from "@mui/icons-material";
 import { List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
+import { NewVersionIcon } from "../../../components/icons";
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { Dropzone } from "../../../components/uploads/Dropzone";
 import { FileTypeOptions } from "../../../components/uploads/FileTypeOptions";
@@ -157,7 +157,7 @@ export const NewVersionListItem = ({
           secondary={capability.status === "disabled" ? capability.reason : undefined}
         />
         <ListItemIcon>
-          <BackupRoundedIcon />
+          <NewVersionIcon />
         </ListItemIcon>
       </ListItemButton>
 
@@ -168,6 +168,7 @@ export const NewVersionListItem = ({
         submitDisabled={
           !file || capability.status !== "enabled" || !datasetUploadIsSendable(record)
         }
+        submitIcon={<NewVersionIcon />}
         submitText="Upload"
         title={`Upload a New Version to ${datasetName}`}
         onClose={onClose}

@@ -5,6 +5,7 @@ import { type CoreOptions, createColumnHelper } from "@tanstack/react-table";
 
 import { CenterLoader } from "../../../../../../components/CenterLoader";
 import { DataTable } from "../../../../../../components/DataTable/DataTable";
+import { SaveIcon } from "../../../../../../components/icons";
 import { ModalWrapper } from "../../../../../../components/modals/ModalWrapper";
 import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../../../../../utils/app/jsonSchema";
 import { getErrorMessage } from "../../../../../../utils/next/orvalError";
@@ -186,6 +187,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`${datasetId}-schema`}
       open={open}
+      submitIcon={<SaveIcon />}
       submitText="Save"
       title="Edit Schema"
       onClose={onClose}

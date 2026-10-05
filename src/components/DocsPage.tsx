@@ -1,8 +1,6 @@
 import { type ComponentType } from "react";
 
-import { NavigateBeforeRounded, NavigateNextRounded } from "@mui/icons-material";
 import { Box, Breadcrumbs, Button, Container, Divider, Stack, Typography } from "@mui/material";
-import Head from "next/head";
 import Link from "next/link";
 
 import {
@@ -12,6 +10,8 @@ import {
   docsSiblings,
 } from "../content/docs/manifest";
 import { DocsNav } from "./DocsNav";
+import { NextIcon, PreviousIcon } from "./icons";
+import { PageHead } from "./PageHead";
 
 /** Where this page sits, as the trail of ancestors that leads to it. */
 const DocsBreadcrumb = ({
@@ -55,14 +55,14 @@ const DocsSequence = ({ href }: { href: DocsHref }) => {
         sx={{ justifyContent: "space-between" }}
       >
         {previous ? (
-          <Button component={Link} href={previous.href} startIcon={<NavigateBeforeRounded />}>
+          <Button component={Link} href={previous.href} startIcon={<PreviousIcon />}>
             {previous.title}
           </Button>
         ) : (
           <Box />
         )}
         {next ? (
-          <Button component={Link} endIcon={<NavigateNextRounded />} href={next.href}>
+          <Button component={Link} endIcon={<NextIcon />} href={next.href}>
             {next.title}
           </Button>
         ) : (
@@ -86,16 +86,11 @@ const DocsSequence = ({ href }: { href: DocsHref }) => {
  */
 export const withDocsPage = (href: DocsHref, Content: ComponentType) => {
   const { ancestors, node } = docsEntryOf(href);
-  const title =
-    ancestors.length === 0
-      ? "Squonk Data Manager documentation"
-      : `${node.title} - Squonk Data Manager documentation`;
+  const title = ancestors.length === 0 ? ["Docs"] : [node.title, "Docs"];
 
   const DocsPage = () => (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
+      <PageHead description={node.blurb} parts={title} />
       <Container maxWidth="lg" sx={{ py: 3 }}>
         <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 4 }}>
           <DocsNav current={href} />

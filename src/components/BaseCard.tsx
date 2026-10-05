@@ -1,6 +1,5 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 
-import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
   Avatar,
   Card,
@@ -10,6 +9,8 @@ import {
   Collapse,
   IconButton,
 } from "@mui/material";
+
+import { ExpandIcon } from "./icons";
 
 /**
  * Parameters passed to actions when a component is passed
@@ -125,7 +126,7 @@ export const BaseCard = ({
               setHasExpanded(true);
             }}
           >
-            <ExpandMoreIcon />
+            <ExpandIcon />
           </IconButton>
         )}
       </CardActions>

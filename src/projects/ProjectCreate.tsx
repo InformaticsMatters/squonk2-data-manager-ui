@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 import { administrationLinks } from "../administration/routes";
 import { capabilityReason } from "../application/capability";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { AddIcon, BackIcon, RetryIcon } from "../components/icons";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { settle } from "../utils/app/settle";
@@ -697,7 +698,12 @@ export const ProjectCreate = () => {
         <Stack direction="row" spacing={2}>
           {(lifecycle.kind === "product-failed" && lifecycle.retryable) ||
           lifecycle.kind === "project-failed" ? (
-            <Button disabled={pending} variant="contained" onClick={() => void retry()}>
+            <Button
+              disabled={pending}
+              startIcon={<RetryIcon />}
+              variant="contained"
+              onClick={() => void retry()}
+            >
               Retry
             </Button>
           ) : lifecycle.kind === "collecting" ? (
@@ -709,6 +715,7 @@ export const ProjectCreate = () => {
                 !projectCreationNameIsValid(name) ||
                 !unitId
               }
+              startIcon={<AddIcon />}
               variant="contained"
               onClick={() => void submit()}
             >
@@ -718,7 +725,9 @@ export const ProjectCreate = () => {
           {/* An attempt that has ended still names a subscription that outlived it, so leaving is
               a deliberate step away from that answer rather than another cancellation. */}
           {lifecycle.kind === "released" || lifecycle.kind === "cleanup-failed" ? (
-            <Button onClick={leaveForProjects}>Back to Projects</Button>
+            <Button startIcon={<BackIcon />} onClick={leaveForProjects}>
+              Back to Projects
+            </Button>
           ) : (
             <Button disabled={pending} onClick={cancel}>
               Cancel

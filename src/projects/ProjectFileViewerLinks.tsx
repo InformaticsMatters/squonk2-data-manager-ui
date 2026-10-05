@@ -1,20 +1,60 @@
-import { type ReactNode } from "react";
-
-import { Description as DescriptionIcon } from "@mui/icons-material";
-import { Link, List, ListItemButton, ListItemIcon, ListItemText, Popover } from "@mui/material";
+import {
+  Link,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  type SvgIconProps,
+} from "@mui/material";
 import { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { usePopupState } from "material-ui-popup-state/hooks";
 import A from "next/link";
 
+import { BrowserViewerIcon, MarkdownViewerIcon, TextViewerIcon } from "../components/icons";
 import { childFilesystemPath } from "./fileFacts";
-import { type FileViewer, fileViewerLabels, fileViewersFor } from "./fileViewers";
-import { projectLinks } from "./routes";
+import {
+  type FileViewer,
+  fileViewerLabels,
+  fileViewersFor,
+  opensInBrowserTab,
+} from "./fileViewers";
+import { projectFileTransportLinks, projectLinks } from "./routes";
 
 /** The icon each viewer is recognised by; what it is called is a viewer fact Files owns. */
-const fileViewerIcons: Record<FileViewer, ReactNode> = {
-  browser: <DescriptionIcon color="action" />,
-  text: <DescriptionIcon color="action" />,
+const fileViewerIcons = {
+  browser: BrowserViewerIcon,
+  markdown: MarkdownViewerIcon,
+  text: TextViewerIcon,
+} satisfies Record<FileViewer, unknown>;
+
+export const FileViewerIcon = ({ viewer, ...props }: SvgIconProps & { viewer: FileViewer }) => {
+  const Icon = fileViewerIcons[viewer];
+  return <Icon {...props} />;
 };
+
+/**
+ * Where a link to one viewer of one file goes. Every viewer is the file's own Files route, except
+ * the Browser Viewer of a file the browser renders natively, which is the file itself in a new tab.
+ */
+export const fileViewerLink = (
+  projectId: string,
+  path: string,
+  viewer: FileViewer,
+  { replace = false } = {},
+) =>
+  viewer === "browser" && opensInBrowserTab(path)
+    ? ({
+        component: "a",
+        href: projectFileTransportLinks.browserView(projectId, path),
+        rel: "noopener noreferrer",
+        target: "_blank",
+      } as const)
+    : ({
+        component: A,
+        href: projectLinks.fileView(projectId, { path, viewer }) as never,
+        replace,
+      } as const);
 
 export interface ProjectFileViewerLinksProps {
   /** Absolute path of the directory holding the file, inside the project that owns it. */
@@ -56,13 +96,14 @@ export const ProjectFileViewerLinks = ({
             const { name, summary } = fileViewerLabels[viewer];
             return (
               <ListItemButton
-                component={A}
-                href={projectLinks.fileView(projectId, { path, viewer }) as never}
+                {...fileViewerLink(projectId, path, viewer)}
                 key={viewer}
                 onClick={() => popupState.close()}
               >
                 <ListItemText primary={name} secondary={summary} />
-                <ListItemIcon sx={{ ml: 2 }}>{fileViewerIcons[viewer]}</ListItemIcon>
+                <ListItemIcon sx={{ ml: 2 }}>
+                  <FileViewerIcon color="action" viewer={viewer} />
+                </ListItemIcon>
               </ListItemButton>
             );
           })}

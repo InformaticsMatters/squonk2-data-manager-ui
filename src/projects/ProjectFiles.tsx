@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -17,8 +16,9 @@ import NextError from "next/error";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
+import { DirectoryIcon, ManagedFileIcon, PrivateIcon, RefreshIcon } from "../components/icons";
+import { FileKindIcon } from "../components/kindIcons";
 import { NextLink } from "../components/NextLink";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
@@ -34,6 +34,7 @@ import {
   filesystemPathOf,
   filesystemRoot,
   isDirectoryRow,
+  managedFileId,
   type ProjectFileRow,
 } from "./fileFacts";
 import { FILE_NOT_FOUND_NOTICE } from "./fileViewers";
@@ -43,6 +44,8 @@ import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
 import { ProjectFileUpload } from "./ProjectFileUpload";
 import { ProjectFileViewerLinks } from "./ProjectFileViewerLinks";
+import { filesColumns, filesListingSx } from "./ProjectOrganisationBoundary";
+import { findReadmeRow, ProjectReadme } from "./ProjectReadme";
 import { projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -104,6 +107,7 @@ const FilesTable = ({
   const capability = evaluateProjectFileMutationCapability({ ...facts, content: files.content });
   const reason = capabilityReason(capability);
   const directories = existingDirectoryNames(files.rows);
+  const readme = findReadmeRow(files.rows);
   // The unit a dataset made from these files is billed to. The project's ancestry names it where
   // it could be read, and the project itself names it where it could not, so a project whose
   // subscription is refused still knows where its own files live.
@@ -117,30 +121,61 @@ const FilesTable = ({
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", {
-        cell: ({ getValue, row: { original: row } }) =>
-          isDirectoryRow(row) ? (
-            <NextLink
-              component="a"
-              href={
-                projectLinks.files(projectId, {
-                  path: childFilesystemPath(path, row.name),
-                }) as never
-              }
-              sx={{ textTransform: "none" }}
-            >
-              {getValue()}
-            </NextLink>
-          ) : (
-            <ProjectFileViewerLinks directory={path} fileName={row.name} projectId={projectId} />
-          ),
-        header: "File Name",
+        cell: ({ getValue, row: { original: row } }) => (
+          <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
+            {isDirectoryRow(row) ? (
+              <>
+                <DirectoryIcon color="action" fontSize="small" />
+                <NextLink
+                  component="a"
+                  href={
+                    projectLinks.files(projectId, {
+                      path: childFilesystemPath(path, row.name),
+                    }) as never
+                  }
+                  sx={{ textTransform: "none" }}
+                >
+                  {getValue()}
+                </NextLink>
+              </>
+            ) : (
+              <>
+                <FileKindIcon color="action" fileName={row.name} fontSize="small" />
+                <ProjectFileViewerLinks
+                  directory={path}
+                  fileName={row.name}
+                  projectId={projectId}
+                />
+                {managedFileId(row) === undefined ? null : (
+                  <ManagedFileIcon
+                    color="action"
+                    fontSize="small"
+                    titleAccess="Managed file, attached from a dataset"
+                  />
+                )}
+              </>
+            )}
+          </Box>
+        ),
+        header: filesColumns.name.header,
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.owner), {
-        header: "Owner",
+        header: filesColumns.owner.header,
+        meta: { width: filesColumns.owner.width },
         id: "owner",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : fileRowMode(row)), {
-        header: "Mode",
+        cell: ({ getValue }) =>
+          getValue() === "immutable" ? (
+            <Box component="span" sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
+              <PrivateIcon color="action" fontSize="small" />
+              immutable
+            </Box>
+          ) : (
+            getValue()
+          ),
+        header: filesColumns.mode.header,
+        meta: { width: filesColumns.mode.width },
         id: "mode",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.size), {
@@ -148,13 +183,15 @@ const FilesTable = ({
           const value = getValue();
           return typeof value === "string" ? value : filesize(value);
         },
-        header: "File size",
+        header: filesColumns.fileSize.header,
+        meta: { width: filesColumns.fileSize.width },
         id: "fileSize",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.modified), {
         cell: ({ getValue, row }) =>
           isDirectoryRow(row.original) ? getValue() : toLocalTimeString(getValue(), true, true),
-        header: "Last updated",
+        header: filesColumns.lastUpdated.header,
+        meta: { width: filesColumns.lastUpdated.width },
         id: "lastUpdated",
       }),
       columnHelper.display({
@@ -169,7 +206,8 @@ const FilesTable = ({
           />
         ),
         enableGrouping: false,
-        header: "Actions",
+        header: filesColumns.actions.header,
+        meta: { width: filesColumns.actions.width },
         id: "actions",
       }),
     ],
@@ -191,29 +229,18 @@ const FilesTable = ({
               {notice}
             </Alert>
           ) : null}
-          {/* A listing that is still loading already says so through its own loader, so what its
-          controls require stays on the controls rather than being announced as a banner every
-          navigation would flash. */}
-          {reason && !files.isLoading ? (
+          {reason ? (
             <Alert severity="info" sx={{ mb: 2 }}>
               {reason}
             </Alert>
           ) : null}
 
-          <Box
-            sx={{
-              "& .MuiPaper-root:last-child": {
-                height: "calc(100vh - 260px)",
-                "@supports (height: 100dvh)": { height: "calc(100dvh - 260px)" },
-              },
-            }}
-          >
+          <Box sx={filesListingSx}>
             <DataTable
               subRowsEnabled
               columns={columns}
-              data={files.isLoading ? undefined : files.rows}
+              data={files.rows}
               getRowId={(row) => row.fullPath}
-              isLoading={files.isLoading}
               toolbarContent={
                 <Grid container sx={{ width: "100%" }}>
                   <Grid sx={{ alignItems: "center", display: "flex" }}>
@@ -232,7 +259,7 @@ const FilesTable = ({
                     />
                     <Tooltip title="Refresh this directory">
                       <IconButton size="large" onClick={() => files.refresh()}>
-                        <RefreshRoundedIcon />
+                        <RefreshIcon />
                       </IconButton>
                     </Tooltip>
                   </Grid>
@@ -240,6 +267,9 @@ const FilesTable = ({
               }
             />
           </Box>
+          {readme === undefined ? null : (
+            <ProjectReadme key={readme.fullPath} path={path} projectId={projectId} row={readme} />
+          )}
         </>
       )}
     </ProjectFileUpload>
@@ -262,19 +292,15 @@ export const ProjectFilesSection = ({ notice, route }: { notice?: string; route:
       <Typography gutterBottom component="h1" variant="h4">
         Files
       </Typography>
-      {facts === undefined ? (
-        <CenterLoader />
-      ) : (
-        /* A new project or a new directory is a new listing, so nothing the previous one was
-        showing — rows, dialogs, or an in-flight command's control state — survives into it. */
-        <FilesTable
-          facts={facts}
-          key={`${projectId}:${path}`}
-          notice={notice}
-          path={path}
-          projectId={projectId}
-        />
-      )}
+      {/* A new project or a new directory is a new listing, so nothing the previous one was
+      showing — rows, dialogs, or an in-flight command's control state — survives into it. */}
+      <FilesTable
+        facts={facts}
+        key={`${projectId}:${path}`}
+        notice={notice}
+        path={path}
+        projectId={projectId}
+      />
     </Container>
   );
 };

@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { type DropzoneState } from "react-dropzone";
 
-import {
-  CloudUploadRounded as CloudUploadRoundedIcon,
-  CreateNewFolderRounded as CreateNewFolderRoundedIcon,
-} from "@mui/icons-material";
 import { Box, Button, Paper, Popover, TextField } from "@mui/material";
 import { bindPopover, bindToggle, usePopupState } from "material-ui-popup-state/hooks";
 
+import { CreateDirectoryIcon, UploadFileIcon } from "../components/icons";
 import { capabilityIsEnabled, type ProjectCapability } from "./capabilities";
 import { CapabilityIconButton } from "./CapabilityIconButton";
 import { useFileCommands } from "./useFileCommands";
@@ -50,7 +47,7 @@ export const CreateDirectoryControl = ({
         title="Create directory"
         {...bindToggle(popupState)}
       >
-        <CreateNewFolderRoundedIcon />
+        <CreateDirectoryIcon />
       </CapabilityIconButton>
       <Popover
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
@@ -71,7 +68,7 @@ export const CreateDirectoryControl = ({
                 value={name}
                 onChange={(event) => setName(event.target.value)}
               />
-              <Button disabled={isPending} type="submit">
+              <Button disabled={isPending} startIcon={<CreateDirectoryIcon />} type="submit">
                 Create
               </Button>
             </form>
@@ -99,6 +96,6 @@ export const UploadFileControl = ({
     title="Upload unmanaged file"
     onClick={() => capabilityIsEnabled(capability) && openUploadDialog()}
   >
-    <CloudUploadRoundedIcon />
+    <UploadFileIcon />
   </CapabilityIconButton>
 );

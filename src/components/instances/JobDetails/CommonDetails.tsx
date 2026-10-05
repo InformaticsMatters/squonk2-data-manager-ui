@@ -1,7 +1,8 @@
 import { type InstanceGetResponse } from "@/api/data-manager";
 
-import { AppsRounded as AppsRoundedIcon, Payment as PaymentIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+
+import { ApplicationIcon, CoinsIcon } from "../../icons";
 
 export interface CommonDetailsProps {
   instance: InstanceGetResponse;
@@ -18,7 +19,7 @@ export const CommonDetails = ({ instance }: CommonDetailsProps) => {
       {instance.coins === undefined && instance.cost === undefined ? null : (
         <ListItem>
           <ListItemIcon sx={{ minWidth: "40px" }}>
-            <PaymentIcon />
+            <CoinsIcon />
           </ListItemIcon>
           <ListItemText
             primary={
@@ -30,7 +31,7 @@ export const CommonDetails = ({ instance }: CommonDetailsProps) => {
       )}
       <ListItem>
         <ListItemIcon sx={{ minWidth: "40px" }}>
-          <AppsRoundedIcon />
+          <ApplicationIcon />
         </ListItemIcon>
         <ListItemText primary={instance.application_id} secondary={instance.application_version} />
       </ListItem>

@@ -1,9 +1,13 @@
 import { useMemo } from "react";
 
-import { getGetFilesQueryKey, useGetFiles } from "@/api/data-manager/file-and-path";
+import {
+  getGetFilesQueryKey,
+  getGetFilesSuspenseQueryOptions,
+} from "@/api/data-manager/file-and-path";
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useSettledQuery } from "../hooks/useSettledQuery";
 import {
   type ProjectFileContent,
   projectFileRequests,
@@ -25,7 +29,6 @@ export type ProjectFiles = {
    * listing establishes as little as a stale one, so each is told apart from one that answered.
    */
   content: ProjectFileContent;
-  isLoading: boolean;
   /** Refreshes the displayed directory without changing which directory is displayed. */
   refresh: () => void;
   /** What the section must tell the caller about the read it made. */
@@ -41,22 +44,26 @@ export type ProjectFiles = {
  * and the path Files owns are both required arguments of that read, and its generated query options
  * remain the only cache identity for it, so the section keeps no aggregate of its own and cannot
  * list a directory of a project other than the addressed one.
+ *
+ * The listing suspends until it has answered, with rows or with a failure, so the section mounts
+ * once with its rows. A new path is a route change, which renders in a transition, so the previous
+ * directory stays on screen until the new one has answered.
  */
 export const useProjectFiles = (projectId: string, path: string): ProjectFiles => {
   const queryClient = useQueryClient();
   const requests = useMemo(() => projectFileRequests(projectId, path), [projectId, path]);
 
-  const files = useGetFiles(requests.files, { query: { retry: false } });
+  const files = useSettledQuery(
+    getGetFilesSuspenseQueryOptions(requests.files, { query: { retry: false } }),
+  );
 
   const readState = resolveSectionReadState(sectionReadFailure(files));
-  // A directory the read has not answered for yet establishes nothing about what it holds, so it is
-  // not treated as current merely for having failed at nothing. Content already in hand — cached or
-  // being refreshed behind what is on screen — has answered.
+  // A directory the read failed to answer establishes nothing about what it holds. Content already in
+  // hand — cached or being refreshed behind what is on screen — has answered.
   const hasAnswered = files.data !== undefined;
 
   return {
     content: resolveProjectFileContent(readState, hasAnswered),
-    isLoading: files.isLoading,
     refresh: () =>
       void queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(requests.files) }),
     report: resolveSectionReadReport([readState]),

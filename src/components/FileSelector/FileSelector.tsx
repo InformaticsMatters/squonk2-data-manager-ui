@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Box, Button, Collapse } from "@mui/material";
 
+import { FilesIcon } from "../icons";
 import { MiniFileList } from "./MiniFileList";
 import { SelectedFilesLabel } from "./SelectedFilesLabel";
 import { type SharedProps } from "./types";
@@ -19,7 +20,13 @@ export const FileSelector = ({ value, targetType, ...props }: SharedProps) => {
     <>
       <SelectedFilesLabel files={files} />
 
-      <Button size="small" sx={{ ml: "auto" }} variant="outlined" onClick={() => setExpanded(true)}>
+      <Button
+        size="small"
+        startIcon={<FilesIcon />}
+        sx={{ ml: "auto" }}
+        variant="outlined"
+        onClick={() => setExpanded(true)}
+      >
         Select {targetType}
       </Button>
     </>

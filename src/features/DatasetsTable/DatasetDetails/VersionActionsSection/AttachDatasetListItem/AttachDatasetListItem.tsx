@@ -3,7 +3,6 @@ import { useState } from "react";
 import { type DatasetVersionSummary } from "@/api/data-manager";
 import { useGetFileTypes } from "@/api/data-manager/type";
 
-import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
 import {
   Alert,
   Checkbox,
@@ -21,6 +20,7 @@ import { useForm } from "@tanstack/react-form";
 import NextLink from "next/link";
 import { z } from "zod/mini";
 
+import { AttachIcon } from "../../../../../components/icons";
 import { FormModalWrapper } from "../../../../../components/modals/FormModalWrapper";
 import {
   attachmentDestinationPath,
@@ -204,13 +204,14 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
             </>
           }
         />
-        <AttachFileRoundedIcon color="action" />
+        <AttachIcon color="action" />
       </ListItemButton>
       <FormModalWrapper
         DialogProps={{ maxWidth: "sm", fullWidth: true }}
         form={formWrapper}
         id={`attach-dataset-${datasetId}`}
         open={open}
+        submitIcon={<AttachIcon />}
         submitText="Attach"
         title={`Attach ${version.file_name} v${version.version} to a Project`}
         onClose={() => setOpen(false)}

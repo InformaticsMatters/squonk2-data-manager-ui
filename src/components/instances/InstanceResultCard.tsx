@@ -10,6 +10,8 @@ import { type ResultCapabilities } from "../../projects/resultCapabilities";
 import { type RerunTarget } from "../../projects/resultRerun";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { HrefButton } from "../HrefButton";
+import { ExternalLinkIcon } from "../icons";
+import { DefinitionKindIcon } from "../kindIcons";
 import { CapabilityReasons } from "../results/CapabilityReasons";
 import { LogsButton } from "../results/LogsButton";
 import { RerunJobButton } from "../results/RerunJobButton";
@@ -107,6 +109,7 @@ export const InstanceResultCard = ({
               color="primary"
               href={instance.url}
               rel="noopener noreferrer"
+              startIcon={<ExternalLinkIcon />}
               target="_blank"
             >
               Open
@@ -140,6 +143,9 @@ export const InstanceResultCard = ({
       createdDateTime={instance.started ?? instance.launched}
       finishedDateTime={instance.stopped}
       href={projectLinks.result(projectId, "instances", instanceId, resultsState)}
+      kindIcon={
+        kind === undefined ? undefined : <DefinitionKindIcon fontSize="small" kind={kind} />
+      }
       linkTitle={instance.name}
       state={instance.phase}
     >

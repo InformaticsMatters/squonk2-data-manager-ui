@@ -1,7 +1,7 @@
-import { FolderSpecialRounded as FolderSpecialRoundedIcon } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
 import { useProjectFileFavourites } from "../../projects/fileFavourites";
+import { FavouriteIcon } from "../icons";
 import { FileListItem } from "./FileListItem";
 import { ScrollList } from "./ScrollList";
 import { type SharedProps } from "./types";
@@ -30,7 +30,7 @@ export const FavouritesList = ({
       {selectedFilesToDisplay.map(({ path: fullPath, type, mimeType }) => (
         <FileListItem
           checked={getChecked(value, fullPath)}
-          folderIcon={<FolderSpecialRoundedIcon />}
+          folderIcon={<FavouriteIcon />}
           fullPath={fullPath}
           key={fullPath}
           mimeType={mimeType}

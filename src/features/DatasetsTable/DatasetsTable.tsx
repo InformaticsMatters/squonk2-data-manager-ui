@@ -1,17 +1,23 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 
-import { useGetDatasets } from "@/api/data-manager/dataset";
+import { type GetDatasetsParams } from "@/api/data-manager";
+import { getGetDatasetsSuspenseQueryOptions } from "@/api/data-manager/dataset";
+import { getGetFileTypesSuspenseQueryOptions } from "@/api/data-manager/type";
+import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
 
-import { Alert, Button, CircularProgress } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { Chips } from "../../components/Chips";
 import { DataTable } from "../../components/DataTable/DataTable";
+import { DatasetIcon, RetryIcon } from "../../components/icons";
+import { FileKindIcon } from "../../components/kindIcons";
 import { LabelChip } from "../../components/labels/LabelChip";
 import { NextLink } from "../../components/NextLink";
 import { getDatasetListParams } from "../../datasets/datasetQuery";
+import { datasetsColumns, DatasetUploadPlaceholder } from "../../datasets/DatasetsSkeleton";
 import { resolveDatasetVersion } from "../../datasets/resolveDatasetVersion";
 import {
   datasetLinks,
@@ -20,6 +26,7 @@ import {
   type DatasetRoute,
   datasetRouteHref,
 } from "../../datasets/routes";
+import { useSettledQueries, useSettledQuery } from "../../hooks/useSettledQuery";
 import { combineLabels } from "../../utils/app/labels";
 import { EditorFilter } from "./filters/EditorFilter";
 import { FileTypeFilter } from "./filters/FileTypeFilter";
@@ -32,7 +39,7 @@ import { useSelectedDatasets } from "./useSelectedDatasets";
 
 const DatasetUpload = dynamic<Record<string, never>>(
   () => import("../DatasetUpload").then((mod) => mod.DatasetUpload),
-  { loading: () => <CircularProgress size="1rem" /> },
+  { loading: () => <DatasetUploadPlaceholder /> },
 );
 
 const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
@@ -58,10 +65,10 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("fileName", {
-        header: "File Name",
+        header: datasetsColumns.fileName.header,
         cell: ({ row }) => {
           const { datasetVersion } = row.original;
-          return datasetVersion ? (
+          const name = datasetVersion ? (
             <NextLink
               component="a"
               href={
@@ -77,10 +84,21 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
           ) : (
             row.original.fileName
           );
+          return (
+            <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
+              {row.original.type === "row" ? (
+                <DatasetIcon color="action" fontSize="small" />
+              ) : (
+                <FileKindIcon color="action" fileName={row.original.fileName} fontSize="small" />
+              )}
+              {name}
+            </Box>
+          );
         },
       }),
       columnHelper.accessor("labels", {
-        header: "Labels",
+        header: datasetsColumns.labels.header,
+        meta: { width: datasetsColumns.labels.width },
         cell: ({ getValue }) => (
           <Chips>
             {Object.entries(getValue()).map(([label, values]) => (
@@ -90,21 +108,39 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         ),
       }),
       columnHelper.accessor("editors", {
-        header: "Editors",
+        header: datasetsColumns.editors.header,
+        meta: { width: datasetsColumns.editors.width },
         sortingFn: editorsSorter,
         cell: ({ getValue }) => getValue().join(", "),
       }),
       columnHelper.accessor((row) => row.subRows.length > 0 || "", {
         id: "versions",
-        header: "Versions",
+        header: datasetsColumns.versions.header,
+        meta: { width: datasetsColumns.versions.width },
       }),
-      columnHelper.accessor("numberOfProjects", { header: "Number of projects" }),
+      columnHelper.accessor("numberOfProjects", {
+        header: datasetsColumns.numberOfProjects.header,
+        meta: { width: datasetsColumns.numberOfProjects.width },
+      }),
     ],
     [state],
   );
 
-  const params = getDatasetListParams(state);
-  const { data, error, isLoading, refetch } = useGetDatasets(params);
+  // A filter change is a new read, so the read is deferred: the rows already listed stay on screen
+  // until the filtered ones arrive, rather than giving way to the skeleton. The parameters are
+  // deferred as text, because a fresh object every render would never settle.
+  const params = JSON.parse(
+    useDeferredValue(JSON.stringify(getDatasetListParams(state) ?? null)),
+  ) as GetDatasetsParams | null;
+  const datasetsRead = getGetDatasetsSuspenseQueryOptions(params ?? undefined);
+  // The filters' option lists are read with the rows, so every filter is usable once the listing
+  // is there; the filters read them with their own hooks and find them answered.
+  useSettledQueries([
+    datasetsRead,
+    getGetFileTypesSuspenseQueryOptions(),
+    getGetUsersSuspenseQueryOptions(),
+  ]);
+  const { data, error, refetch } = useSettledQuery(datasetsRead);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] = useMemo(
@@ -151,7 +187,12 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
       {error && route.kind === "index" ? (
         <Alert
           action={
-            <Button color="inherit" size="small" onClick={() => void refetch()}>
+            <Button
+              color="inherit"
+              size="small"
+              startIcon={<RetryIcon />}
+              onClick={() => void refetch()}
+            >
               Retry
             </Button>
           }
@@ -167,7 +208,6 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         data={datasets}
         getRowId={getRowId}
         initialSelection={[]}
-        isLoading={isLoading}
         searchLabel="Search datasets"
         searchValue={state.search ?? ""}
         ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}

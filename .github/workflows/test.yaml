@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v7.0.1
-    - uses: pnpm/action-setup@v6.0.10
+    - uses: pnpm/action-setup@v6.1.0
       with:
         run_install: false
     - name: Setup Node
@@ -25,8 +25,8 @@ jobs:
       run: pnpm ci
     - name: Setup Playwright Chromium
       run: pnpm exec playwright install --with-deps chromium
-    - name: Component tests
-      run: pnpm test:components
+    - name: Component and node tests
+      run: pnpm exec playwright test --config=playwright.config.ts
 
   acceptance:
     runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v7.0.1
-    - uses: pnpm/action-setup@v6.0.10
+    - uses: pnpm/action-setup@v6.1.0
       with:
         run_install: false
     - name: Setup Node

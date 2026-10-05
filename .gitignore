@@ -43,8 +43,6 @@ yarn-error.log*
 # motd file
 motd.yaml
 
-# vercel
-.vercel
 
 # Playwright
 # No suite writes this any more, but a stale one from before the cutover holds live tokens.

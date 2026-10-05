@@ -2,6 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
@@ -86,6 +87,20 @@ test("the listing belongs to the project and the path in the URL", async ({
     afterSecond.some(({ query }) => query.includes(`project_id=${fixtureIds.screeningProject}`)),
   ).toBe(true);
   expect(afterSecond.filter(({ query }) => !query.includes("project_id="))).toEqual([]);
+});
+
+test("the tab names the page within the project, not within Projects", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceFiles, testInfo);
+  await expect(page).toHaveTitle("Files | Acceptance Project | Squonk Data Manager");
+
+  await page.goto(`projects/${fixtureIds.project}/run`);
+  await expect(page).toHaveTitle("Run | Acceptance Project | Squonk Data Manager");
+
+  // A file names itself before the project that holds it.
+  await page.goto(`${acceptanceFiles}/view?path=%2Fnotes.txt`);
+  await expect(page).toHaveTitle("notes.txt | Acceptance Project | Squonk Data Manager");
 });
 
 test("the path is owned by Files, canonical in the URL, and restored by history", async ({
@@ -437,4 +452,28 @@ test("a listing draws its directories and its files as the same kind of link", a
     "color",
     colour,
   );
+});
+
+test("the listing arrives once behind its skeleton, and a new path keeps the rows until it answers", async ({
+  page,
+}, testInfo) => {
+  const releaseRoot = await holdReads(page, /\/file\?/u);
+  await login(page, acceptanceFiles, testInfo);
+
+  // The section's own heading says its content has arrived, so nothing of it is shown before.
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Files" })).toHaveCount(0);
+  await releaseRoot();
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+
+  const releaseInputs = await holdReads(page, /\/file\?/u);
+  await page.getByRole("link", { exact: true, name: "inputs" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceFiles}?path=%2Finputs`);
+
+  // The previous directory stays on screen until the new one arrives.
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toHaveCount(0);
+  await releaseInputs();
+  await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toHaveCount(0);
 });

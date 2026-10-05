@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import { Box, TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod/mini";
 
+import { RenameIcon } from "../components/icons";
 import { FormModalWrapper } from "../components/modals/FormModalWrapper";
 import { type ProjectCapability } from "./capabilities";
 import { CapabilityIconButton } from "./CapabilityIconButton";
@@ -62,7 +62,7 @@ export const ProjectFileRename = ({
         title="Rename or move"
         onClick={() => setOpen(true)}
       >
-        <DriveFileRenameOutlineRoundedIcon />
+        <RenameIcon />
       </CapabilityIconButton>
       <FormModalWrapper
         form={{
@@ -72,6 +72,7 @@ export const ProjectFileRename = ({
         }}
         id={`rename-${fullPath}`}
         open={open}
+        submitIcon={<RenameIcon />}
         submitText="Rename / Move"
         title="Rename / Move"
         onClose={() => setOpen(false)}

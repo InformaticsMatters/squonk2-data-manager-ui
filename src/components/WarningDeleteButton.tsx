@@ -5,6 +5,7 @@ import { Tooltip, Typography } from "@mui/material";
 import { useMountedState } from "../hooks/useMountedState";
 import { settle } from "../utils/app/settle";
 import { ModalWrapper } from "./modals/ModalWrapper";
+import { DeleteIcon, WarningIcon } from "./icons";
 
 export interface DeleteButtonProps {
   isDeleting: boolean;
@@ -24,6 +25,10 @@ export interface WarningDeleteButtonProps {
    * Text displayed in the primary action. Defaults to `"Delete"`.
    */
   submitText?: string;
+  /**
+   * Icon of the primary action. Defaults to the Delete icon.
+   */
+  submitIcon?: ReactNode;
   /**
    * Text displayed in the tooltip wrapped around the child.
    */
@@ -56,6 +61,7 @@ export const WarningDeleteButton = ({
   title,
   modalId,
   submitText = "Delete",
+  submitIcon,
   tooltipText,
   modalChildren = defaultChild,
   children,
@@ -98,8 +104,10 @@ export const WarningDeleteButton = ({
         id={modalId}
         open={open}
         submitDisabled={isDeleting}
+        submitIcon={submitIcon ?? <DeleteIcon />}
         submitText={submitText}
         title={title}
+        titleIcon={<WarningIcon color="warning" />}
         onClose={() => setOpen(false)}
         onSubmit={() => void submitHandler()}
       >

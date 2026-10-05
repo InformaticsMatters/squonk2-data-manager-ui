@@ -10,7 +10,9 @@ const subjectFor = (testInfo: TestInfo) => `acceptance-worker-${testInfo.paralle
 const files = `projects/${fixtureIds.project}/files`;
 const notesView = `${files}/view?path=%2Fnotes.txt`;
 const posesView = `${files}/view?path=%2Finputs%2Fposes.sdf`;
-const notesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/file?path=%2F&file=notes.txt`;
+const guideView = `${files}/view?path=%2Finputs%2Fguide.md`;
+const notesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/notes.txt`;
+const posesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/inputs/poses.sdf`;
 const notesDownload = `/data-manager-ui/api/dm-api/project/${fixtureIds.project}/file?path=%2F&file=notes.txt`;
 
 test.beforeEach(async ({ request }, testInfo) => {
@@ -88,6 +90,55 @@ test("a file's viewers are addressed beneath the project that holds it", async (
   await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
 });
 
+test("a Markdown file is offered, and shown in, its own formatted viewer", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${files}?path=%2Finputs`, testInfo);
+  await page.getByRole("button", { exact: true, name: "guide.md" }).click();
+
+  // The Markdown Viewer is offered first, while the Plaintext Viewer stays the file's default.
+  await expect(page.getByRole("link", { name: /Viewer/u }).first()).toHaveText(/Markdown Viewer/u);
+  await expect(page.getByRole("link", { name: "Plaintext Viewer" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${guideView}`,
+  );
+  await page.getByRole("link", { name: "Markdown Viewer" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${guideView}&viewer=markdown`);
+  await expect(page.getByRole("heading", { name: "Acceptance guide" })).toBeVisible();
+  await expect(page.locator("strong", { hasText: "inputs" })).toBeVisible();
+
+  // The server renders the file's bytes, so a refresh shows the same formatted file.
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Acceptance guide" })).toBeVisible();
+
+  // A file that is not Markdown cannot be shown in the Markdown Viewer.
+  await page.goto(`${notesView}&viewer=markdown`);
+  await expect(page.getByText("This file cannot be shown in that viewer.")).toBeVisible();
+});
+
+test("a directory holding a README shows it, formatted, below its listing", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${files}?path=%2Finputs%2Fligands`, testInfo);
+
+  const readme = page.getByRole("region", { name: "README.md" });
+  await expect(readme.getByRole("heading", { name: "Ligand notes" })).toBeVisible();
+  await expect(readme.getByRole("link", { name: "Open in Markdown Viewer" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${files}/view?path=%2Finputs%2Fligands%2FREADME.md&viewer=markdown`,
+  );
+  // Its links resolve against the directory listed, not the project root.
+  await expect(readme.getByRole("link", { name: "guide" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${guideView}&viewer=markdown`,
+  );
+
+  // A directory without one shows no panel.
+  await page.goto(`${files}?path=%2Finputs`);
+  await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
+  await expect(page.getByRole("region", { name: /README/iu })).toHaveCount(0);
+});
+
 test("a viewer entered directly authenticates into its own project and transport", async ({
   page,
   request,
@@ -109,6 +160,18 @@ test("a viewer entered directly authenticates into its own project and transport
   expect(browserView.status()).toBe(200);
   expect(browserView.headers()["content-disposition"]).toBe("inline");
   expect(await browserView.text()).toBe("acceptance notes.txt");
+
+  // The browser viewer spells the file as a path, so a document's relative references resolve
+  // against the directory holding it, and a path that names no file never reaches the service.
+  const sibling = await page.request.get(
+    new URL("../notes.txt", transportUrl(posesTransport)).toString(),
+  );
+  expect(sibling.status()).toBe(200);
+  expect(await sibling.text()).toBe("acceptance notes.txt");
+  const directory = await page.request.get(
+    transportUrl(`/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/`),
+  );
+  expect(directory.status()).toBe(404);
 
   const diagnostics = await request
     .get(`${acceptanceUrls.control}/scenario/${subject}`)

@@ -1,5 +1,7 @@
+import { type NextApiHandler } from "next";
 import { type NextHttpProxyMiddlewareOptions } from "next-http-proxy-middleware";
 
+import { projectFileResourcePath } from "../../../projects/routes";
 import { createProxyMiddleware } from "../../../utils/api/apiProxy";
 
 export const config = {
@@ -23,4 +25,31 @@ const handleProxyInit: NextHttpProxyMiddlewareOptions["onProxyInit"] = (proxy) =
   });
 };
 
-export default createProxyMiddleware(`^${prefix}`, target, handleProxyInit);
+const proxy = createProxyMiddleware(`^${prefix}`, target, handleProxyInit);
+
+const projectFilePath = new RegExp(`^${prefix}/project/([^/?]+)/files(/[^?]*)`, "u");
+
+/**
+ * Project files arrive spelled as a path (see `projectFileBrowserPath`) so relative references in a
+ * rendered document resolve beside it; the Data Manager only knows the query form, so translate.
+ * A path that names no file of a project answers 404 here rather than reaching the Data Manager.
+ */
+const handler: NextApiHandler = (req, res) => {
+  const match = projectFilePath.exec(req.url ?? "");
+  if (match) {
+    const [, projectId, encodedPath] = match;
+    try {
+      const path = encodedPath
+        .split("/")
+        .map((name) => decodeURIComponent(name))
+        .join("/");
+      req.url = `${prefix}${projectFileResourcePath(projectId, path)}`;
+    } catch {
+      res.status(404).end();
+      return;
+    }
+  }
+  return proxy(req, res);
+};
+
+export default handler;

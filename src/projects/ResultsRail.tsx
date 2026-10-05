@@ -1,6 +1,8 @@
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
+import { type ReactNode } from "react";
+
 import { Box, Button, Chip, Divider, MenuItem, TextField, Typography } from "@mui/material";
 
+import { JobIcon, RefreshIcon, TaskIcon, WorkflowIcon } from "../components/icons";
 import { EventDebugSwitch } from "../components/results/EventDebugSwitch";
 import { resultsTypeNarrowing, resultTypeLabels } from "./resultFacts";
 import { ResultsDefinitionChip } from "./ResultsDefinitionChip";
@@ -22,6 +24,12 @@ export const refreshResultsLabel = "Refresh results";
  * offers — a route carries no types either way, so "I have selected all three" is not a state a
  * caller can be in.
  */
+const resultTypeIcons = {
+  instance: <JobIcon fontSize="small" />,
+  task: <TaskIcon fontSize="small" />,
+  workflow: <WorkflowIcon fontSize="small" />,
+} satisfies Record<ResultFilterType, ReactNode>;
+
 const ResultsTypeFilter = ({
   onTypesChange,
   types,
@@ -48,7 +56,12 @@ const ResultsTypeFilter = ({
           ) : (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {selected.map((type) => (
-                <Chip key={type} label={resultTypeLabels[type]} size="small" />
+                <Chip
+                  icon={resultTypeIcons[type]}
+                  key={type}
+                  label={resultTypeLabels[type]}
+                  size="small"
+                />
               ))}
             </Box>
           );
@@ -58,7 +71,8 @@ const ResultsTypeFilter = ({
     value={types ?? resultFilterTypes}
   >
     {resultFilterTypes.map((value) => (
-      <MenuItem key={value} value={value}>
+      <MenuItem key={value} sx={{ gap: 1 }} value={value}>
+        {resultTypeIcons[value]}
         {resultTypeLabels[value]}
       </MenuItem>
     ))}
@@ -150,7 +164,7 @@ export const ResultsRail = ({
     <Button
       fullWidth
       size="small"
-      startIcon={<RefreshRoundedIcon />}
+      startIcon={<RefreshIcon />}
       variant="outlined"
       onClick={onRefresh}
     >

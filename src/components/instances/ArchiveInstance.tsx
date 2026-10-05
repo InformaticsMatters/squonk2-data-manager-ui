@@ -6,6 +6,7 @@ import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
 import { useResultCommands } from "../../projects/useResultCommands";
 import { settle } from "../../utils/app/settle";
+import { ArchiveIcon, UnarchiveIcon } from "../icons";
 
 export interface ArchiveInstanceProps {
   archived: boolean;
@@ -56,6 +57,7 @@ export const ArchiveInstance = ({
       <span>
         <Button
           disabled={archiving || !capabilityIsEnabled(capability)}
+          startIcon={archived ? <UnarchiveIcon /> : <ArchiveIcon />}
           onClick={() => void archiveInstance()}
         >
           {archived ? "Unarchive" : "Archive"}

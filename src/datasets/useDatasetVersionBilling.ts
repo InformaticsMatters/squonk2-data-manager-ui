@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
+import { type OrganisationUnitsGetResponse } from "@/api/account-server";
 import { useGetUnits } from "@/api/account-server/unit";
-import { getGetUserInventoryQueryOptions } from "@/api/data-manager/inventory";
+import { getGetUserInventorySuspenseQueryOptions } from "@/api/data-manager/inventory";
 
 import { useQueries } from "@tanstack/react-query";
 
@@ -12,6 +13,15 @@ import {
   type InheritedBillingUnit,
   resolveInheritedBillingUnit,
 } from "./versionBilling";
+
+/** The inventory reads that say which unit holds a dataset: one per scope the caller may ask about. */
+export const datasetInventoryReads = (groups: readonly OrganisationUnitsGetResponse[]) =>
+  datasetInventoryScopes(groups).map((scope) =>
+    getGetUserInventorySuspenseQueryOptions(
+      scope.kind === "organisation" ? { org_id: scope.organisationId } : { unit_id: scope.unitId },
+      { query: { retry: false } },
+    ),
+  );
 
 /**
  * The billing unit a new version of this dataset inherits.
@@ -28,18 +38,7 @@ import {
 export const useDatasetVersionBilling = (datasetId: string): InheritedBillingUnit => {
   const { data, isError, isPending } = useGetUnits();
   const groups = useMemo(() => data?.units ?? [], [data]);
-  const scopes = useMemo(() => datasetInventoryScopes(groups), [groups]);
-
-  const reports = useQueries({
-    queries: scopes.map((scope) =>
-      getGetUserInventoryQueryOptions(
-        scope.kind === "organisation"
-          ? { org_id: scope.organisationId }
-          : { unit_id: scope.unitId },
-        { query: { retry: false } },
-      ),
-    ),
-  });
+  const reports = useQueries({ queries: useMemo(() => datasetInventoryReads(groups), [groups]) });
 
   const answered = reports.flatMap((report) => (report.data ? [report.data] : []));
   // The unit index answers for which scopes exist at all, so its own read counts with theirs.

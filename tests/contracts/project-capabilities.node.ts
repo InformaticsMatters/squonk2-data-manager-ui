@@ -436,7 +436,6 @@ test.describe("Project subscription facts", () => {
       storageCoinsUsed: 5,
       storageSize: "1 GB",
       tier: "Bronze",
-      type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       used: 25,
     });
   });
@@ -467,7 +466,6 @@ test.describe("Project subscription facts", () => {
       storageCoinsUsed: 5,
       storageSize: "1 GB",
       tier: undefined,
-      type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
       used: 25,
     });
   });

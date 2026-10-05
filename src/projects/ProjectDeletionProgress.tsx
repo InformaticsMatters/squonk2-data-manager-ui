@@ -16,6 +16,8 @@ import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { BackIcon, RetryIcon } from "../components/icons";
+import { StatusConceptIcon } from "../components/results/StatusIcon";
 import { isProductId } from "../routing/identifiers";
 import { projectDeletionFailureReason } from "./failures";
 import { removeUnavailableProject } from "./projectCache";
@@ -57,24 +59,43 @@ const Diagnostic = ({ label, value }: { label: string; value: string }) => (
  */
 const phasePresentation = (
   state: ProjectDeletionState,
-): { message: string; retry?: string; severity: "error" | "info" | "success" | "warning" } => {
+): {
+  message: string;
+  retry?: string;
+  severity: "error" | "info" | "success" | "warning";
+  status?: "failed" | "running" | "succeeded";
+} => {
   switch (state.kind) {
     case "polling":
-      return { message: "The Data Manager is deleting this project's data.", severity: "info" };
+      return {
+        message: "The Data Manager is deleting this project's data.",
+        severity: "info",
+        status: "running",
+      };
     case "delete-unconfirmed":
       return { message: state.reason, severity: "warning" };
     case "delete-unusable":
       return { message: state.reason, retry: "Check again", severity: "warning" };
     case "delete-failed":
-      return { message: state.reason, severity: "error" };
+      return { message: state.reason, severity: "error", status: "failed" };
     case "cleaning-up":
-      return { message: "Removing this project's subscription.", severity: "info" };
+      return {
+        message: "Removing this project's subscription.",
+        severity: "info",
+        status: "running",
+      };
     case "cleanup-failed":
-      return { message: state.reason, retry: "Retry subscription deletion", severity: "error" };
+      return {
+        message: state.reason,
+        retry: "Retry subscription deletion",
+        severity: "error",
+        status: "failed",
+      };
     case "completed":
       return {
         message: "This project and its subscription have been deleted.",
         severity: "success",
+        status: "succeeded",
       };
     // The request phase belongs to Manage; this route is only ever entered with a task in hand.
     case "collecting":
@@ -211,7 +232,16 @@ export const ProjectDeletionProgress = () => {
           </Typography>
         </div>
 
-        <Alert severity={presentation.severity}>{presentation.message}</Alert>
+        <Alert
+          icon={
+            presentation.status === undefined ? undefined : (
+              <StatusConceptIcon concept={presentation.status} />
+            )
+          }
+          severity={presentation.severity}
+        >
+          {presentation.message}
+        </Alert>
         {pending ? <LinearProgress /> : null}
 
         <Box component="section">
@@ -262,6 +292,7 @@ export const ProjectDeletionProgress = () => {
           {presentation.retry ? (
             <Button
               disabled={pending}
+              startIcon={<RetryIcon />}
               variant="contained"
               onClick={() =>
                 void applyTransition(transitionProjectDeletion(lifecycle, { kind: "retry" }))
@@ -270,7 +301,7 @@ export const ProjectDeletionProgress = () => {
               {presentation.retry}
             </Button>
           ) : null}
-          <Button component={Link} href={projectLinks.index()}>
+          <Button component={Link} href={projectLinks.index()} startIcon={<BackIcon />}>
             Back to Projects
           </Button>
         </Stack>

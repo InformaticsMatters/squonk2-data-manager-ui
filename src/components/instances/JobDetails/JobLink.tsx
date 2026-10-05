@@ -1,10 +1,10 @@
-import { Folder } from "@mui/icons-material";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import A from "next/link";
 
 import { filesystemPathOf } from "../../../projects/fileFacts";
 import { ProjectFileViewerLinks } from "../../../projects/ProjectFileViewerLinks";
 import { projectLinks } from "../../../projects/routes";
+import { DirectoryIcon } from "../../icons";
 
 export interface JobLinkProps {
   projectId: string;
@@ -63,7 +63,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
             href={projectLinks.files(projectId, { path: filePath }) as never}
             size="large"
           >
-            <Folder color="primary" fontSize="small" />
+            <DirectoryIcon color="primary" fontSize="small" />
           </IconButton>
         </Tooltip>
 
@@ -80,7 +80,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
           href={projectLinks.files(projectId, { path: filesystemPathOf(resolvedPath) }) as never}
           size="small"
         >
-          <Folder color="primary" fontSize="small" />
+          <DirectoryIcon color="primary" fontSize="small" />
         </IconButton>
       </Tooltip>
 

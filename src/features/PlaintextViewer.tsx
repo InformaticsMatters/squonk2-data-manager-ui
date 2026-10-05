@@ -4,7 +4,6 @@ import { filesize } from "filesize";
 
 import { useEffect } from "react";
 
-import Head from "next/head";
 import Prism from "prismjs";
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
@@ -47,46 +46,41 @@ export const PlaintextViewer = ({
   }`;
 
   return (
-    <>
-      <Head>
-        <title>{title}</title>
-      </Head>
-      <Paper sx={{ marginY: 2 }}>
-        <Box
-          sx={[
-            {
-              alignItems: "center",
-              display: "flex",
-              paddingX: 2,
-              paddingY: 1,
-              bgcolor: "grey.200",
-              boxShadow: 0,
-              gap: 2,
-            },
-            (theme) => theme.applyStyles("dark", { bgcolor: "grey.900" }),
-          ]}
-        >
-          <Box sx={{ alignItems: "center", display: "flex", flex: "1 1 auto", gap: 1 }}>
-            <Typography
-              className={firaMonoFont.className}
-              component="h1"
-              sx={{ wordBreak: "break-all" }}
-            >
-              <b>{title}</b>
-            </Typography>
-            <Divider flexItem orientation="vertical" />
-            <Typography>{contentSummary}</Typography>
-            {!!(compressed || truncated) && <Divider flexItem orientation="vertical" />}
-            {!!compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
-            {!!truncated && <Chip label="Truncated" size="small" variant="outlined" />}
-          </Box>
+    <Paper sx={{ marginY: 2 }}>
+      <Box
+        sx={[
+          {
+            alignItems: "center",
+            display: "flex",
+            paddingX: 2,
+            paddingY: 1,
+            bgcolor: "grey.200",
+            boxShadow: 0,
+            gap: 2,
+          },
+          (theme) => theme.applyStyles("dark", { bgcolor: "grey.900" }),
+        ]}
+      >
+        <Box sx={{ alignItems: "center", display: "flex", flex: "1 1 auto", gap: 1 }}>
+          <Typography
+            className={firaMonoFont.className}
+            component="h1"
+            sx={{ wordBreak: "break-all" }}
+          >
+            <b>{title}</b>
+          </Typography>
+          <Divider flexItem orientation="vertical" />
+          <Typography>{contentSummary}</Typography>
+          {!!(compressed || truncated) && <Divider flexItem orientation="vertical" />}
+          {!!compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
+          {!!truncated && <Chip label="Truncated" size="small" variant="outlined" />}
         </Box>
-        <Box sx={{ paddingBottom: 1, paddingX: 1 }}>
-          <Box className="line-numbers" component="pre" sx={{ overflowX: "auto" }}>
-            <code className={`${firaMonoFont.className} language-`}>{content}</code>
-          </Box>
+      </Box>
+      <Box sx={{ paddingBottom: 1, paddingX: 1 }}>
+        <Box className="line-numbers" component="pre" sx={{ overflowX: "auto" }}>
+          <code className={`${firaMonoFont.className} language-`}>{content}</code>
         </Box>
-      </Paper>
-    </>
+      </Box>
+    </Paper>
   );
 };

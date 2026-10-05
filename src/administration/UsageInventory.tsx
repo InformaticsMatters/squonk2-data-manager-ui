@@ -1,9 +1,8 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, Suspense, useState } from "react";
 
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 import { type InventoryProjectDetail } from "@/api/data-manager";
 
-import { Close as CloseIcon, Done as DoneIcon } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -18,9 +17,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import Link from "next/link";
 
-import { CenterLoader } from "../components/CenterLoader";
 import { Chips } from "../components/Chips";
 import { DataTable } from "../components/DataTable";
+import { CheckIcon, CloseIcon, PersonIcon, ProjectIcon, RetryIcon } from "../components/icons";
 import { DATE_FORMAT, TIME_FORMAT } from "../constants/datetimes";
 import { projectLinks } from "../projects/routes";
 import { isProjectId } from "../routing/identifiers";
@@ -34,7 +33,11 @@ import {
 } from "./inventoryFacts";
 import { AdministrationLink, PageTitle } from "./resources";
 import { administrationLinks } from "./routes";
-import { useOrganisationInventory, useUnitInventory } from "./useUsageInventory";
+import {
+  useOrganisationInventory,
+  usePrefetchOrganisationInventory,
+  useUnitInventory,
+} from "./useUsageInventory";
 
 dayjs.extend(utc);
 
@@ -156,7 +159,7 @@ const unitUserColumns = [
   unitRowHelper.accessor("isMember", {
     header: "Unit Member",
     cell: ({ getValue }) =>
-      getValue() ? <DoneIcon titleAccess="Member" /> : <CloseIcon titleAccess="Not a member" />,
+      getValue() ? <CheckIcon titleAccess="Member" /> : <CloseIcon titleAccess="Not a member" />,
   }),
   ...activityColumns(unitRowHelper),
   unitRowHelper.group({
@@ -248,16 +251,19 @@ const ReportBody = <TReport,>({
   children,
   read,
   refresh,
+  skeleton,
 }: {
   children: (report: TReport) => ReactNode;
   read: InventoryRead<TReport>;
   refresh: () => void;
+  /** The report's own table, loading. */
+  skeleton: ReactNode;
 }) => {
   if (read.kind === "pending") {
-    return <CenterLoader />;
+    return skeleton;
   }
   const retry = (
-    <Button color="inherit" size="small" onClick={refresh}>
+    <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={refresh}>
       Retry
     </Button>
   );
@@ -289,6 +295,31 @@ const ActivityNote = () => (
   </Typography>
 );
 
+const OrganisationReportBody = ({
+  organisationId,
+  skeleton,
+}: {
+  organisationId: string;
+  skeleton: ReactNode;
+}) => {
+  const { read, refresh } = useOrganisationInventory(organisationId);
+
+  return (
+    <ReportBody read={read} refresh={refresh} skeleton={skeleton}>
+      {(rows) =>
+        rows.length === 0 ? (
+          <EmptyReport>
+            No users are accounted for in this organisation&apos;s units. A user appears here once
+            they belong to one of its units or hold a role in one of their projects.
+          </EmptyReport>
+        ) : (
+          <DataTable columns={organisationColumns} data={rows} searchLabel="Search users" />
+        )
+      }
+    </ReportBody>
+  );
+};
+
 /**
  * The usage report of the organisation in effect.
  *
@@ -299,23 +330,17 @@ const ActivityNote = () => (
  * removed.
  */
 export const OrganisationReport = ({ organisationId }: { organisationId: string }) => {
-  const { read, refresh } = useOrganisationInventory(organisationId);
+  usePrefetchOrganisationInventory(organisationId);
+  // The units suspend and the inventory is pending behind the same table, so the report has one
+  // skeleton whichever of the two answers last.
+  const skeleton = <DataTable isLoading columns={organisationColumns} searchLabel="Search users" />;
 
   return (
     <>
       <PageTitle>Usage &amp; Inventory</PageTitle>
-      <ReportBody read={read} refresh={refresh}>
-        {(rows) =>
-          rows.length === 0 ? (
-            <EmptyReport>
-              No users are accounted for in this organisation&apos;s units. A user appears here once
-              they belong to one of its units or hold a role in one of their projects.
-            </EmptyReport>
-          ) : (
-            <DataTable columns={organisationColumns} data={rows} searchLabel="Search users" />
-          )
-        }
-      </ReportBody>
+      <Suspense fallback={skeleton}>
+        <OrganisationReportBody organisationId={organisationId} skeleton={skeleton} />
+      </Suspense>
       <ActivityNote />
     </>
   );
@@ -369,15 +394,31 @@ export const UnitReport = ({
         value={pivot}
         onChange={(_, next: "projects" | "users" | null) => next && setPivot(next)}
       >
-        <ToggleButton value="users">By user</ToggleButton>
-        <ToggleButton value="projects">By project</ToggleButton>
+        <ToggleButton sx={{ gap: 1 }} value="users">
+          <PersonIcon fontSize="small" />
+          By user
+        </ToggleButton>
+        <ToggleButton sx={{ gap: 1 }} value="projects">
+          <ProjectIcon fontSize="small" />
+          By project
+        </ToggleButton>
       </ToggleButtonGroup>
       {organisation ? null : (
         <Alert severity="info" sx={{ mb: 2 }}>
           This unit&apos;s organisation could not be determined, so it is reported on its own.
         </Alert>
       )}
-      <ReportBody read={read} refresh={refresh}>
+      <ReportBody
+        read={read}
+        refresh={refresh}
+        skeleton={
+          pivot === "users" ? (
+            <DataTable isLoading columns={unitUserColumns} searchLabel="Search users" />
+          ) : (
+            <DataTable isLoading columns={projectColumns} searchLabel="Search projects" />
+          )
+        }
+      >
         {({ projects, users }) =>
           pivot === "users" ? (
             <UnitUserPivot users={users} />

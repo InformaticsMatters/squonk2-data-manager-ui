@@ -1,10 +1,11 @@
-import { type FC } from "react";
+import { type FC, type ReactNode } from "react";
 
 import { useGetUsers } from "@/api/data-manager/user";
 
-import { Cancel as CancelIcon } from "@mui/icons-material";
-import { Autocomplete, Chip, TextField } from "@mui/material";
+import { Autocomplete, Box, Chip, TextField } from "@mui/material";
 import { type AutocompleteChangeReason } from "@mui/material/useAutocomplete";
+
+import { CloseIcon } from "./icons";
 
 export interface ManageUsersProps {
   /**
@@ -33,6 +34,10 @@ export interface ManageUsersProps {
    */
   title: string;
   /**
+   * Icon shown before the title.
+   */
+  icon?: ReactNode;
+  /**
    * Called when a user is selected
    */
   onSelect: (value: string[], changedUser?: string) => Promise<void> | void;
@@ -54,6 +59,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
   isLoading = false,
   disabled = false,
   title,
+  icon,
   helperText,
   inputValue,
   onSelect,
@@ -108,14 +114,29 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       inputValue={inputValue}
       loading={loading}
       options={availableUsers.map((user) => user.username)}
-      renderInput={(params) => <TextField {...params} helperText={helperText} label={title} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          helperText={helperText}
+          label={
+            icon ? (
+              <Box component="span" sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
+                {icon}
+                {title}
+              </Box>
+            ) : (
+              title
+            )
+          }
+        />
+      )}
       renderValue={(value, getItemProps) =>
         value.map((option: string, index: number) => {
           const { onDelete, ...chipProps } = getItemProps({ index });
           const isDisabled = disabledUsers.includes(option);
           return (
             <Chip
-              deleteIcon={<CancelIcon aria-label={`Remove ${option}`} />}
+              deleteIcon={<CloseIcon aria-label={`Remove ${option}`} />}
               label={option}
               variant="outlined"
               // A disabled user offers no way to remove itself, so the list cannot ask for a

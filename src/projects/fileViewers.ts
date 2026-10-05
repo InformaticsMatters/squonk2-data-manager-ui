@@ -9,7 +9,7 @@ import { classifyViewerContent, type ViewerContent } from "../utils/api/viewerCo
  * so which viewers exist, which of them a file offers, and which one a URL that names none means
  * are all decided here rather than at each link.
  */
-export const fileViewers = ["text", "browser"] as const;
+export const fileViewers = ["markdown", "text", "browser"] as const;
 
 export type FileViewer = (typeof fileViewers)[number];
 
@@ -26,7 +26,15 @@ export const isFileViewer = (value: string): value is FileViewer =>
 /** What Files answers with for a file it was addressed beneath but could not show. */
 export const FILE_NOT_FOUND_NOTICE = "This file was not found in this project.";
 
+/**
+ * The most of a file a viewer formats in the page. The server-rendered viewers stop reading there,
+ * and a README past it is linked to its viewer rather than fetched into the listing.
+ */
+export const VIEWER_CONTENT_MAX_BYTES = 100_000;
+
 const compressedExtensions = [".gz", ".gzip"];
+
+const markdownExtensions = [".md", ".markdown"];
 
 const hasExtension = (fileName: string, extensions: readonly string[]) =>
   extensions.some((extension) => fileName.endsWith(extension));
@@ -38,6 +46,7 @@ const hasExtension = (fileName: string, extensions: readonly string[]) =>
  */
 const viewerRequirements: Record<FileViewer, (fileName: string) => boolean> = {
   browser: () => true,
+  markdown: (fileName) => hasExtension(fileName.toLowerCase(), markdownExtensions),
   text: () => true,
 };
 
@@ -47,6 +56,7 @@ export const fileViewerLabels: Record<FileViewer, { name: string; summary: strin
     name: "Browser Viewer",
     summary: "Displays the file in your browser if it supports the file type",
   },
+  markdown: { name: "Markdown Viewer", summary: "Displays the file as formatted Markdown" },
   text: { name: "Plaintext Viewer", summary: "Displays the file as plaintext" },
 };
 
@@ -58,16 +68,28 @@ export const fileViewerLabels: Record<FileViewer, { name: string; summary: strin
 export const isCompressedFileName = (fileName: string): boolean =>
   hasExtension(fileName, compressedExtensions);
 
+const browserNativeExtensions = [".htm", ".html", ".json"];
+
+/**
+ * Whether the browser shows this file better on its own than inside the viewer's sandboxed frame:
+ * the frame grants nothing, so a page's scripts and a browser's own JSON viewer only work when the
+ * file is opened directly. Its Browser Viewer therefore opens the file in a new tab.
+ */
+export const opensInBrowserTab = (fileName: string): boolean =>
+  hasExtension(fileName.toLowerCase(), browserNativeExtensions);
+
 /** The viewers this file offers, in the one order every list of them is shown in. */
 export const fileViewersFor = (fileName: string): FileViewer[] =>
   fileViewers.filter((viewer) => viewerRequirements[viewer](fileName));
 
 /**
- * Whether this file can be shown in this viewer. A viewer a file does not offer is an address the
- * section cannot serve, so it is answered locally rather than by rendering an empty viewer.
+ * Whether this file can be shown in this viewer inside the application. A viewer a file does not
+ * offer is an address the section cannot serve, so it is answered locally rather than by rendering
+ * an empty viewer. A file that opens in its own tab is never framed, so its Browser Viewer has no
+ * in-application address either.
  */
 export const offersFileViewer = (fileName: string, viewer: FileViewer): boolean =>
-  viewerRequirements[viewer](fileName);
+  viewerRequirements[viewer](fileName) && !(viewer === "browser" && opensInBrowserTab(fileName));
 
 /**
  * What the page established about the file before the viewer was framed. `readable` is a file that

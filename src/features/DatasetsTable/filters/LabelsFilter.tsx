@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-import { AddCircle } from "@mui/icons-material";
 import { Chip, IconButton, styled, TextField, useTheme } from "@mui/material";
+
+import { AddIcon } from "../../../components/icons";
 
 export interface LabelsFilterProps {
   /**
@@ -74,7 +75,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
                 title="Add label"
                 onClick={() => addLabel()}
               >
-                <AddCircle />
+                <AddIcon />
               </IconButton>
             </EndAdornmentWrapper>
           ),

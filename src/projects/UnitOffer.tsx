@@ -5,6 +5,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useSnackbar } from "notistack";
 import { z } from "zod/mini";
 
+import { AddIcon, PersonalUnitIcon, UnitIcon } from "../components/icons";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useCreateUnitCommand } from "../hooks/useUnitCommands";
@@ -70,6 +71,7 @@ const CreateUnitModal = ({
       id="projects-create-unit"
       open={open}
       submitDisabled={!canSubmit || isPending}
+      submitIcon={<AddIcon />}
       submitText={isPending ? "Creating..." : "Create"}
       title="Create unit"
       onClose={onClose}
@@ -99,10 +101,12 @@ const NamedUnitOffer = ({
   capability,
   existingUnitNames,
   organisationId,
+  reserveReason,
 }: {
   capability: ProjectCapability;
   existingUnitNames: string[];
   organisationId: string;
+  reserveReason: boolean;
 }) => {
   const createUnit = useCreateUnitCommand();
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
@@ -128,6 +132,8 @@ const NamedUnitOffer = ({
         capability={capability}
         id="projects-unit-offer"
         isPending={isPending}
+        reserveReason={reserveReason}
+        startIcon={<UnitIcon />}
         onClick={() => setOpen(true)}
       >
         Create unit
@@ -143,7 +149,13 @@ const NamedUnitOffer = ({
   );
 };
 
-const PersonalUnitOffer = ({ capability }: { capability: ProjectCapability }) => {
+const PersonalUnitOffer = ({
+  capability,
+  reserveReason,
+}: {
+  capability: ProjectCapability;
+  reserveReason: boolean;
+}) => {
   const { createPersonalUnit, state } = usePersonalUnitCreation();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -164,6 +176,8 @@ const PersonalUnitOffer = ({ capability }: { capability: ProjectCapability }) =>
       capability={capability}
       id="projects-unit-offer"
       isPending={state.kind === "creating"}
+      reserveReason={reserveReason}
+      startIcon={<PersonalUnitIcon />}
       onClick={() => void create()}
     >
       {state.kind === "creating" ? "Creating..." : "Create personal unit"}
@@ -171,12 +185,15 @@ const PersonalUnitOffer = ({ capability }: { capability: ProjectCapability }) =>
   );
 };
 
+/** `reserveReason` is passed to the offer's button; see `CapabilityButton`. */
 export const UnitOffer = ({
   existingUnitNames,
   organisationId,
+  reserveReason = false,
 }: {
   existingUnitNames: string[];
   organisationId: string | undefined;
+  reserveReason?: boolean;
 }) => {
   const facts = useUnitCreationFacts(organisationId);
   const offer = decideIndexUnitOffer(facts);
@@ -187,12 +204,13 @@ export const UnitOffer = ({
     return null;
   }
   return offer.kind === "personal" ? (
-    <PersonalUnitOffer capability={offer.capability} />
+    <PersonalUnitOffer capability={offer.capability} reserveReason={reserveReason} />
   ) : (
     <NamedUnitOffer
       capability={offer.capability}
       existingUnitNames={existingUnitNames}
       organisationId={organisationId}
+      reserveReason={reserveReason}
     />
   );
 };

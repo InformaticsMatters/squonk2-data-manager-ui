@@ -2,6 +2,7 @@ import { Alert, Button } from "@mui/material";
 
 import { useResultInstance } from "../../projects/useResultInstance";
 import { CenterLoader } from "../CenterLoader";
+import { RetryIcon } from "../icons";
 import { InstanceProgress } from "./InstanceProgress";
 
 export interface InstanceDetailsProps {
@@ -26,7 +27,7 @@ export const InstanceDetails = ({ instanceId, projectId }: InstanceDetailsProps)
     return read.readState.kind === "recoverable" ? (
       <Alert
         action={
-          <Button color="inherit" size="small" onClick={handleRetry}>
+          <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={handleRetry}>
             Retry
           </Button>
         }

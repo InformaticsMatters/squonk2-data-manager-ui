@@ -1,13 +1,14 @@
+import { type ReactNode } from "react";
+
 import { Alert } from "@mui/material";
 
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { useAccessFacts } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
 import { DefaultOrganisationCharges, OrganisationChargeLedger } from "./ChargeLedgers";
 import { useOrganisationInEffect } from "./organisationInEffect";
 import { OrganisationOverview } from "./OrganisationOverview";
-import { PageTitle } from "./resources";
+import { PageTitle, SectionSkeleton } from "./resources";
 import { type AdministrationRoute } from "./routes";
 import { organisationChargesAreOffered } from "./scope";
 import { SubscriptionEntry } from "./SubscriptionEntry";
@@ -67,7 +68,7 @@ const AdministrationContent = () => {
   // Only the organisation-relative sections need one, and each says so for itself rather than the
   // frame withholding the whole workspace.
   if (organisation.kind === "pending") {
-    return <CenterLoader />;
+    return <SectionSkeleton />;
   }
   if (organisation.kind === "none") {
     return (
@@ -91,7 +92,14 @@ const AdministrationContent = () => {
   }
 };
 
-export const AdministrationWorkspace = () => (
+/**
+ * The Administration family's shell, which is the whole workspace: every Administration page is the
+ * same frame rendering whichever section its route names. Mounting it here rather than in each
+ * page is what keeps the rail, and a unit's identity and section strip, in the document across a section
+ * change — a page component changes on every navigation, and React discards whatever it rendered.
+ * The pages themselves render nothing.
+ */
+export const AdministrationWorkspace = (_: { children: ReactNode }) => (
   <AdministrationFrame>
     <AdministrationContent />
   </AdministrationFrame>

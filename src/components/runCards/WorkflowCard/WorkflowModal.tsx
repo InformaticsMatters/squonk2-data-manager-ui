@@ -19,6 +19,8 @@ import {
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
+import { RunIcon } from "../../icons";
+import { DefinitionKindIcon } from "../../kindIcons";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
@@ -101,8 +103,10 @@ export const WorkflowModal = ({
       submitDisabled={
         !capabilityIsEnabled(capabilities.launch) || !launchIsComplete || !launchIsSendable(attempt)
       }
+      submitIcon={<RunIcon />}
       submitText="Run"
       title={workflow?.workflow_name ?? workflow?.name ?? "Run workflow"}
+      titleIcon={<DefinitionKindIcon kind="workflow" />}
       onClose={onClose}
       onSubmit={handleLaunch}
     >

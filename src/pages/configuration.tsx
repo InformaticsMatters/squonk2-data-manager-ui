@@ -3,6 +3,7 @@ import { type GetServerSideProps } from "next";
 
 import { readApiServers } from "@/application/apiServers";
 import { pagePolicies, withPagePolicy } from "@/application/pagePolicy";
+import { PageHead } from "@/components/PageHead";
 
 // Format a value so undefined and empty string are visible
 const ReprLi = ({ title, children }: { children: string | null | undefined; title: string }) => {
@@ -42,6 +43,7 @@ export const getServerSideProps: GetServerSideProps<ConfigurationProps> = async 
 
 export const Configuration = ({ dmAPI, asAPI, depictAPI }: ConfigurationProps) => (
   <Container>
+    <PageHead parts={["Configuration"]} />
     <h1>Configuration</h1>
     <p>
       Values will be displayed in <em>italics</em> if they are a special value (empty string or

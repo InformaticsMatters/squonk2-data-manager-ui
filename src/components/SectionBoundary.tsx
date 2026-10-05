@@ -22,7 +22,7 @@ const SectionFallback = ({ error, resetError }: { error: unknown; resetError: ()
  * A read that fails with no data throws, and is caught here rather than by the family, so a
  * refusal stays local to the section that made it: `failure` renders the section's own
  * unavailable state, and its `retry` clears the failed queries and reads them again. The family's
- * `CenterLoader` remains only for whatever suspends outside a section.
+ * own skeleton remains only for whatever suspends outside a section.
  *
  * Sentry's boundary has no reset keys, so a section that reads an addressed resource is keyed by
  * that resource, as `ProjectOrganisationBoundary` is, or one resource's failure outlives a

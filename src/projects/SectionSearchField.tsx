@@ -16,9 +16,12 @@ const searchSettleMs = 300;
  * settles: a section is never asked to re-render, or a history-free replace issued, per keystroke.
  */
 export const SectionSearchField = ({
+  disabled = false,
   onSearch,
   search,
 }: {
+  /** Shown in place, unusable, as a placeholder does before its section can be searched. */
+  disabled?: boolean;
   /** Called with the settled value, or nothing at all where the field was emptied. */
   onSearch: (search?: string) => void;
   search?: string;
@@ -54,6 +57,7 @@ export const SectionSearchField = ({
   return (
     <SearchTextField
       fullWidth
+      disabled={disabled}
       ref={searchRef}
       value={draft ?? search ?? ""}
       onChange={(event) => setDraft(event.target.value)}

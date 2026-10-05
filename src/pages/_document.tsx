@@ -5,16 +5,22 @@ import {
 } from "@mui/material-nextjs/v15-pagesRouter";
 import { type DocumentContext, Head, Html, Main, NextScript } from "next/document";
 
-import { RECENT_PROJECTS_ATTRIBUTE, RECENT_PROJECTS_STORAGE_KEY } from "../projects/recentProjects";
+import {
+  MAX_RECENT_PROJECTS,
+  RECENT_PROJECTS_ATTRIBUTE,
+  RECENT_PROJECTS_STORAGE_KEY,
+} from "../projects/recentProjects";
 import { withBasePath } from "../utils/app/basePath";
 
-// Run before the first paint, so Home's server render can reserve the recent-projects section for
-// a browser that remembers some: only the browser can read its own storage.
-const markRecentProjects = `try{if(JSON.parse(localStorage.getItem(${JSON.stringify(
+// Run before the first paint, so Home's server render can reserve the recent-projects section, at
+// the number of cards it will hold, for a browser that remembers some: only the browser can read
+// its own storage. The count is the one `parseRecentProjectIds` arrives at: distinct non-empty
+// strings, at most the number Home shows.
+const markRecentProjects = `try{var n=Math.min(new Set(JSON.parse(localStorage.getItem(${JSON.stringify(
   RECENT_PROJECTS_STORAGE_KEY,
-)})).some((id)=>typeof id==="string"&&id))document.documentElement.setAttribute(${JSON.stringify(
+)})).filter((id)=>typeof id==="string"&&id)).size,${MAX_RECENT_PROJECTS});if(n)document.documentElement.setAttribute(${JSON.stringify(
   RECENT_PROJECTS_ATTRIBUTE,
-)},"")}catch{}`;
+)},String(n))}catch{}`;
 
 type DocumentProps = DocumentHeadTagsProps;
 

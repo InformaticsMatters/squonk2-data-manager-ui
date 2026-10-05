@@ -1443,6 +1443,10 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   // exactly where they left them.
   await page.getByRole("button", { name: "Change organisation" }).click();
   await page.getByRole("option", { name: /Acceptance Organisation/u }).click();
+  // The switch lands once its navigation to Home has, which a navigation of our own would cancel.
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Acceptance Organisation",
+  );
   await page.goto("projects");
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
@@ -1656,4 +1660,31 @@ test("Manage arrives with the directory its membership lists offer", async ({
   for (const role of ["Administrators", "Editors", "Observers"]) {
     await expect(members(page, role).getByRole("combobox")).toBeEnabled();
   }
+});
+
+test("a project page holds the project strip's place from its first frame", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+  // Every height the masthead takes while the page loads, from the first frame it paints.
+  await page.addInitScript(() => {
+    const heights: number[] = [];
+    Object.assign(globalThis, { mastheadHeights: heights });
+    const sample = () => {
+      const height = document.querySelector("header")?.getBoundingClientRect().height;
+      if (height !== undefined && heights.at(-1) !== height) {
+        heights.push(height);
+      }
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+
+  await page.goto(`projects/${fixtureIds.project}/files`);
+  await expect(page.getByRole("button", { name: "Change project" })).toBeVisible();
+  const heights = await page.evaluate(
+    () => (globalThis as unknown as { mastheadHeights: number[] }).mastheadHeights,
+  );
+  expect(heights).toHaveLength(1);
 });

@@ -16,7 +16,11 @@ import Link from "next/link";
 import { useClientSnapshot } from "../../hooks/useClientSnapshot";
 import { authClient } from "../../lib/auth-client";
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
-import { RECENT_PROJECTS_ATTRIBUTE, recentProjectIdsSnapshot } from "../../projects/recentProjects";
+import {
+  MAX_RECENT_PROJECTS,
+  RECENT_PROJECTS_ATTRIBUTE,
+  recentProjectIdsSnapshot,
+} from "../../projects/recentProjects";
 import { projectLinks } from "../../projects/routes";
 import { useVisibleOrganisations } from "../../state/organisationSelection";
 import { FilesIcon, ProjectIcon } from "../icons";
@@ -65,14 +69,30 @@ const RecentProjectCard = ({
   </Paper>
 );
 
+/** Shows the server render's card at `index` only where `_document` counted more projects. */
+const shownBeyond = (index: number) =>
+  Array.from(
+    { length: MAX_RECENT_PROJECTS - index },
+    (_, offset) => `html[${RECENT_PROJECTS_ATTRIBUTE}="${index + 1 + offset}"] &`,
+  ).join(", ");
+
 /**
  * The section as it will arrive, one card per remembered project. With no count the server is
- * rendering, and the section is shown only if `_document`'s script found remembered projects.
+ * rendering: it draws every card Home could show, and `_document`'s script, which counted the
+ * remembered projects, decides how many of them are shown, if the section is shown at all.
  */
 const RecentProjectsSkeleton = ({ count }: { count?: number }) => (
   <RecentProjectsSection hidden={count === undefined}>
-    {Array.from({ length: count ?? 1 }, (_, index) => (
-      <Loading key={index}>
+    {Array.from({ length: count ?? MAX_RECENT_PROJECTS }, (_, index) => (
+      <Loading
+        key={index}
+        // The row's flex item in place of the card it wraps, so it shares the row as the cards will.
+        sx={[
+          { flex: 1 },
+          count === undefined &&
+            index > 0 && { display: "none", [shownBeyond(index)]: { display: "block" } },
+        ]}
+      >
         <RecentProjectCard
           // The real control, disabled, so the card is exactly the height it will be.
           action={

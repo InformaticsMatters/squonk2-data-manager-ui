@@ -16,7 +16,7 @@ import { HeaderLogo } from "../../components/logo/HeaderLogo";
 import { authClient } from "../../lib/auth-client";
 import { MainNav, MainNavLink } from "./MainNavLink";
 import { OrganisationIdentity } from "./OrganisationIdentity";
-import { ProjectNavigation } from "./ProjectNavigation";
+import { ProjectNavigation, ProjectNavigationPlaceholder } from "./ProjectNavigation";
 
 const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.UserMenu), {
   // Its own button, disabled as it is while the user loads, so the links do not move when it arrives.
@@ -71,6 +71,9 @@ const PublicNavigation = () => (
     <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated={false} />
     </Box>
+    {/* A project page is only ever shown signed in, so while the session answers it keeps the
+        place of the project strip that will join it. */}
+    <ProjectNavigationPlaceholder />
   </>
 );
 

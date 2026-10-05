@@ -5,7 +5,7 @@ import { getGetDatasetsSuspenseQueryOptions } from "@/api/data-manager/dataset";
 import { getGetFileTypesSuspenseQueryOptions } from "@/api/data-manager/type";
 import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
 
-import { Alert, Box, Button, CircularProgress } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -17,6 +17,7 @@ import { FileKindIcon } from "../../components/kindIcons";
 import { LabelChip } from "../../components/labels/LabelChip";
 import { NextLink } from "../../components/NextLink";
 import { getDatasetListParams } from "../../datasets/datasetQuery";
+import { datasetsColumns, DatasetUploadPlaceholder } from "../../datasets/DatasetsSkeleton";
 import { resolveDatasetVersion } from "../../datasets/resolveDatasetVersion";
 import {
   datasetLinks,
@@ -38,7 +39,7 @@ import { useSelectedDatasets } from "./useSelectedDatasets";
 
 const DatasetUpload = dynamic<Record<string, never>>(
   () => import("../DatasetUpload").then((mod) => mod.DatasetUpload),
-  { loading: () => <CircularProgress size="1rem" /> },
+  { loading: () => <DatasetUploadPlaceholder /> },
 );
 
 const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
@@ -64,7 +65,7 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("fileName", {
-        header: "File Name",
+        header: datasetsColumns.fileName.header,
         cell: ({ row }) => {
           const { datasetVersion } = row.original;
           const name = datasetVersion ? (
@@ -96,7 +97,8 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         },
       }),
       columnHelper.accessor("labels", {
-        header: "Labels",
+        header: datasetsColumns.labels.header,
+        meta: { width: datasetsColumns.labels.width },
         cell: ({ getValue }) => (
           <Chips>
             {Object.entries(getValue()).map(([label, values]) => (
@@ -106,15 +108,20 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         ),
       }),
       columnHelper.accessor("editors", {
-        header: "Editors",
+        header: datasetsColumns.editors.header,
+        meta: { width: datasetsColumns.editors.width },
         sortingFn: editorsSorter,
         cell: ({ getValue }) => getValue().join(", "),
       }),
       columnHelper.accessor((row) => row.subRows.length > 0 || "", {
         id: "versions",
-        header: "Versions",
+        header: datasetsColumns.versions.header,
+        meta: { width: datasetsColumns.versions.width },
       }),
-      columnHelper.accessor("numberOfProjects", { header: "Number of projects" }),
+      columnHelper.accessor("numberOfProjects", {
+        header: datasetsColumns.numberOfProjects.header,
+        meta: { width: datasetsColumns.numberOfProjects.width },
+      }),
     ],
     [state],
   );

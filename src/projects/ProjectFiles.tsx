@@ -44,6 +44,7 @@ import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
 import { ProjectFileUpload } from "./ProjectFileUpload";
 import { ProjectFileViewerLinks } from "./ProjectFileViewerLinks";
+import { filesColumns, filesListingSx } from "./ProjectOrganisationBoundary";
 import { findReadmeRow, ProjectReadme } from "./ProjectReadme";
 import { projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
@@ -156,10 +157,11 @@ const FilesTable = ({
             )}
           </Box>
         ),
-        header: "File Name",
+        header: filesColumns.name.header,
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.owner), {
-        header: "Owner",
+        header: filesColumns.owner.header,
+        meta: { width: filesColumns.owner.width },
         id: "owner",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : fileRowMode(row)), {
@@ -172,7 +174,8 @@ const FilesTable = ({
           ) : (
             getValue()
           ),
-        header: "Mode",
+        header: filesColumns.mode.header,
+        meta: { width: filesColumns.mode.width },
         id: "mode",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.size), {
@@ -180,13 +183,15 @@ const FilesTable = ({
           const value = getValue();
           return typeof value === "string" ? value : filesize(value);
         },
-        header: "File size",
+        header: filesColumns.fileSize.header,
+        meta: { width: filesColumns.fileSize.width },
         id: "fileSize",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.modified), {
         cell: ({ getValue, row }) =>
           isDirectoryRow(row.original) ? getValue() : toLocalTimeString(getValue(), true, true),
-        header: "Last updated",
+        header: filesColumns.lastUpdated.header,
+        meta: { width: filesColumns.lastUpdated.width },
         id: "lastUpdated",
       }),
       columnHelper.display({
@@ -201,7 +206,8 @@ const FilesTable = ({
           />
         ),
         enableGrouping: false,
-        header: "Actions",
+        header: filesColumns.actions.header,
+        meta: { width: filesColumns.actions.width },
         id: "actions",
       }),
     ],
@@ -229,14 +235,7 @@ const FilesTable = ({
             </Alert>
           ) : null}
 
-          <Box
-            sx={{
-              "& .MuiPaper-root:last-child": {
-                height: "calc(100vh - 260px)",
-                "@supports (height: 100dvh)": { height: "calc(100dvh - 260px)" },
-              },
-            }}
-          >
+          <Box sx={filesListingSx}>
             <DataTable
               subRowsEnabled
               columns={columns}

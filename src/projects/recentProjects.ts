@@ -1,13 +1,13 @@
 export const RECENT_PROJECTS_STORAGE_KEY = "data-manager-ui-recent-projects";
 
 /**
- * Set on `<html>` by `_document`'s inline script, before the first paint, when this browser
- * remembers recent projects. The server cannot read browser storage, so this is how Home's server
- * render knows to reserve the section.
+ * Set on `<html>` by `_document`'s inline script, before the first paint, to how many recent
+ * projects this browser remembers, when it remembers any. The server cannot read browser storage,
+ * so this is how Home's server render knows to reserve the section, and how many cards to show.
  */
 export const RECENT_PROJECTS_ATTRIBUTE = "data-recent-projects";
 
-const MAX_RECENT_PROJECTS = 3;
+export const MAX_RECENT_PROJECTS = 3;
 
 export const parseRecentProjectIds = (value: unknown) => {
   if (!Array.isArray(value)) {

@@ -27,10 +27,12 @@ export type SectionFilterControl<TFilter extends string> = {
 
 /** The control that edits which types a section's route narrows to, where the section offers one. */
 const SectionTypeFilter = <TFilter extends string>({
+  disabled,
   filter,
   onStateChange,
   state,
 }: {
+  disabled: boolean;
   filter: SectionFilterControl<TFilter>;
   onStateChange: (change: SectionListState<TFilter>) => void;
   state: SectionListState<TFilter>;
@@ -42,6 +44,7 @@ const SectionTypeFilter = <TFilter extends string>({
       <TextField
         fullWidth
         select
+        disabled={disabled}
         label={filter.label}
         slotProps={{
           select: {
@@ -85,9 +88,12 @@ const SectionTypeFilter = <TFilter extends string>({
  *
  * When a keystroke reaches the route is not this toolbar's to decide: the field it puts above the
  * list owns that, so a section that lays its chrome out differently searches on identical terms.
+ *
+ * `disabled` is the toolbar as a section's skeleton shows it: every control in place, none usable.
  */
 export const SectionToolbar = <TFilter extends string>({
   children,
+  disabled = false,
   filter,
   onRefresh,
   onStateChange,
@@ -96,6 +102,7 @@ export const SectionToolbar = <TFilter extends string>({
 }: {
   /** Controls only one section offers, placed between the filter and the search field. */
   children?: ReactNode;
+  disabled?: boolean;
   filter?: SectionFilterControl<TFilter>;
   onRefresh: () => void;
   onStateChange: (change: SectionListState<TFilter>) => void;
@@ -104,21 +111,34 @@ export const SectionToolbar = <TFilter extends string>({
 }) => (
   <Grid container spacing={2} sx={{ alignItems: "center", mb: 2 }}>
     {filter ? (
-      <SectionTypeFilter filter={filter} state={state} onStateChange={onStateChange} />
+      <SectionTypeFilter
+        disabled={disabled}
+        filter={filter}
+        state={state}
+        onStateChange={onStateChange}
+      />
     ) : null}
     {children}
     <Grid size={{ md: 4, sm: 5, xs: 12 }} sx={{ ml: "auto" }}>
       <SectionSearchField
+        disabled={disabled}
         search={state.search}
         onSearch={(search) => onStateChange({ ...state, search })}
       />
     </Grid>
     <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>
-      <Tooltip title={refreshLabel}>
-        <IconButton size="large" sx={{ ml: "auto" }} onClick={onRefresh}>
+      {disabled ? (
+        // A tooltip is not given a disabled button: it could never be hovered to show.
+        <IconButton disabled aria-label={refreshLabel} size="large" sx={{ ml: "auto" }}>
           <RefreshIcon />
         </IconButton>
-      </Tooltip>
+      ) : (
+        <Tooltip title={refreshLabel}>
+          <IconButton size="large" sx={{ ml: "auto" }} onClick={onRefresh}>
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+      )}
     </Grid>
   </Grid>
 );

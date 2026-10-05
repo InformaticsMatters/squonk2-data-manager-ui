@@ -5,6 +5,13 @@ import Link from "next/link";
 
 import { capabilityIsEnabled, capabilityReason, type ProjectCapability } from "./capabilities";
 
+/** One reason's line, empty and unannounced, holding its height. */
+export const ReservedReasonLine = () => (
+  <Typography aria-hidden sx={{ visibility: "hidden" }} variant="body2">
+    {"\u00A0"}
+  </Typography>
+);
+
 /**
  * One capability-governed action in the Projects family, with its reason beneath it. A hidden
  * capability renders nothing; every other status renders the control, disabled unless enabled —
@@ -16,6 +23,9 @@ import { capabilityIsEnabled, capabilityReason, type ProjectCapability } from ".
  *
  * An action that navigates passes `href` instead of `onClick`; a refused one is a plain disabled
  * button either way, because a link that cannot be followed is still a link.
+ *
+ * `reserveReason` holds the reason's line where there is none, for a layout whose height must not
+ * depend on whether the action is explained — one whose placeholder could not know.
  */
 export const CapabilityButton = ({
   capability,
@@ -24,6 +34,7 @@ export const CapabilityButton = ({
   id,
   isPending = false,
   onClick,
+  reserveReason = false,
   startIcon,
   variant = "outlined",
 }: {
@@ -33,6 +44,7 @@ export const CapabilityButton = ({
   id: string;
   isPending?: boolean;
   onClick?: () => void;
+  reserveReason?: boolean;
   startIcon?: ReactNode;
   variant?: "contained" | "outlined";
 }) => {
@@ -71,6 +83,8 @@ export const CapabilityButton = ({
         <Typography color="text.secondary" id={`${id}-reason`} variant="body2">
           {reason}
         </Typography>
+      ) : reserveReason ? (
+        <ReservedReasonLine />
       ) : null}
     </Stack>
   );

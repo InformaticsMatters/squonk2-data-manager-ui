@@ -5,7 +5,7 @@ import { getGetProductSuspenseQueryOptions } from "@/api/account-server/product"
 import { type ProjectDetail } from "@/api/data-manager";
 import { useGetProjectSuspense } from "@/api/data-manager/project";
 
-import { Box, Container, Skeleton, Typography } from "@mui/material";
+import { Box, Container, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { ErrorBoundary } from "@sentry/nextjs";
 import {
   QueryErrorResetBoundary,
@@ -15,6 +15,7 @@ import {
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
+import { type ProjectSection } from "../application/pagePolicy";
 import { PageHead } from "../components/PageHead";
 import {
   CardGridSkeleton,
@@ -24,10 +25,13 @@ import {
 } from "../components/skeletons";
 import { useSettledQuery } from "../hooks/useSettledQuery";
 import { useSelectedOrganisation } from "../state/organisationSelection";
+import { ReservedReasonLine } from "./CapabilityButton";
 import { readProjectAncestry, resolvedAncestry } from "./projectAncestry";
 import { callerAccountRead } from "./projectFacts";
 import { recordRecentProject } from "./recentProjects";
 import { type ProjectSectionKey, projectSectionLabel, routeProjectSection } from "./routes";
+import { runFilter } from "./runFilter";
+import { SectionToolbar } from "./SectionToolbar";
 import { RouteProjectProvider, useRouteProjectId } from "./useRouteProject";
 
 const ProjectFailure = dynamic(
@@ -70,35 +74,175 @@ const ResultsSkeleton = () => (
   </Loading>
 );
 
-const sectionSkeletons: Record<ProjectSectionKey, ReactNode> = {
-  files: (
-    <ListingSkeleton
-      columns={["File Name", "Owner", "Mode", "File size", "Last updated", "Actions"]}
-    />
-  ),
-  manage: <IdentitySkeleton />,
-  results: <ResultsSkeleton />,
-  run: <CardGridSkeleton />,
+/** The Files listing fills the viewport below the strip, loaded or not, so its footer stays put. */
+export const filesListingSx = {
+  "& .MuiPaper-root:last-child": {
+    height: "calc(100vh - 260px)",
+    "@supports (height: 100dvh)": { height: "calc(100dvh - 260px)" },
+  },
 };
 
 /**
- * A placeholder for the section the URL addresses, shaped like its heading and content. The heading
- * is a placeholder too: a section's real heading says its content has arrived. Sections suspend on
- * their own reads into this same boundary, so the project and the section resolve behind one
- * skeleton rather than one after the other.
+ * The Files listing's headings and the widths it declares, shared with its skeleton so the columns
+ * are where they will stay. The file name takes whatever the others leave.
  */
-const ProjectSkeleton = () => {
-  const { asPath } = useRouter();
-  const section = routeProjectSection(asPath, useRouteProjectId() ?? "");
+export const filesColumns = {
+  name: { header: "File Name" },
+  owner: { header: "Owner", width: "15%" },
+  mode: { header: "Mode", width: "11%" },
+  fileSize: { header: "File size", width: "10%" },
+  lastUpdated: { header: "Last updated", width: "15%" },
+  actions: { header: "Actions", width: "18%" },
+} as const;
 
-  return (
-    <Container maxWidth={section === "files" || section === "run" ? "xl" : "lg"} sx={{ py: 3 }}>
-      <Typography gutterBottom component="div" variant="h4">
-        <Skeleton width={160} />
+/** A Files row's height, set by the small icon buttons in its Actions cell. */
+const filesRowHeight = 44;
+
+const sectionSkeletons: Record<ProjectSectionKey, ReactNode> = {
+  files: (
+    <Box sx={filesListingSx}>
+      <ListingSkeleton
+        subRowsEnabled
+        columns={Object.values(filesColumns)}
+        loadingRowHeight={filesRowHeight}
+      />
+    </Box>
+  ),
+  manage: <IdentitySkeleton />,
+  results: <ResultsSkeleton />,
+  run: (
+    <>
+      {/* The section's own toolbar, disabled: what it offers is known before the catalogue is. */}
+      <SectionToolbar
+        disabled
+        filter={runFilter}
+        refreshLabel="Refresh catalogue"
+        state={{}}
+        onRefresh={() => undefined}
+        onStateChange={() => undefined}
+      />
+      <CardGridSkeleton />
+    </>
+  ),
+};
+
+/**
+ * A placeholder for one project section, shaped like its heading and content. The heading is the
+ * section's own, which is known from the route; only what the reads answer is a placeholder, and
+ * the heading is not marked as one until the section itself renders it. Sections suspend on their
+ * own reads into the same boundary, so the project and the section resolve behind one skeleton
+ * rather than one after the other.
+ */
+const ProjectSkeleton = ({ section }: { section: ProjectSectionKey }) => (
+  <Container maxWidth={section === "files" || section === "run" ? "xl" : "lg"} sx={{ py: 3 }}>
+    {/* Results sets its heading in a row with the result count, spaced below rather than gutters. */}
+    <Typography
+      component="div"
+      gutterBottom={section !== "results"}
+      sx={section === "results" ? { mb: 2 } : undefined}
+      variant="h4"
+    >
+      {projectSectionLabel(section)}
+    </Typography>
+    {sectionSkeletons[section]}
+  </Container>
+);
+
+/** The skeleton of the section the URL addresses. */
+const RouteProjectSkeleton = () => {
+  const { asPath } = useRouter();
+  return <ProjectSkeleton section={routeProjectSection(asPath, useRouteProjectId() ?? "")} />;
+};
+
+/**
+ * The index's caption names the organisation, which only its reads can, so a name that wraps it
+ * onto a second line would otherwise make the header taller as it arrives. Both lines are held
+ * whatever the caption says.
+ */
+export const projectsIndexCaptionSx = { minHeight: "3em" } as const;
+
+/** The project index, shaped like its heading, filters and rows. */
+const ProjectsIndexSkeleton = () => (
+  <Container maxWidth="md" sx={{ py: 3 }}>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      sx={{ alignItems: { sm: "flex-end" }, gap: 2, justifyContent: "space-between", mb: 3 }}
+    >
+      <div>
+        {/* Not the page's heading yet: that says the index has arrived. */}
+        <Typography component="div" variant="h3">
+          Projects
+        </Typography>
+        {/* The caption names the organisation once its reads have, so it is a placeholder. */}
+        <Typography color="text.secondary" sx={projectsIndexCaptionSx}>
+          <Skeleton width="80%" />
+        </Typography>
+      </div>
+      {/* Which unit the organisation is offered, and whether either action is available, is what
+          the index's reads decide, so only the two buttons' places are held. */}
+      <Loading sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
+        {[217, 166].map((width) => (
+          // Each over the reason line the real buttons hold whether or not they have a reason.
+          <Stack key={width} spacing={0.5}>
+            <Skeleton height={36.5} variant="rounded" width={width} />
+            <ReservedReasonLine />
+          </Stack>
+        ))}
+      </Loading>
+    </Stack>
+    {/* The filters are the index's own, disabled in place until there is a list to narrow. */}
+    <Stack direction={{ xs: "column", sm: "row" }} sx={{ gap: 2 }}>
+      <TextField disabled fullWidth label="Search projects" />
+      <TextField disabled label="Unit" sx={{ minWidth: { sm: 260 } }} />
+    </Stack>
+    <Loading sx={{ display: "grid", gap: 1, mt: 2 }}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <Skeleton height={64} key={index} variant="rounded" />
+      ))}
+    </Loading>
+  </Container>
+);
+
+/** Project creation and deletion progress: a narrow page with its heading over one form. */
+const ProjectFormSkeleton = ({ caption, title }: { caption: string; title: string }) => (
+  <Container maxWidth="sm" sx={{ py: 4 }}>
+    <Box sx={{ mb: 3 }}>
+      <Typography component="div" variant="h3">
+        {title}
       </Typography>
-      {sectionSkeletons[section]}
-    </Container>
-  );
+      <Typography color="text.secondary">{caption}</Typography>
+    </Box>
+    <Loading>
+      <Skeleton height={240} variant="rounded" />
+    </Loading>
+  </Container>
+);
+
+/**
+ * What a Projects page shows before the route, session or API clients are ready, chosen from the
+ * page's policy alone because none of those can be read yet.
+ */
+export const ProjectsSkeleton = ({ section }: { section: ProjectSection }) => {
+  switch (section) {
+    case "index":
+      return <ProjectsIndexSkeleton />;
+    case "create":
+      return (
+        <ProjectFormSkeleton
+          caption="Choose who owns the subscription before creating its linked project."
+          title="Create project"
+        />
+      );
+    case "deletion":
+      return (
+        <ProjectFormSkeleton
+          caption="This page follows the deletion itself, so it stays available once the project cannot be opened."
+          title="Deleting project"
+        />
+      );
+    default:
+      return <ProjectSkeleton section={section} />;
+  }
 };
 
 /**
@@ -153,7 +297,7 @@ const ProjectWorkspaceMount = ({
   }, [organisation, organisationId, project.project_id]);
 
   if (!adopted) {
-    return <ProjectSkeleton />;
+    return <RouteProjectSkeleton />;
   }
 
   return (
@@ -231,7 +375,7 @@ export const ProjectOrganisationBoundary = ({ children }: { children: ReactNode 
           key={projectId}
           onReset={reset}
         >
-          <Suspense fallback={<ProjectSkeleton />}>
+          <Suspense fallback={<RouteProjectSkeleton />}>
             <ProjectBoundary projectId={projectId}>{children}</ProjectBoundary>
           </Suspense>
         </ErrorBoundary>

@@ -12,11 +12,12 @@ import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
-import { ListingSkeleton, Loading } from "../components/skeletons";
+import { Loading } from "../components/skeletons";
 import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
 import { useSettledQueries, useSettledQuery } from "../hooks/useSettledQuery";
 import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
+import { DatasetsListingSkeleton } from "./DatasetsSkeleton";
 import { type DatasetDeletionDestination } from "./mutations";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
 import { datasetInventoryReads } from "./useDatasetVersionBilling";
@@ -133,13 +134,7 @@ export const DatasetsWorkspace = () => {
         <Typography gutterBottom component="h1" variant="h3">
           Datasets
         </Typography>
-        <Suspense
-          fallback={
-            <ListingSkeleton
-              columns={["File Name", "Labels", "Editors", "Versions", "Number of projects"]}
-            />
-          }
-        >
+        <Suspense fallback={<DatasetsListingSkeleton />}>
           <DatasetsTable route={datasetRoute} />
         </Suspense>
       </Container>

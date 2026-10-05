@@ -726,3 +726,37 @@ for (const [layout, viewport] of [
     ).toEqual([]);
   });
 }
+
+test("Home's recent projects arrive into cards the size the server render reserved", async ({
+  page,
+}, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByText("Acceptance Project", { exact: true }).first()).toBeVisible();
+  await page.goto(`${acceptanceUrls.app}projects/${fixtureIds.screeningProject}/files`);
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  // Every arrangement the visible cards take while Home loads, from the first frame it paints.
+  await page.addInitScript(() => {
+    const layouts: string[] = [];
+    Object.assign(globalThis, { recentLayouts: layouts });
+    const sample = () => {
+      const layout = [...document.querySelectorAll("section .MuiPaper-root")]
+        .map((card) => card.getBoundingClientRect())
+        .filter(({ width }) => width > 0)
+        .map(({ height, left, width }) => `${left}+${width}x${height}`)
+        .join(" ");
+      if (layout && layouts.at(-1) !== layout) {
+        layouts.push(layout);
+      }
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+
+  await page.goto(homeUrl);
+  await expect(page.getByRole("link", { name: "Open files" })).toHaveCount(2);
+  const layouts = await page.evaluate(
+    () => (globalThis as unknown as { recentLayouts: string[] }).recentLayouts,
+  );
+  expect(layouts).toHaveLength(1);
+});

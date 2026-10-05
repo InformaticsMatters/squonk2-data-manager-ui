@@ -36,10 +36,10 @@ import { organisationChargesAreOffered } from "./scope";
 import { buildUnitIndex, type UnitIndexRow } from "./unitIndex";
 
 /** The rail is sized by its content and capped below the viewport, which is what makes it stick. */
-const RAIL_WIDTH = 288;
+export const RAIL_WIDTH = 288;
 // Capped well below the viewport, and floored beneath by the content pane, so the row holding the
 // rail is always taller than the rail itself — which is the whole of what makes it stick.
-const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
+export const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
 
 /**
  * Which rail entry the current route selects. The rail is a set of links and the current

@@ -1,8 +1,14 @@
 import { useDeferredValue, useState } from "react";
 
-import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
-import { useGetUnitsSuspense } from "@/api/account-server/unit";
-import { useGetProjectsSuspense } from "@/api/data-manager/project";
+import {
+  getGetOrganisationsSuspenseQueryOptions,
+  useGetDefaultOrganisation,
+} from "@/api/account-server/organisation";
+import { getGetUnitsSuspenseQueryOptions, useGetUnitsSuspense } from "@/api/account-server/unit";
+import {
+  getGetProjectsSuspenseQueryOptions,
+  useGetProjectsSuspense,
+} from "@/api/data-manager/project";
 
 import {
   Alert,
@@ -18,10 +24,12 @@ import {
 import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../../application/FamilyRouteResolution";
+import { accountFactsReads } from "../../hooks/useAccountFacts";
 import { useClientSnapshot } from "../../hooks/useClientSnapshot";
 import { useDraftValue } from "../../hooks/useDraftValue";
 import { useGetPersonalUnit } from "../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { useSettledQueries } from "../../hooks/useSettledQuery";
 import { CapabilityButton } from "../../projects/CapabilityButton";
 import {
   dismissProjectOnboarding,
@@ -35,6 +43,7 @@ import {
 } from "../../projects/projectIndex";
 import { ProjectIndexRow } from "../../projects/ProjectIndexRow";
 import { ProjectOnboarding } from "../../projects/ProjectOnboarding";
+import { projectsIndexCaptionSx } from "../../projects/ProjectOrganisationBoundary";
 import { type ProjectIndexLinkState, projectLinks } from "../../projects/routes";
 import { UnitOffer } from "../../projects/UnitOffer";
 import { useProjectCreationOffer } from "../../projects/useProjectCreationOffer";
@@ -42,6 +51,15 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { AddIcon } from "../icons";
 
 export const ProjectsIndex = () => {
+  // Everything the header's two offers are decided from, started together and waited for behind
+  // the skeleton, so the offers arrive decided: an unconfirmed offer that settles a moment later
+  // changes state, and its note beneath it, in front of the caller.
+  useSettledQueries([
+    getGetProjectsSuspenseQueryOptions(),
+    getGetUnitsSuspenseQueryOptions(),
+    getGetOrganisationsSuspenseQueryOptions(),
+    ...accountFactsReads,
+  ]);
   const router = useRouter();
   const familyRoute = useFamilyRoute();
   const route = familyRoute.localNotFound ? null : familyRoute.route;
@@ -175,7 +193,7 @@ export const ProjectsIndex = () => {
           {/* The caption tells the caller what to do with a list. Where the offer is the screen
               there is no list, and the offer says what to do instead. */}
           {onboardingIsTheIndex ? null : (
-            <Typography color="text.secondary">
+            <Typography color="text.secondary" sx={projectsIndexCaptionSx}>
               {/* The index lists one organisation at a time, so the organisation is named here
                   rather than repeated down every row. */}
               Choose a project
@@ -193,7 +211,10 @@ export const ProjectsIndex = () => {
                 so the header stands aside for exactly as long as the panel is up. Dismissing the
                 panel takes away the explanation, not the action. */}
             {offersOnboarding ? null : (
+              // Whether either action is explained is what the reads decide, so both hold a reason's
+              // line: the header is one height either way, and the list starts where it will stay.
               <UnitOffer
+                reserveReason
                 existingUnitNames={
                   organisationId ? unitNamesInOrganisation(units, organisationId) : []
                 }
@@ -201,6 +222,7 @@ export const ProjectsIndex = () => {
               />
             )}
             <CapabilityButton
+              reserveReason
               capability={projectCreation}
               href={projectLinks.create()}
               id="projects-create"

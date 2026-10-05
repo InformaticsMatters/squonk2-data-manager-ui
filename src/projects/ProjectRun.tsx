@@ -4,28 +4,22 @@ import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { DefinitionKindIcon } from "../components/kindIcons";
 import { cardGridSx } from "../components/runCards/cardGrid";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectRunDefinition } from "./ProjectRunDefinition";
-import {
-  projectLinks,
-  type ProjectRoute,
-  runCatalogueState,
-  type RunFilterType,
-  type RunState,
-} from "./routes";
+import { projectLinks, type ProjectRoute, runCatalogueState, type RunState } from "./routes";
 import {
   filterRunItems,
   findRunDefinition,
   runCatalogueOf,
   type RunDefinitionItem,
 } from "./runFacts";
+import { runFilter } from "./runFilter";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
-import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
+import { SectionToolbar } from "./SectionToolbar";
 import { type ProjectRunCatalogue, useProjectRun } from "./useProjectRun";
 import { type LaunchOutcome } from "./useRunCommands";
 
@@ -33,20 +27,6 @@ type RunRoute = Extract<ProjectRoute, { kind: "run-definition" | "run" }>;
 
 const isRunRoute = (route: FamilyRoute): route is RunRoute =>
   route.kind === "run" || route.kind === "run-definition";
-
-const filterOptions: readonly SectionFilterOption<RunFilterType>[] = [
-  {
-    icon: <DefinitionKindIcon fontSize="small" kind="workflow" />,
-    label: "Workflows",
-    value: "workflow",
-  },
-  {
-    icon: <DefinitionKindIcon fontSize="small" kind="application" />,
-    label: "Applications",
-    value: "application",
-  },
-  { icon: <DefinitionKindIcon fontSize="small" kind="job" />, label: "Jobs", value: "job" },
-];
 
 /**
  * A definition that is absent, refused, not offered by this project, or addressed through a URL
@@ -173,7 +153,7 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
         Run
       </Typography>
       <SectionToolbar
-        filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
+        filter={runFilter}
         refreshLabel="Refresh catalogue"
         state={state}
         onRefresh={() => run.refresh()}

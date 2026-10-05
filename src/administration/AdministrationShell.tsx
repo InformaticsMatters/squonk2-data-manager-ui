@@ -1,13 +1,13 @@
 import { type ReactNode, useEffect, useRef } from "react";
 
-import { Alert, Box, Button, Container, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Skeleton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { RetryIcon } from "../components/icons";
 import { SectionBoundary } from "../components/SectionBoundary";
-import { AdministrationRail } from "./AdministrationRail";
+import { AdministrationRail, RAIL_MAX_HEIGHT, RAIL_WIDTH } from "./AdministrationRail";
 import { presentAdministrationFailure } from "./failures";
 import { useOrganisationInEffect } from "./organisationInEffect";
 import { SectionSkeleton } from "./resources";
@@ -99,3 +99,28 @@ export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
     </Container>
   );
 };
+
+/**
+ * The frame before the route, session or API clients are ready, so the workspace arrives into the
+ * rail and content pane it will occupy. The rail is assumed: the masthead restores the organisation
+ * in effect long before these gates open.
+ */
+export const AdministrationSkeleton = () => (
+  <Container maxWidth="xl" sx={{ py: 3 }}>
+    {/* Not the page's heading yet: that says the workspace has arrived. */}
+    <Typography component="div" sx={{ mb: 2 }} variant="h3">
+      Administration
+    </Typography>
+    <Box sx={{ alignItems: "flex-start", display: "flex", gap: 3 }}>
+      <Skeleton
+        height={RAIL_MAX_HEIGHT}
+        sx={{ display: { md: "block", xs: "none" }, flexShrink: 0 }}
+        variant="rounded"
+        width={RAIL_WIDTH}
+      />
+      <Box sx={{ flexGrow: 1, minHeight: "calc(100vh - 120px)", minWidth: 0, pb: 6 }}>
+        <SectionSkeleton />
+      </Box>
+    </Box>
+  </Container>
+);

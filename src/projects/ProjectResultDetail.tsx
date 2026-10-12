@@ -21,7 +21,7 @@ import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDeta
 import { useSettledQueries } from "../hooks/useSettledQuery";
 import { resultInstanceJob, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts } from "./projectFacts";
-import { ProjectResultRerun } from "./ProjectResultRerun";
+import { ProjectResultRerun, type RerunLaunched } from "./ProjectResultRerun";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import {
   instanceOwner,
@@ -30,7 +30,7 @@ import {
   runningWorkflowOwner,
   taskOwner,
 } from "./resultFacts";
-import { resolveRerunTarget } from "./resultRerun";
+import { type RerunTarget, resolveRerunTarget, resolveWorkflowRerunTarget } from "./resultRerun";
 import { projectLinks, type ProjectRoute, resultsListState } from "./routes";
 import { type SectionReadState } from "./sectionReads";
 import { resultTaskSettlement } from "./taskFacts";
@@ -41,6 +41,32 @@ import { useResultWorkflow } from "./useResultWorkflow";
 import { resultWorkflowSettlement } from "./workflowFacts";
 
 type ResultRoute = Extract<ProjectRoute, { kind: "result" }>;
+
+/**
+ * Where an answered rerun goes. A launch is only reported once the Data Manager has accepted it,
+ * so the result it opens is one that exists — at its own canonical Results route, inside the
+ * project that ran it, carrying the same Results list state the rerun was opened with.
+ *
+ * An answered rerun has spent its route, so it is replaced rather than added to: left behind, that
+ * route would put a rerun of work that has just been run one Back away from the result it created,
+ * offering it afresh and sendable.
+ */
+const useRerunNavigation = (route: ResultRoute) => {
+  const router = useRouter();
+  const state = resultsListState(route);
+  return {
+    // Leaving the rerun replaces it with the result it was opened over, carrying only the Results
+    // state that result's own route owns, so Close never adds an entry Back would walk back through.
+    handleClose: () =>
+      void router.replace(
+        projectLinks.result(route.projectId, route.collection, route.resultId, state) as never,
+      ),
+    handleLaunched: (target: RerunTarget, { collection, resultId }: RerunLaunched) =>
+      void router.replace(
+        projectLinks.result(target.projectId, collection, resultId, state) as never,
+      ),
+  };
+};
 
 /**
  * A result that is absent, refused, or owned by another project answers identically here. The
@@ -214,12 +240,7 @@ const InstanceResult = ({
     ),
   );
   const state = resultsListState(route);
-  // Leaving the rerun replaces it with the instance it was opened over, carrying only the Results
-  // state that instance's own route owns, so Close never adds an entry Back would walk back through.
-  const closeRerun = () =>
-    void router.replace(
-      projectLinks.result(route.projectId, "instances", route.resultId, state) as never,
-    );
+  const rerunNavigation = useRerunNavigation(route);
 
   return (
     <AddressedResult
@@ -267,30 +288,13 @@ const InstanceResult = ({
             />
             {/* A rerun the instance itself does not offer is not opened by its route asking for
             one, so a URL cannot compose a launch the instance beneath it would refuse. */}
-            {route.rerun === true && rerunTarget !== null ? (
+            {route.rerun === true && rerunTarget?.collection === "instances" ? (
               <ProjectResultRerun
                 capability={capabilities.rerun}
                 instance={instance}
                 target={rerunTarget}
-                onClose={closeRerun}
-                // A launch is only reported once the Data Manager has accepted it, so the instance
-                // this opens is one that exists — at its own canonical Results route, inside the
-                // project that ran it, carrying the same Results list state the rerun was opened
-                // with.
-                //
-                // An answered rerun has spent its route, so it is replaced rather than added to:
-                // left behind, that route would put a rerun of work that has just been run one Back
-                // away from the instance it created, offering it afresh and sendable.
-                onLaunched={(instanceId) =>
-                  void router.replace(
-                    projectLinks.result(
-                      rerunTarget.projectId,
-                      "instances",
-                      instanceId,
-                      state,
-                    ) as never,
-                  )
-                }
+                onClose={rerunNavigation.handleClose}
+                onLaunched={(launched) => rerunNavigation.handleLaunched(rerunTarget, launched)}
               />
             ) : null}
           </>
@@ -332,6 +336,7 @@ const WorkflowResult = ({
       : [],
   );
   const state = resultsListState(route);
+  const rerunNavigation = useRerunNavigation(route);
 
   return (
     <AddressedResult
@@ -343,28 +348,49 @@ const WorkflowResult = ({
     >
       {(workflow, content) => {
         const owningProjectId = runningWorkflowOwner(workflow) ?? route.projectId;
+        const capabilities = resolveResultCapabilities(facts, {
+          content,
+          owningProjectId,
+          routeProjectId: route.projectId,
+          workflowSettlement: resultWorkflowSettlement(read.lifecycle),
+        });
+        // Decided once, exactly as an instance's is: the control that offers the rerun and the
+        // modal that sends it read this one target.
+        const rerunTarget = resolveWorkflowRerunTarget({
+          routeProjectId: route.projectId,
+          workflow,
+        });
 
         return (
-          <ResultWorkflowDetail
-            capabilities={resolveResultCapabilities(facts, {
-              content,
-              owningProjectId,
-              routeProjectId: route.projectId,
-              workflowSettlement: resultWorkflowSettlement(read.lifecycle),
-            })}
-            lifecycle={read.lifecycle}
-            projectId={owningProjectId}
-            resultsState={state}
-            steps={read.steps}
-            stepsReadState={read.stepsReadState}
-            workflow={workflow}
-            // A deleted workflow has no route of its own left, so the caller is returned to the
-            // list of the project that owned it, with that list's own state. A stop and a rejected
-            // request both change nothing about where the caller is.
-            onDeleted={() =>
-              void router.replace(projectLinks.results(owningProjectId, state) as never)
-            }
-          />
+          <>
+            <ResultWorkflowDetail
+              capabilities={capabilities}
+              lifecycle={read.lifecycle}
+              projectId={owningProjectId}
+              rerunTarget={rerunTarget}
+              resultsState={state}
+              steps={read.steps}
+              stepsReadState={read.stepsReadState}
+              workflow={workflow}
+              // A deleted workflow has no route of its own left, so the caller is returned to the
+              // list of the project that owned it, with that list's own state. A stop and a
+              // rejected request both change nothing about where the caller is.
+              onDeleted={() =>
+                void router.replace(projectLinks.results(owningProjectId, state) as never)
+              }
+            />
+            {/* A rerun the workflow itself does not offer is not opened by its route asking for
+            one, so a URL cannot compose a launch the workflow beneath it would refuse. */}
+            {route.rerun === true && rerunTarget?.collection === "workflows" ? (
+              <ProjectResultRerun
+                capability={capabilities.rerun}
+                runningWorkflow={workflow}
+                target={rerunTarget}
+                onClose={rerunNavigation.handleClose}
+                onLaunched={(launched) => rerunNavigation.handleLaunched(rerunTarget, launched)}
+              />
+            ) : null}
+          </>
         );
       }}
     </AddressedResult>

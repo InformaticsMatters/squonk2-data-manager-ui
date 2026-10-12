@@ -14,7 +14,7 @@ import { ExternalLinkIcon } from "../icons";
 import { DefinitionKindIcon } from "../kindIcons";
 import { CapabilityReasons } from "../results/CapabilityReasons";
 import { LogsButton } from "../results/LogsButton";
-import { RerunJobButton } from "../results/RerunJobButton";
+import { RerunButton } from "../results/RerunButton";
 import { ResultCard } from "../results/ResultCard";
 import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
@@ -116,7 +116,7 @@ export const InstanceResultCard = ({
             </HrefButton>
           )}
           {rerunTarget === null ? null : (
-            <RerunJobButton
+            <RerunButton
               capability={capabilities.rerun}
               resultsState={resultsState}
               target={rerunTarget}

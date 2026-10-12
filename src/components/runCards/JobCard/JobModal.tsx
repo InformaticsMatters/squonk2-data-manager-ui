@@ -9,18 +9,10 @@ import { useGetJob } from "@/api/data-manager/job";
 
 import { Box, TextField, Typography } from "@mui/material";
 
-import { useDraftValue } from "../../../hooks/useDraftValue";
 import { useStateResetOn } from "../../../hooks/useStateResetOn";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
 import { launchIsSendable } from "../../../projects/runLaunch";
-import {
-  declaredInputDefaults,
-  type InputData,
-  launchNameDefault,
-  launchVariables,
-  readRunDefinitionVariables,
-  runInputsAreSupplied,
-} from "../../../projects/runLaunchForm";
+import { launchNameDefault, readRunDefinitionVariables } from "../../../projects/runLaunchForm";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
@@ -32,6 +24,7 @@ import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { LaunchFeedback } from "../LaunchFeedback";
 import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type RunModalProps } from "../types";
+import { useLaunchForm } from "../useLaunchForm";
 import { JobInputsAndOptionsForm } from "./JobInputsAndOptionsForm";
 
 interface JobSpecification {
@@ -91,29 +84,17 @@ export const JobModal = ({
     [spec],
   );
 
-  // Control for generated options form
-  const [optionsFormData, setOptionsFormData] = useState<any>(specVariables);
-
-  // Control for the inputs fields
-
   // The declared inputs, options, and option order, read the one way every definition's are.
   const declared = useMemo(() => readRunDefinitionVariables(job?.variables), [job?.variables]);
 
-  // The values the job's own declared defaults start its fields at
-  const inputsDefault = useMemo(() => declaredInputDefaults(declared.inputs), [declared]);
-
-  // The defaults arrive with the definition, so the fields start at whatever it last declared.
-  const [inputsData, setInputsData] = useDraftValue<InputData>(inputsDefault);
-
-  const inputKeys = Object.keys(declared.inputs?.properties ?? {});
-  const specInputs = Object.fromEntries(
-    Object.entries(specVariables ?? {}).filter(([key, _]) => inputKeys.includes(key)),
-  );
-
-  const inputsValid = runInputsAreSupplied(
-    declared.inputs,
-    Object.keys(inputsData).length > 0 ? inputsData : specInputs,
-  );
+  const {
+    inputsData,
+    inputsSupplied: inputsValid,
+    optionsFormData,
+    setInputsData,
+    setOptionsFormData,
+    variables,
+  } = useLaunchForm(declared, specVariables);
 
   const formRef = useRef<any>(null);
 
@@ -127,7 +108,7 @@ export const JobModal = ({
       collection: job.collection,
       job: job.job,
       version: job.version,
-      variables: launchVariables(optionsFormData, inputsData),
+      variables: variables(),
     };
     void launch(() =>
       launchInstance(projectId, {

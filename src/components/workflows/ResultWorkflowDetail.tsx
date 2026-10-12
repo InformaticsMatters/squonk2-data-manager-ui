@@ -3,6 +3,7 @@ import { type RunningWorkflowGetResponse, type RunningWorkflowStep } from "@/api
 import { ListItem, ListItemText } from "@mui/material";
 
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type RerunTarget } from "../../projects/resultRerun";
 import { type ResultsState } from "../../projects/routes";
 import { type SectionReadState } from "../../projects/sectionReads";
 import { type ResultWorkflowLifecycle } from "../../projects/workflowFacts";
@@ -18,6 +19,8 @@ export interface ResultWorkflowDetailProps {
    * inside that project.
    */
   projectId: string;
+  /** What running this workflow again would target, or `null` where nothing may be run again. */
+  rerunTarget: RerunTarget | null;
   /** Results list state this card's links preserve. */
   resultsState?: ResultsState;
   steps: readonly RunningWorkflowStep[] | undefined;
@@ -55,6 +58,7 @@ export const ResultWorkflowDetail = ({
   capabilities,
   lifecycle,
   projectId,
+  rerunTarget,
   resultsState,
   steps,
   stepsReadState,
@@ -74,6 +78,7 @@ export const ResultWorkflowDetail = ({
     }
     collapsedByDefault={false}
     projectId={projectId}
+    rerunTarget={rerunTarget}
     resultsState={resultsState}
     workflow={workflow}
     onDeleted={onDeleted}

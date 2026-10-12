@@ -138,15 +138,24 @@ type RunDefinitionRoute = {
 }[RunDefinitionType];
 
 /**
- * Whether the addressed instance's rerun is open. Only an instance names a job that can be run
+ * The results that name a definition which can be run again: an instance names the job it ran and
+ * a running workflow the workflow it ran. A task names neither.
+ */
+export type RerunnableCollection = Extract<ResultCollection, "instances" | "workflows">;
+
+const isRerunnableCollection = (collection: ResultCollection): collection is RerunnableCollection =>
+  collection === "instances" || collection === "workflows";
+
+/**
+ * Whether the addressed result's rerun is open. Only a result that names a definition can be run
  * again, so only its own route carries this: the collection decides whether the value exists at
- * all, and a rerun therefore cannot be addressed for a task or a running workflow.
+ * all, and a rerun therefore cannot be addressed for a task.
  */
 type ResultRerunState = { rerun?: true };
 
 type ResultRoute = {
   [TCollection in ResultCollection]: ResultsState &
-    (TCollection extends "instances" ? ResultRerunState : unknown) & {
+    (TCollection extends RerunnableCollection ? ResultRerunState : unknown) & {
       kind: "result";
       projectId: ProjectId;
       collection: TCollection;
@@ -477,12 +486,18 @@ export const projectLinks = {
     state: ResultsLinkState = {},
   ) => buildHref(resultPath(projectId, collection, resultId), resultsQuery(state)),
   /**
-   * The addressed instance with its rerun open. It is built from the instance's own collection, so
-   * a rerun is only ever addressed for an instance, and it carries the same Results list state the
-   * instance's own route does — a rerun is a view of one instance rather than a section of its own.
+   * The addressed result with its rerun open. It is built from the result's own collection, so a
+   * rerun is only ever addressed for a result that names a definition, and it carries the same
+   * Results list state the result's own route does — a rerun is a view of one result rather than a
+   * section of its own.
    */
-  resultRerun: (projectId: string, instanceId: string, state: ResultsLinkState = {}) =>
-    buildHref(resultPath(projectId, "instances", instanceId), [
+  resultRerun: (
+    projectId: string,
+    collection: RerunnableCollection,
+    resultId: string,
+    state: ResultsLinkState = {},
+  ) =>
+    buildHref(resultPath(projectId, collection, resultId), [
       ...resultsQuery(state),
       ["rerun", rerunQueryValue],
     ]),
@@ -768,12 +783,15 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
       return localNotFoundRoute("projects", "results", projectId);
     }
     const state = parseResultsState(searchParams);
-    // Only an instance has a job to run again, so only its collection can carry an open rerun.
-    // Anywhere else the flag names nothing this route owns, and is dropped with the rest of the
-    // state a Results route does not own.
-    const rerun =
-      collection === "instances" &&
-      readOptionalQuery(searchParams, "rerun", isRerunFlag) !== undefined;
+    // Only an instance or a running workflow has a definition to run again, so only their
+    // collections can carry an open rerun. Anywhere else the flag names nothing this route owns,
+    // and is dropped with the rest of the state a Results route does not own.
+    const rerunCollection =
+      isRerunnableCollection(collection) &&
+      readOptionalQuery(searchParams, "rerun", isRerunFlag) !== undefined
+        ? collection
+        : undefined;
+    const rerun = rerunCollection !== undefined;
     const route = {
       kind: "result",
       projectId,
@@ -785,9 +803,9 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
     return validRoute(
       location,
       route,
-      rerun
-        ? projectLinks.resultRerun(projectId, resultId, state)
-        : projectLinks.result(projectId, collection, resultId, state),
+      rerunCollection === undefined
+        ? projectLinks.result(projectId, collection, resultId, state)
+        : projectLinks.resultRerun(projectId, rerunCollection, resultId, state),
     );
   }
 

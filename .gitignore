@@ -56,6 +56,9 @@ tsconfig.tsbuildinfo
 # Sentry Config File
 .sentryclirc
 
-# LLM
-.claude
-.playwright-cli
+# Claude Code
+.claude/settings.local.json
+.claude/worktrees/
+
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

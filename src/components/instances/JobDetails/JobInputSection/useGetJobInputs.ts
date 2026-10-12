@@ -1,16 +1,11 @@
 import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 import { useGetJob } from "@/api/data-manager/job";
 
-import { type InputFieldSchema } from "../../../../projects/runLaunchForm";
+import { readRunDefinitionVariables, suppliedRunInputs } from "../../../../projects/runLaunchForm";
 import { TEST_JOB_ID } from "../../../runCards/TestJob/jobId";
 
 // Contains only fields we are interested in
 type ApplicationSpecification = { variables?: Record<string, unknown> };
-
-// Contains only fields we are interested in
-type JobInput = { title: string; type: InputFieldSchema["type"] };
-
-type JobInputs = { properties: Record<string, JobInput> };
 
 /**
  * Returns provided inputs with their information. It matches the provided inputs with their
@@ -32,27 +27,12 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
     ? JSON.parse(instance.application_specification)
     : { variables: {} };
 
-  // Parse job inputs
-  // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
-  const jobVariables = data?.variables?.inputs
-    ? (data.variables.inputs as JobInputs)
-    : ({ properties: {} } satisfies JobInputs);
-
   // Get information about inputs that were provided when creating the job with their respective
   // values
-  const usedInputs = Object.entries(jobVariables.properties)
-    .filter(([name]) => Boolean(applicationSpecification.variables?.[name]))
-    .map(([name, jobInput]) => {
-      // Let's assume inputs can only contain string or array of strings as values
-      const value = applicationSpecification.variables?.[name] as string[] | string;
-
-      return {
-        name,
-        // If value is not an array, make an array out of it
-        value: Array.isArray(value) ? value : [value],
-        ...jobInput,
-      };
-    });
+  const usedInputs = suppliedRunInputs(
+    readRunDefinitionVariables(data?.variables).inputs,
+    applicationSpecification.variables,
+  );
 
   return { inputs: usedInputs, isLoading, isError, error };
 };

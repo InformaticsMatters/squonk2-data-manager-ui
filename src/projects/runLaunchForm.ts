@@ -161,3 +161,29 @@ export const launchNameDefault = (
 
   return definitionName ?? "";
 };
+
+/** One input a run was given: the field its definition declared and the values it carried. */
+export type SuppliedRunInput = InputFieldSchema & { name: string; value: string[] };
+
+/**
+ * The inputs one run was given, as its definition declared them. A job instance and a running
+ * workflow both record the variables they were launched with, so what either was given is read by
+ * this one rule rather than by one per kind. Only a declared input that was supplied a value is
+ * accounted for, and a value is only taken where it is a string or a list of them.
+ */
+export const suppliedRunInputs = (
+  inputs: InputSchema | undefined,
+  variables: unknown,
+): SuppliedRunInput[] => {
+  if (!isRecord(variables)) {
+    return [];
+  }
+
+  return Object.entries(inputs?.properties ?? {}).flatMap(([name, field]) => {
+    const supplied = variables[name];
+    const value = (Array.isArray(supplied) ? supplied : [supplied]).filter(
+      (item): item is string => typeof item === "string" && item !== "",
+    );
+    return value.length > 0 ? [{ ...field, name, value }] : [];
+  });
+};

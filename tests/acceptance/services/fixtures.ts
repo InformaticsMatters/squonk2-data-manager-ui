@@ -1064,6 +1064,14 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         },
         options: { properties: { count: { title: "Count", type: "integer" } }, type: "object" },
         order: { options: ["count"] },
+        // The workflow declares its own output as a job does, located by the path the running
+        // workflow was given for it.
+        outputs: {
+          properties: {
+            screened: { creates: "{{ screened }}", title: "Screened library", type: "file" },
+          },
+          type: "object",
+        },
       },
       version: "1.0.0",
       workflow_description: "Screens a library against a target",
@@ -1127,6 +1135,15 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         },
       ],
     }),
+    // The variables each running workflow was launched with: the values of the inputs and outputs
+    // its definition declares, which are paths of the project that owns it.
+    runningWorkflowVariables: {
+      [fixtureIds.runningWorkflow]: {
+        count: 3,
+        library: "libraries/candidates.sdf",
+        screened: "results/screened.sdf",
+      },
+    } as Record<string, Record<string, unknown> | undefined>,
     // The steps of each running workflow. The acceptance workflow ran one step as an instance of
     // the project that owns it and one that never became an instance at all, so a step that can be
     // addressed and a step that cannot are both observable.

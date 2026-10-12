@@ -1,5 +1,7 @@
+import { ownedBy, runningWorkflowOwner } from "../../projects/resultFacts";
 import { type ResultsState } from "../../projects/routes";
 import { useResultWorkflow } from "../../projects/useResultWorkflow";
+import { WorkflowInputsAndOutputs } from "./WorkflowInputsAndOutputs";
 import { WorkflowStepsPanel } from "./WorkflowProgress";
 
 export interface ResultWorkflowStepsProps {
@@ -17,9 +19,11 @@ export interface ResultWorkflowStepsProps {
  * owner the addressed workflow's own route reads it through, so a workflow expanded in a list and
  * the same workflow on its own route show one read, polled by one rule.
  *
- * Only its steps are shown. What the workflow itself came to is stated by the card this is
- * expanded inside, from the collection that listed it, so a card and its own expansion can never
- * give two accounts of one workflow's outcome.
+ * Only what it was given and produced and its steps are shown, and the first only for a workflow
+ * this project owns, so no path is ever located in a project the workflow does not belong to. What
+ * the workflow itself came to is stated by the card this is expanded inside, from the collection
+ * that listed it, so a card and its own expansion can never give two accounts of one workflow's
+ * outcome.
  */
 export const ResultWorkflowSteps = ({
   projectId,
@@ -29,11 +33,16 @@ export const ResultWorkflowSteps = ({
   const read = useResultWorkflow(runningWorkflowId, projectId);
 
   return (
-    <WorkflowStepsPanel
-      projectId={projectId}
-      resultsState={resultsState}
-      steps={read.steps}
-      stepsReadState={read.stepsReadState}
-    />
+    <>
+      {read.workflow !== undefined && ownedBy(runningWorkflowOwner(read.workflow), projectId) && (
+        <WorkflowInputsAndOutputs projectId={projectId} workflow={read.workflow} />
+      )}
+      <WorkflowStepsPanel
+        projectId={projectId}
+        resultsState={resultsState}
+        steps={read.steps}
+        stepsReadState={read.stepsReadState}
+      />
+    </>
   );
 };

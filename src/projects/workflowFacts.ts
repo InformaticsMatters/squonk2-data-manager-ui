@@ -4,6 +4,7 @@ import {
 } from "@/api/data-manager";
 
 import { type InstanceId, isInstanceId } from "../routing/identifiers";
+import { declaredOutputs, type ResultInstanceOutput } from "./instanceFacts";
 import {
   classifyProgressReadFailure,
   pendingPollIntervalMs,
@@ -146,3 +147,65 @@ export const resultWorkflowStepInstance = (step: {
   instance_id?: string;
 }): InstanceId | undefined =>
   step.instance_id !== undefined && isInstanceId(step.instance_id) ? step.instance_id : undefined;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/**
+ * The path one declared workflow output was written to. The workflow engine takes a workflow
+ * output's path from the running workflow's own variable of the same name, so that is what locates
+ * it; a declaration whose `creates` is a template over the running workflow's variables is rendered
+ * from them instead. A template naming a variable the workflow was not given locates nothing.
+ */
+const workflowOutputPath = (
+  name: string,
+  creates: unknown,
+  variables: Record<string, unknown>,
+): string | undefined => {
+  const named = variables[name];
+  if (typeof named === "string" && named.trim() !== "") {
+    return named;
+  }
+  if (typeof creates !== "string") {
+    return undefined;
+  }
+
+  const placeholder = /\{\{\s*([\w-]+)\s*\}\}/gu;
+  const valueOf = (variable: string) => {
+    const value = variables[variable];
+    return typeof value === "string" || typeof value === "number" ? String(value) : undefined;
+  };
+  if ([...creates.matchAll(placeholder)].some(([, variable]) => valueOf(variable) === undefined)) {
+    return undefined;
+  }
+  return creates.replaceAll(placeholder, (_, variable: string) => valueOf(variable) ?? "");
+};
+
+/**
+ * What one running workflow produced. A workflow declares its outputs the way a job does, in the
+ * `outputs` block of its definition's variables, and each is located by the path the running
+ * workflow was given for it. An output whose path cannot be established is not presented rather
+ * than presented as a link to nowhere.
+ */
+export const resultWorkflowOutputs = (
+  definitionVariables: unknown,
+  runningVariables: unknown,
+): ResultInstanceOutput[] => {
+  const outputs = isRecord(definitionVariables) ? definitionVariables.outputs : undefined;
+  const properties = isRecord(outputs) ? outputs.properties : undefined;
+  if (!isRecord(properties)) {
+    return [];
+  }
+  const variables = isRecord(runningVariables) ? runningVariables : {};
+
+  return declaredOutputs(
+    Object.fromEntries(
+      Object.entries(properties).map(([name, output]) => [
+        name,
+        isRecord(output)
+          ? { ...output, creates: workflowOutputPath(name, output.creates, variables) }
+          : output,
+      ]),
+    ),
+  );
+};

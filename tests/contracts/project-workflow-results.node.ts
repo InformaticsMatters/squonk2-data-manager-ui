@@ -17,9 +17,11 @@ import {
 import { resolveResultCapabilities } from "../../src/projects/resultCapabilities";
 import { resultListRequests, runningWorkflowOwner } from "../../src/projects/resultFacts";
 import { projectLinks } from "../../src/projects/routes";
+import { suppliedRunInputs } from "../../src/projects/runLaunchForm";
 import {
   resolveResultWorkflowLifecycle,
   resultWorkflowLifecycleAction,
+  resultWorkflowOutputs,
   resultWorkflowPollInterval,
   resultWorkflowSettlement,
   resultWorkflowStepInstance,
@@ -341,4 +343,47 @@ test("one module owns the addressed workflow read, its polling, and the commands
   expect(lifecycleButton).not.toMatch(
     /useQueryClient|invalidateQueries|useDeleteRunningWorkflow|useStopRunningWorkflow/u,
   );
+});
+
+test("a workflow accounts for its inputs and outputs through its definition and its variables", () => {
+  const definition = {
+    inputs: {
+      properties: {
+        library: { title: "Library", type: "file" },
+        target: { title: "Target", type: "file" },
+      },
+    },
+    outputs: {
+      properties: {
+        named: { creates: "ignored.sdf", title: "Named", type: "file" },
+        rendered: { creates: "{{ outDir }}/{{ count }}.sdf", type: "files" },
+        unresolved: { creates: "{{ missing }}", title: "Unresolved", type: "file" },
+        literal: { creates: "results/", title: "Results directory" },
+      },
+    },
+  };
+  const variables = {
+    count: 3,
+    library: ["file://a.sdf", "file://b.sdf"],
+    named: "results/named.sdf",
+    outDir: "out",
+  };
+
+  // Only a declared input the workflow was given a value for is one it was given.
+  expect(
+    suppliedRunInputs(definition.inputs as Parameters<typeof suppliedRunInputs>[0], variables),
+  ).toEqual([
+    { name: "library", title: "Library", type: "file", value: ["file://a.sdf", "file://b.sdf"] },
+  ]);
+  expect(suppliedRunInputs(undefined, variables)).toEqual([]);
+
+  // The engine locates a workflow output by the running workflow's variable of the same name; a
+  // `creates` template is rendered from its variables, and one it cannot render locates nothing.
+  expect(resultWorkflowOutputs(definition, variables)).toEqual([
+    { creates: "results/named.sdf", kind: "file", name: "named", title: "Named" },
+    { creates: "out/3.sdf", kind: "file", name: "rendered", title: "rendered" },
+    { creates: "results/", kind: "directory", name: "literal", title: "Results directory" },
+  ]);
+  expect(resultWorkflowOutputs(undefined, variables)).toEqual([]);
+  expect(resultWorkflowOutputs({ outputs: "nonsense" }, variables)).toEqual([]);
 });

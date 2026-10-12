@@ -978,7 +978,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       done: staged.status !== "RUNNING",
       running_user: state.fixtures.subject,
       success: staged.status === "SUCCESS",
-      variables: {},
+      variables: state.fixtures.runningWorkflowVariables[staged.id] ?? {},
     });
   }
   // Every project membership list is addressed the same way, so one handler answers for all three

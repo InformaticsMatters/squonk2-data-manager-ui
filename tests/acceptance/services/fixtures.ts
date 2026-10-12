@@ -1127,6 +1127,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         },
       ],
     }),
+    // What each running workflow was launched with. A running workflow's own read carries this and
+    // its listed summary does not, so a rerun is prefilled from the addressed workflow alone.
+    runningWorkflowVariables: {
+      [fixtureIds.runningWorkflow]: { count: 25, library: "library.sdf" },
+    } as Record<string, Record<string, unknown>>,
     // The steps of each running workflow. The acceptance workflow ran one step as an instance of
     // the project that owns it and one that never became an instance at all, so a step that can be
     // addressed and a step that cannot are both observable.

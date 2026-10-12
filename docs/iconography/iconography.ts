@@ -467,7 +467,7 @@ export const areas: Area[] = [
         usages: [
           { element: "Terminate / Stop", concepts: "stop", priority: "high" },
           { element: "Delete", concepts: "delete", priority: "high" },
-          { element: "Run again", concepts: "rerun", priority: "high" },
+          { element: "Run again (job instance or workflow)", concepts: "rerun", priority: "high" },
           { element: "Logs", concepts: "logs", priority: "medium" },
           {
             element: "Open application in a new tab",

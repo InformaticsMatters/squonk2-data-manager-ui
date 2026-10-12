@@ -700,7 +700,7 @@ test("the definition filter follows a result and its rerun and comes back with A
   const definition = { definitionType: "jobs", definitionId: "42", version: "1.0.0" } as const;
   const state = { definition, search: "docking" };
   const detail = projectLinks.result(projectId, "instances", instance().id, state);
-  const rerun = projectLinks.resultRerun(projectId, instance().id, state);
+  const rerun = projectLinks.resultRerun(projectId, "instances", instance().id, state);
 
   expect(rerun).toBe(`${detail}&rerun=1`);
   for (const href of [detail, rerun]) {

@@ -4,10 +4,12 @@ import { type RunningWorkflowSummary } from "@/api/data-manager";
 
 import { definitionKinds } from "../../constants/definitionKinds";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type RerunTarget } from "../../projects/resultRerun";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { resolveResultWorkflowLifecycle } from "../../projects/workflowFacts";
 import { WorkflowIcon } from "../icons";
 import { CapabilityReasons } from "../results/CapabilityReasons";
+import { RerunButton } from "../results/RerunButton";
 import { ResultCard } from "../results/ResultCard";
 import { WorkflowLifecycleButton } from "./WorkflowLifecycleButton";
 
@@ -22,6 +24,12 @@ export interface WorkflowResultCardProps {
    * that project rather than the one the caller happens to be looking at.
    */
   projectId: string;
+  /**
+   * What running this workflow again would target, decided by whoever knows the project in the
+   * URL, or `null` where nothing may be run again. A card never resolves this for itself: it
+   * displays a workflow rather than deciding which project a command may be composed for.
+   */
+  rerunTarget: RerunTarget | null;
   /** Results list state this card's own link preserves. */
   resultsState?: ResultsState;
   /** The workflow as its project's own collection listed it, or as its own read answered. */
@@ -46,6 +54,7 @@ export const WorkflowResultCard = ({
   collapsed,
   collapsedByDefault,
   projectId,
+  rerunTarget,
   resultsState,
   workflow,
   children,
@@ -70,7 +79,20 @@ export const WorkflowResultCard = ({
             onDeleted?.();
           }}
         />
-        <CapabilityReasons capabilities={[capabilities.workflowLifecycle]} />
+        {rerunTarget === null ? null : (
+          <RerunButton
+            capability={capabilities.rerun}
+            resultsState={resultsState}
+            target={rerunTarget}
+          />
+        )}
+        <CapabilityReasons
+          capabilities={
+            rerunTarget === null
+              ? [capabilities.workflowLifecycle]
+              : [capabilities.workflowLifecycle, capabilities.rerun]
+          }
+        />
       </>
     )}
     collapsed={collapsed}

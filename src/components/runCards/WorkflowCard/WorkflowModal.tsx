@@ -1,20 +1,17 @@
 import { useMemo, useRef, useState } from "react";
 
+import { type RunningWorkflowGetResponse } from "@/api/data-manager";
 import { useGetWorkflow } from "@/api/data-manager/workflow";
 
 import { Box, TextField, Typography } from "@mui/material";
 
-import { useDraftValue } from "../../../hooks/useDraftValue";
 import { useStateResetOn } from "../../../hooks/useStateResetOn";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
 import { launchIsSendable } from "../../../projects/runLaunch";
 import {
-  declaredInputDefaults,
-  type InputData,
+  launchNameDefault,
   launchNameProblem,
-  launchVariables,
   readRunDefinitionVariables,
-  runInputsAreSupplied,
 } from "../../../projects/runLaunchForm";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
@@ -27,18 +24,26 @@ import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { JobInputsAndOptionsForm } from "../JobCard/JobInputsAndOptionsForm";
 import { LaunchFeedback } from "../LaunchFeedback";
 import { type RunModalProps } from "../types";
+import { useLaunchForm } from "../useLaunchForm";
 
 export interface WorkflowModalProps extends RunModalProps {
   workflowId: string;
+  /**
+   * An earlier run of this workflow from which fields take their default values, so running it
+   * again starts from exactly what that run was launched with.
+   */
+  runningWorkflow?: Pick<RunningWorkflowGetResponse, "name" | "variables">;
 }
 
 /**
  * Modal for running a workflow in the project the URL addresses. Fetches the workflow definition
- * and displays the form its variables describe.
+ * and displays the form its variables describe. A running workflow can be passed to inherit
+ * default values.
  */
 export const WorkflowModal = ({
   capabilities,
   workflowId,
+  runningWorkflow,
   projectId,
   open,
   onClose,
@@ -52,10 +57,10 @@ export const WorkflowModal = ({
     [workflow?.variables],
   );
 
-  // The workflow's own name once the definition answers, and nothing at all until then.
-  const [nameState, setNameState] = useStateResetOn(
-    workflow?.workflow_name,
-    (workflowName) => workflowName ?? "",
+  // The name the inherited run was launched under, and only where there is none the workflow's own
+  // name once the definition answers.
+  const [nameState, setNameState] = useStateResetOn(workflow?.workflow_name, (workflowName) =>
+    launchNameDefault(runningWorkflow?.name, workflowName),
   );
 
   const [debug, setDebug] = useState<DebugValue>("0");
@@ -63,10 +68,14 @@ export const WorkflowModal = ({
   // The definition arrives after the form is first drawn, so its own declared defaults are entered
   // once it does. A workflow that declares a default for an input it requires is therefore ready to
   // run as opened, exactly as the same workflow expressed as a job would be.
-  const inputsDefault = useMemo(() => declaredInputDefaults(declared.inputs), [declared]);
-
-  const [inputsData, setInputsData] = useDraftValue<InputData>(inputsDefault);
-  const [optionsFormData, setOptionsFormData] = useState<Record<string, unknown>>();
+  const {
+    inputsData,
+    inputsSupplied,
+    optionsFormData,
+    setInputsData,
+    setOptionsFormData,
+    variables,
+  } = useLaunchForm(declared, runningWorkflow?.variables);
 
   const formRef = useRef<any>(null);
 
@@ -77,8 +86,7 @@ export const WorkflowModal = ({
   // contract will not accept, can only be answered with a refusal, so it is explained here instead
   // of being sent to earn one.
   const nameProblem = launchNameProblem(nameState);
-  const launchIsComplete =
-    nameProblem === undefined && runInputsAreSupplied(declared.inputs, inputsData);
+  const launchIsComplete = nameProblem === undefined && inputsSupplied;
 
   // The launch names the project the URL addresses and nothing else, so a workflow can only ever be
   // run in the project the caller is looking at.
@@ -90,7 +98,7 @@ export const WorkflowModal = ({
       launchWorkflow(projectId, workflow.id, {
         debug,
         name: nameState,
-        variables: JSON.stringify(launchVariables(optionsFormData, inputsData)),
+        variables: JSON.stringify(variables()),
       }),
     );
   };
@@ -147,6 +155,7 @@ export const WorkflowModal = ({
             projectId={projectId}
             setInputsData={setInputsData}
             setOptionsFormData={setOptionsFormData}
+            specVariables={runningWorkflow?.variables}
           />
         </>
       )}

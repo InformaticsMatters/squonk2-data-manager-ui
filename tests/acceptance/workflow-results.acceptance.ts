@@ -12,10 +12,19 @@ const screeningResults = `projects/${fixtureIds.screeningProject}/results`;
 const workflowDetail = `${acceptanceResults}/workflows/${fixtureIds.runningWorkflow}`;
 /** The acceptance project's own workflow, addressed beneath a project that does not own it. */
 const wrongProjectPairing = `${screeningResults}/workflows/${fixtureIds.runningWorkflow}`;
+const workflowRerun = `${workflowDetail}?rerun=1`;
 
 const scenario = (subject: string) => `${acceptanceUrls.control}/scenario/${subject}`;
 
-type Diagnostics = { requests: { method: string; path: string }[] };
+type Diagnostics = {
+  requests: { method: string; path: string }[];
+  workflowLaunches: {
+    as_name: string;
+    project_id: string;
+    variables: string;
+    workflow_id: string;
+  }[];
+};
 
 /** Every path the Data Manager was asked for, so what was never asked for can be stated exactly. */
 const readPaths = async (
@@ -27,6 +36,14 @@ const readPaths = async (
     .then((response) => response.json())) as Diagnostics;
   return diagnostics.requests.map(({ path }) => path);
 };
+
+/** Every run-workflow command the Data Manager received, which is what a rerun actually is. */
+const workflowLaunches = async (
+  request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
+  subject: string,
+) =>
+  ((await request.get(scenario(subject)).then((response) => response.json())) as Diagnostics)
+    .workflowLaunches;
 
 test.beforeEach(async ({ request }, testInfo) => {
   await request.put(scenario(subjectFor(testInfo)));
@@ -392,4 +409,103 @@ test("a workflow read that merely failed is retried without leaving the project"
   await expect(page.getByText("Succeeded")).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDetail}`);
+});
+
+test("a workflow rerun opens as a route of the workflow, prefilled with what it ran", async ({
+  page,
+}, testInfo) => {
+  await login(page, workflowDetail, testInfo);
+  await expect(page.getByText("Succeeded")).toBeVisible();
+
+  // Opening the rerun pushes history and is directly linkable, and the workflow stays beneath it.
+  await page.getByRole("button", { name: "Run again" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowRerun}`);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("Screens a library against a target")).toBeVisible();
+  // The running workflow carries what it was launched with, so the rerun starts from exactly that:
+  // its own name, its options, and an input it requires, which makes it ready to send as opened.
+  await expect(dialog.getByLabel("Workflow name")).toHaveValue("Acceptance Workflow");
+  await expect(dialog.getByLabel("Count")).toHaveValue("25");
+  await expect(dialog.getByText("library.sdf")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+  // The workflow and the project that owns it are still beneath the rerun opened over them.
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("Prepare library")).toBeVisible();
+
+  // Back leaves the rerun and restores the workflow it was opened over.
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDetail}`);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // Close replaces the rerun with the workflow, so Back does not reopen it.
+  await page.goForward();
+  await expect(dialog).toBeVisible();
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDetail}`);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.goBack();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("a workflow rerun runs the workflow again in the project that owns it", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceResults, testInfo);
+
+  // A listed workflow offers the same rerun its own route does.
+  const workflowCard = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Acceptance Workflow", exact: true }) });
+  await workflowCard.getByRole("button", { name: "Run again" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowRerun}`);
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Workflow name").fill("rerun-of-acceptance-workflow");
+  await dialog.getByLabel("Count").fill("50");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+
+  // The created running workflow is opened at its own route, and the spent rerun route is replaced
+  // so Back reaches where the rerun was opened from rather than a sendable rerun.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/workflows/${fixtureIds.launchedRunningWorkflow}`,
+  );
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // The command named the verified project and the workflow the running workflow ran, carrying
+  // what it was run with and the rerun's own edits.
+  const launches = await workflowLaunches(request, subject);
+  expect(launches).toHaveLength(1);
+  expect(launches[0]).toMatchObject({
+    as_name: "rerun-of-acceptance-workflow",
+    project_id: fixtureIds.project,
+    workflow_id: fixtureIds.workflow,
+  });
+  expect(JSON.parse(launches[0]?.variables ?? "{}")).toMatchObject({
+    count: 50,
+    library: "library.sdf",
+  });
+});
+
+test("a workflow rerun addressed beneath a project that does not own it runs nothing", async ({
+  page,
+  request,
+}, testInfo) => {
+  await login(page, `${wrongProjectPairing}?rerun=1`, testInfo);
+  await expect(page.getByText("This result was not found in this project.")).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(await workflowLaunches(request, subjectFor(testInfo))).toHaveLength(0);
+});
+
+test("a project viewer is told what running a workflow again requires", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${scenario(subjectFor(testInfo))}?profile=read-only`);
+  await login(page, workflowDetail, testInfo);
+  await expect(page.getByText("Succeeded")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
 });

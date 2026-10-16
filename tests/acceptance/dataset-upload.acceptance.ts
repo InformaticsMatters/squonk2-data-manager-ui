@@ -169,8 +169,14 @@ test("a caller with no member unit keeps a disabled Upload that explains itself"
   const upload = page.getByRole("button", { name: "Upload dataset" });
   await expect(upload).toBeVisible();
   await expect(upload).toBeDisabled();
-  await upload.hover({ force: true });
-  await expect(page.getByText("You must be a member of a unit to upload a dataset.")).toBeVisible();
+  // The loading placeholder is also a disabled "Upload dataset" with no tooltip, and the real button
+  // replaces it while the page loads, so hover until the one that explains itself answers.
+  await expect(async () => {
+    await upload.hover({ force: true, timeout: 1000 });
+    await expect(page.getByText("You must be a member of a unit to upload a dataset.")).toBeVisible(
+      { timeout: 1000 },
+    );
+  }).toPass();
 });
 
 test("a unit without a dataset subscription keeps the batch and offers Administration", async ({

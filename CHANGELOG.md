@@ -1,3 +1,10 @@
+## [7.1.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.1...7.1.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* link the DataVisualisation section to the published user guide ([#2133](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2133)) ([6dd68f4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6dd68f4bcd53409c2833f7f73e2bd321d0a1d452))
+
 ## [7.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1) (2026-10-05)
 
 

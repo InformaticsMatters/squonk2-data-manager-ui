@@ -169,6 +169,9 @@ test("a lapsed session keeps the project it could not read and offers the way ba
   // still there to be discarded — which is the whole of what this journey is about.
   await page.getByRole("link", { name: "Squonk Home" }).click();
   await expect(page).toHaveURL(acceptanceUrls.app.slice(0, -1));
+  // The URL changes before Home replaces the project, so wait for the project to go: going back
+  // only reads it again if it was unmounted.
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeHidden();
   await request.post(
     `${acceptanceUrls.control}/scenario/${subject}/project-failure?status=403&reason=token-refused`,
   );
@@ -229,6 +232,9 @@ test("transient Project failure retains chrome and retries without changing scop
   await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
   await page.getByRole("link", { name: "Squonk Home" }).click();
   await expect(page).toHaveURL(acceptanceUrls.app.slice(0, -1));
+  // The URL changes before Home replaces the project, so wait for the project to go: going back
+  // only reads it again if it was unmounted.
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeHidden();
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=503`);
   await page.goBack();
 

@@ -53,6 +53,10 @@ const renderIndex = async () => {
       Object.keys(await load()).map((name) => `${idOf(file)}/${name}`),
     ),
   );
+  // A story mounted while the stories loaded owns the page: the index would push it down.
+  if (root) {
+    return;
+  }
   index.replaceChildren(
     ...entries.flat().map((storyId) => {
       const item = document.createElement("li");

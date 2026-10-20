@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 
 import {
@@ -65,12 +67,12 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
                 disableTypography
                 primary={<Typography variant="body1">{input.title}</Typography>}
                 secondary={value.map((val) => (
-                  <>
+                  <Fragment key={val}>
                     SMILES:{" "}
-                    <Typography className={firaMonoFont.className} component="code" key={val}>
+                    <Typography className={firaMonoFont.className} component="code">
                       {val.split("\n").join(", ")}
                     </Typography>
-                  </>
+                  </Fragment>
                 ))}
               />
             ) : (

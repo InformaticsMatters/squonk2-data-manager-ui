@@ -8,6 +8,7 @@ import utc from "dayjs/plugin/utc";
 import { useAtom, useAtomValue } from "jotai";
 import { useSnackbar } from "notistack";
 
+import { apiServersSnapshot } from "../../application/apiServers";
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { getMessageFromEvent } from "../../protobuf/protobuf";
 import {
@@ -68,9 +69,13 @@ const logWebSocketError = (error: Event) => {
 /**
  * Builds WebSocket URL
  */
-const buildWebSocketUrl = (location: string): string => {
+const buildWebSocketUrl = (location: string, accountServer: string): string => {
   const url = new URL(location);
   url.protocol = "wss:";
+  // ponytail: the Account Server reports a host the browser cannot reach (#2027: first `sqounk.it`,
+  // then the in-cluster `account-server-ess`), while the stream is served on the Account Server's
+  // own public host. Trust `location`'s host again once the Account Server reports it correctly.
+  url.host = new URL(accountServer).host;
 
   // Add ordinal parameter to get all historical messages
   url.searchParams.set("stream_from_ordinal", "1");
@@ -158,7 +163,11 @@ export const EventStream = () => {
   const location = (asRole ? data : undefined) ?? createdLocation;
 
   // Build WebSocket URL
-  const wsUrl = eventStreamEnabled && asRole && location ? buildWebSocketUrl(location) : null;
+  const accountServer = apiServersSnapshot()?.accountServer;
+  const wsUrl =
+    eventStreamEnabled && asRole && location && accountServer
+      ? buildWebSocketUrl(location, accountServer)
+      : null;
 
   const { readyState } = useWebSocket(wsUrl, {
     onOpen: handleWebSocketOpen,

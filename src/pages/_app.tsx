@@ -13,6 +13,7 @@ import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
 import Head from "next/head";
 
+import { isTransientTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { type ApiServers, loadApiServers, readApiServers } from "../application/apiServers";
 import { PagePolicyComposer, type PolicyAppComponent } from "../application/PagePolicyComposer";
 import { policyTitle } from "../application/pageTitle";
@@ -97,8 +98,19 @@ const App = (props: CustomAppProps) => {
   if (!pagePolicy) {
     throw new Error("Pages must declare a page composition policy");
   }
-  // React-Query
-  const queryClient = useMemo(() => new QueryClient(), []);
+  // React-Query. A refusal (4xx) is the server's answer, not a hiccup, so only a transient failure
+  // is worth asking again.
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: (failureCount, error) => failureCount < 3 && isTransientTransportFailure(error),
+          },
+        },
+      }),
+    [],
+  );
 
   return (
     <StrictMode>

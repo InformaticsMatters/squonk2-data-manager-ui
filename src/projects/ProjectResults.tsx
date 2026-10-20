@@ -28,7 +28,7 @@ import {
   resultsShownStatement,
   unrunResultsDefinition,
 } from "./resultFacts";
-import { resolveRerunTarget } from "./resultRerun";
+import { resolveRerunTarget, resolveWorkflowRerunTarget } from "./resultRerun";
 import { ResultsRail } from "./ResultsRail";
 import {
   projectLinks,
@@ -142,6 +142,8 @@ const ResultItemCard = ({
           }
           collapsedByDefault={collapsedByDefault}
           projectId={item.owningProjectId}
+          // A listed workflow offers a rerun on the same terms the addressed one does.
+          rerunTarget={resolveWorkflowRerunTarget({ routeProjectId, workflow: item.data })}
           resultsState={resultsState}
           workflow={item.data}
         />

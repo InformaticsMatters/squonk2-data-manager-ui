@@ -77,16 +77,23 @@ test.describe("Project route contract", () => {
     ],
     [
       `/projects/${projectId}/results/instances/${instanceId}?rerun=1`,
-      () => projectLinks.resultRerun(projectId, instanceId),
+      () => projectLinks.resultRerun(projectId, "instances", instanceId),
     ],
     [
       `/projects/${projectId}/results/instances/${instanceId}?search=docking&type=instance&rerun=1`,
       () =>
-        projectLinks.resultRerun(projectId, instanceId, { search: "docking", types: ["instance"] }),
+        projectLinks.resultRerun(projectId, "instances", instanceId, {
+          search: "docking",
+          types: ["instance"],
+        }),
     ],
     [
       `/projects/${projectId}/results/workflows/${runningWorkflowId}`,
       () => projectLinks.result(projectId, "workflows", runningWorkflowId),
+    ],
+    [
+      `/projects/${projectId}/results/workflows/${runningWorkflowId}?rerun=1`,
+      () => projectLinks.resultRerun(projectId, "workflows", runningWorkflowId),
     ],
     [`/projects/${projectId}/manage`, () => projectLinks.manage(projectId)],
   ] as const;

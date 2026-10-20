@@ -88,8 +88,12 @@ test("Results never leave the project in the URL, even across two projects in on
   await expect(page.getByText("Screening Instance")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Screening Workflow" })).toHaveCount(0);
 
-  // The caller administers this project, so its results are actionable here.
-  await expect(page.getByRole("button", { name: "Run again" })).toBeEnabled();
+  // The caller administers this project, so its results are actionable here — the job instance and
+  // the running workflow can each be run again.
+  await expect(page.getByRole("button", { name: "Run again" })).toHaveCount(2);
+  for (const rerun of await page.getByRole("button", { name: "Run again" }).all()) {
+    await expect(rerun).toBeEnabled();
+  }
   await expect(page.getByRole("button", { name: "Archive" }).first()).toBeEnabled();
   await expect(
     page.getByText("You must be a project editor or administrator", { exact: false }),
@@ -318,7 +322,10 @@ test("a project viewer reads results and is told what each unavailable action re
   ).toHaveCount(0);
 
   // Every mutation the viewer cannot make is offered as an explained, disabled control.
-  await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Run again" })).toHaveCount(2);
+  for (const rerun of await page.getByRole("button", { name: "Run again" }).all()) {
+    await expect(rerun).toBeDisabled();
+  }
   await expect(page.getByRole("button", { name: "Archive" }).first()).toBeDisabled();
   for (const remove of await page.getByRole("button", { name: "Delete", exact: true }).all()) {
     await expect(remove).toBeDisabled();

@@ -261,12 +261,15 @@ test.describe("Launch form ownership", () => {
       "components/runCards/JobCard/JobModal.tsx",
       "components/runCards/WorkflowCard/WorkflowModal.tsx",
     ]) {
-      expect(source(modal)).toContain("runInputsAreSupplied");
       expect(source(modal)).toContain("readRunDefinitionVariables");
-      // A default a definition declares is part of whether its launch may be sent, so a form that
-      // did not enter them would withhold a launch over an input already answered.
-      expect(source(modal)).toContain("declaredInputDefaults");
+      // Both take their fields, and the rule deciding them, from the one form state.
+      expect(source(modal)).toContain("useLaunchForm(declared, ");
     }
+    const form = source("components/runCards/useLaunchForm.ts");
+    expect(form).toContain("runInputsAreSupplied");
+    // A default a definition declares is part of whether its launch may be sent, so a form that
+    // did not enter them would withhold a launch over an input already answered.
+    expect(form).toContain("declaredInputDefaults");
   });
 
   test("a rerun's inherited name is not overwritten by the definition it reruns", () => {
@@ -282,9 +285,11 @@ test.describe("Launch form ownership", () => {
 
   test("no definition form reads its declared variables as the values to run with", () => {
     const workflow = source("components/runCards/WorkflowCard/WorkflowModal.tsx");
-    expect(workflow).toContain("launchVariables");
+    expect(source("components/runCards/useLaunchForm.ts")).toContain("launchVariables");
     // Seeding the options form with the definition's own variables block is how the declared
-    // schema reaches the launch, so the form starts from what has been entered and nothing else.
-    expect(workflow).not.toMatch(/useState\(specVariables\)|useState\(variables\)/u);
+    // schema reaches the launch, so the form starts from what an earlier run was launched with —
+    // the running workflow's variables — and never from the workflow definition's.
+    expect(workflow).toContain("useLaunchForm(declared, runningWorkflow?.variables)");
+    expect(workflow).not.toMatch(/useLaunchForm\(declared, workflow\?\.variables\)/u);
   });
 });

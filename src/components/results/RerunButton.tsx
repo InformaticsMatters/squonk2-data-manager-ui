@@ -6,9 +6,9 @@ import { type RerunTarget } from "../../projects/resultRerun";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { RerunIcon } from "../icons";
 
-export interface RerunJobButtonProps {
+export interface RerunButtonProps {
   /**
-   * What running this instance's job again requires, as its owning project decides it. It is the
+   * What running this result's definition again requires, as its owning project decides it. It is the
    * only thing that decides whether the button is offered, so no caller can disable it separately.
    */
   capability: ProjectCapability;
@@ -17,16 +17,16 @@ export interface RerunJobButtonProps {
    * caller came from.
    */
   resultsState?: ResultsState;
-  /** The instance, the job, and the verified project one rerun would be sent for. */
+  /** The result, the definition, and the verified project one rerun would be sent for. */
   target: RerunTarget;
 }
 
 /**
- * Opens the addressed instance's rerun. The rerun is a route of that instance rather than state
+ * Opens the addressed result's rerun. The rerun is a route of that result rather than state
  * this control keeps, so it is directly linkable, survives a refresh, and is left by Back as well
  * as by Close — and it is addressed inside the one project the target was verified against.
  */
-export const RerunJobButton = ({ capability, resultsState, target }: RerunJobButtonProps) => {
+export const RerunButton = ({ capability, resultsState, target }: RerunButtonProps) => {
   const { push } = useRouter();
 
   return (
@@ -36,7 +36,12 @@ export const RerunJobButton = ({ capability, resultsState, target }: RerunJobBut
       startIcon={<RerunIcon />}
       onClick={() =>
         void push(
-          projectLinks.resultRerun(target.projectId, target.instanceId, resultsState) as never,
+          projectLinks.resultRerun(
+            target.projectId,
+            target.collection,
+            target.resultId,
+            resultsState,
+          ) as never,
         )
       }
     >

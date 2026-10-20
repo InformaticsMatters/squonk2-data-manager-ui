@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 
 import { firaMonoFont } from "../../../constants/fonts";
@@ -46,12 +48,12 @@ export const RunInputList = ({ inputs, projectId, noun }: RunInputListProps) => 
                 disableTypography
                 primary={<Typography variant="body1">{input.title}</Typography>}
                 secondary={value.map((val) => (
-                  <>
+                  <Fragment key={val}>
                     SMILES:{" "}
-                    <Typography className={firaMonoFont.className} component="code" key={val}>
+                    <Typography className={firaMonoFont.className} component="code">
                       {val.split("\n").join(", ")}
                     </Typography>
-                  </>
+                  </Fragment>
                 ))}
               />
             ) : (

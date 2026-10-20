@@ -252,7 +252,7 @@ const outputKind = (type: unknown): ResultInstanceOutput["kind"] =>
  * that names none is not presented at all rather than presented as a link to nowhere, and an
  * untitled output is shown under the name the instance keys it by.
  */
-const declaredOutputs = (declared: unknown): ResultInstanceOutput[] => {
+export const declaredOutputs = (declared: unknown): ResultInstanceOutput[] => {
   if (typeof declared !== "object" || declared === null || Array.isArray(declared)) {
     return [];
   }

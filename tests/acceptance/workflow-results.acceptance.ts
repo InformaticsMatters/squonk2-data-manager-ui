@@ -72,6 +72,21 @@ test("a running workflow entered directly opens inside the project that owns it"
   await expect(page.getByText("Succeeded")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Workflow Steps" })).toBeVisible();
 
+  // A workflow has one set of inputs and outputs of its own, presented as a job's are: titled by
+  // its definition and located among the files of the project that owns it.
+  const inputs = page.getByRole("list", { name: "list of workflow inputs" });
+  await expect(inputs.getByText("Library")).toBeVisible();
+  await expect(inputs.getByRole("link", { name: "Locate file in project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.project}/files?path=%2Flibraries`,
+  );
+  const outputs = page.getByRole("list", { name: "list of workflow outputs" });
+  await expect(outputs.getByText("Screened library")).toBeVisible();
+  await expect(outputs.getByRole("link", { name: "Locate file in project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.project}/files?path=%2Fresults`,
+  );
+
   // A step that ran as an instance is addressed in the project that owns the workflow, and a step
   // that never became one is still listed rather than linked to somewhere this client invented.
   await expect(page.getByRole("link", { name: "Prepare library" })).toHaveAttribute(

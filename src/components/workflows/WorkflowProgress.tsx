@@ -1,3 +1,5 @@
+import { type ReactNode } from "react";
+
 import { type RunningWorkflowStep } from "@/api/data-manager";
 
 import { Alert, Typography } from "@mui/material";
@@ -80,6 +82,8 @@ export const WorkflowStepsPanel = ({
 
 export interface WorkflowProgressProps extends WorkflowStepsPanelProps {
   lifecycle: ResultWorkflowLifecycle;
+  /** What the workflow was given and produced, shown between its outcome and its steps. */
+  children?: ReactNode;
 }
 
 /**
@@ -87,9 +91,10 @@ export interface WorkflowProgressProps extends WorkflowStepsPanelProps {
  * Both come from the addressed workflow's own read, so the outcome stated here and the steps shown
  * beneath it always describe the same read of the same workflow.
  */
-export const WorkflowProgress = ({ lifecycle, ...steps }: WorkflowProgressProps) => (
+export const WorkflowProgress = ({ lifecycle, children, ...steps }: WorkflowProgressProps) => (
   <>
     <WorkflowLifecycleAlert lifecycle={lifecycle} />
+    {children}
     <WorkflowStepsPanel {...steps} />
   </>
 );

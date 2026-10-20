@@ -1,3 +1,10 @@
+# [7.2.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.1...7.2.0-dev.2) (2026-10-20)
+
+
+### Bug Fixes
+
+* key each SMILES value in a run's inputs ([8fa71f3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8fa71f38ecddb04bd905185dbed397156e536f88))
+
 # [7.2.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.3-dev.1...7.2.0-dev.1) (2026-10-20)
 
 

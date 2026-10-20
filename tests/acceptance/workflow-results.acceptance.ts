@@ -89,6 +89,21 @@ test("a running workflow entered directly opens inside the project that owns it"
   await expect(page.getByText("Succeeded")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Workflow Steps" })).toBeVisible();
 
+  // A workflow has one set of inputs and outputs of its own, presented as a job's are: titled by
+  // its definition and located among the files of the project that owns it.
+  const inputs = page.getByRole("list", { name: "list of workflow inputs" });
+  await expect(inputs.getByText("Library")).toBeVisible();
+  await expect(inputs.getByRole("link", { name: "Locate file in project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.project}/files?path=%2Flibraries`,
+  );
+  const outputs = page.getByRole("list", { name: "list of workflow outputs" });
+  await expect(outputs.getByText("Screened library")).toBeVisible();
+  await expect(outputs.getByRole("link", { name: "Locate file in project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.project}/files?path=%2Fresults`,
+  );
+
   // A step that ran as an instance is addressed in the project that owns the workflow, and a step
   // that never became one is still listed rather than linked to somewhere this client invented.
   await expect(page.getByRole("link", { name: "Prepare library" })).toHaveAttribute(
@@ -426,8 +441,8 @@ test("a workflow rerun opens as a route of the workflow, prefilled with what it 
   // The running workflow carries what it was launched with, so the rerun starts from exactly that:
   // its own name, its options, and an input it requires, which makes it ready to send as opened.
   await expect(dialog.getByLabel("Workflow name")).toHaveValue("Acceptance Workflow");
-  await expect(dialog.getByLabel("Count")).toHaveValue("25");
-  await expect(dialog.getByText("library.sdf")).toBeVisible();
+  await expect(dialog.getByLabel("Count")).toHaveValue("3");
+  await expect(dialog.getByText("libraries/candidates.sdf")).toBeVisible();
   await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
   // The workflow and the project that owns it are still beneath the rerun opened over them.
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
@@ -486,7 +501,7 @@ test("a workflow rerun runs the workflow again in the project that owns it", asy
   });
   expect(JSON.parse(launches[0]?.variables ?? "{}")).toMatchObject({
     count: 50,
-    library: "library.sdf",
+    library: "libraries/candidates.sdf",
   });
 });
 

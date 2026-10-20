@@ -978,7 +978,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       done: staged.status !== "RUNNING",
       running_user: state.fixtures.subject,
       success: staged.status === "SUCCESS",
-      variables: state.fixtures.runningWorkflowVariables[workflow.id] ?? {},
+      variables: state.fixtures.runningWorkflowVariables[staged.id] ?? {},
     });
   }
   // Every project membership list is addressed the same way, so one handler answers for all three
@@ -1166,9 +1166,6 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       status: "RUNNING",
       workflow: { id: segments[1], name: "acceptance-workflow", version: "1.0.0" },
     });
-    state.fixtures.runningWorkflowVariables[fixtureIds.launchedRunningWorkflow] = JSON.parse(
-      form.get("variables") ?? "{}",
-    ) as Record<string, unknown>;
     return json(response, 201, { id: fixtureIds.launchedRunningWorkflow });
   }
   if (url.pathname === "/type") {

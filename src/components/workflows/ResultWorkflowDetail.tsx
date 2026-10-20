@@ -7,6 +7,7 @@ import { type RerunTarget } from "../../projects/resultRerun";
 import { type ResultsState } from "../../projects/routes";
 import { type SectionReadState } from "../../projects/sectionReads";
 import { type ResultWorkflowLifecycle } from "../../projects/workflowFacts";
+import { WorkflowInputsAndOutputs } from "./WorkflowInputsAndOutputs";
 import { WorkflowProgress } from "./WorkflowProgress";
 import { WorkflowResultCard } from "./WorkflowResultCard";
 
@@ -50,7 +51,8 @@ const lifecycleSummary = (lifecycle: ResultWorkflowLifecycle) => {
 
 /**
  * One addressed running workflow, presented under the project that owns it. Its definition, the
- * caller who ran it, its progress, its steps, and its stop or delete action are all taken from the
+ * caller who ran it, its progress, what it was given and produced, its steps, and its stop or delete
+ * action are all taken from the
  * concrete workflow and that project, so nothing on this card is derived from a selected or
  * previously current project.
  */
@@ -74,7 +76,9 @@ export const ResultWorkflowDetail = ({
         resultsState={resultsState}
         steps={steps}
         stepsReadState={stepsReadState}
-      />
+      >
+        <WorkflowInputsAndOutputs projectId={projectId} workflow={workflow} />
+      </WorkflowProgress>
     }
     collapsedByDefault={false}
     projectId={projectId}

@@ -1,10 +1,23 @@
-## [7.1.1-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1-dev.1) (2026-10-05)
+# [7.2.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.3-dev.1...7.2.0-dev.1) (2026-10-20)
+
+
+### Features
+
+* show a workflow's inputs and outputs on its results ([5413663](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5413663f2c39bdb77352fc2d84b381ca811ff495))
+
+## [7.1.3-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.2...7.1.3-dev.1) (2026-10-20)
 
 
 ### Bug Fixes
 
 * make the navigation bar fit phone and tablet viewports ([fbabcea](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fbabcea5afb4fb29a110422519516acaba9ff61f))
-* start without a depict API server address ([550edbb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/550edbbebf25971da08b17b35ee03a94f112539c))
+
+## [7.1.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.1...7.1.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* link the DataVisualisation section to the published user guide ([#2133](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2133)) ([6dd68f4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6dd68f4bcd53409c2833f7f73e2bd321d0a1d452))
 
 ## [7.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1) (2026-10-05)
 

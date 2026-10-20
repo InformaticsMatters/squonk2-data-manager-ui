@@ -1,3 +1,10 @@
+# [7.2.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.2...7.2.0-dev.3) (2026-10-20)
+
+
+### Features
+
+* run a workflow again from its result ([eafdb42](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eafdb4233b3d59eaa863417b7a80aa7f4ad3825f))
+
 # [7.2.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.1...7.2.0-dev.2) (2026-10-20)
 
 

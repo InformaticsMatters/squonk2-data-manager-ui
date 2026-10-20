@@ -1,3 +1,10 @@
+# [7.2.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.3-dev.1...7.2.0-dev.1) (2026-10-20)
+
+
+### Features
+
+* show a workflow's inputs and outputs on its results ([5413663](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5413663f2c39bdb77352fc2d84b381ca811ff495))
+
 ## [7.1.3-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.2...7.1.3-dev.1) (2026-10-20)
 
 

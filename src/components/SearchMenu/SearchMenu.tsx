@@ -165,8 +165,10 @@ export const SearchMenu = ({
     setAnchor(null);
     onOpenChange?.(false);
     // The search text describes no page and can be sent to nobody, so it is discarded rather than
-    // kept: reopening the menu starts clean.
+    // kept: reopening the menu starts clean, with the highlight back at the top. That is done here
+    // rather than as the menu opens, where it would undo a key pressed while the menu was entering.
     onSearchChange("");
+    setHighlight(0);
   };
 
   const selectRow = (row: SearchMenuRow | undefined) => {
@@ -308,7 +310,6 @@ export const SearchMenu = ({
           // to claim focus, so the keyboard is live from the moment the menu has opened.
           transition: {
             onEntered: () => {
-              setHighlight(0);
               searchRef.current?.focus();
             },
           },

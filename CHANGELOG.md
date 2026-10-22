@@ -1,3 +1,10 @@
+# [7.2.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.3...7.2.0-dev.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* stop retrying refused queries and the default organisation read ([ffe1f0e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ffe1f0e47abe3e14ce3f4f0a9c4eb3cc8cca5fe7)), closes [#2140](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2140) [#2139](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2139)
+
 # [7.2.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.2...7.2.0-dev.3) (2026-10-20)
 
 

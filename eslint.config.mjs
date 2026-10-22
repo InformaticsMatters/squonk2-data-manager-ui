@@ -22,10 +22,7 @@ const appConfig = config.map((entry) => {
   if (entry.name === "base-rules") {
     return {
       ...entry,
-      rules: {
-        ...entry.rules,
-        "simple-import-sort/imports": ["warn", { groups: importGroups }],
-      },
+      rules: { ...entry.rules, "simple-import-sort/imports": ["warn", { groups: importGroups }] },
     };
   }
 

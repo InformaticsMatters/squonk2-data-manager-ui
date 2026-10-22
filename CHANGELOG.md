@@ -1,3 +1,12 @@
+# [7.2.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.4...7.2.0-dev.5) (2026-10-22)
+
+
+### Bug Fixes
+
+* keep a key pressed while the search menu opens ([c3c28ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c3c28ecc295281813f5187858025a23fd12de882))
+* keep a section settled once its reads have answered ([a6714d6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a6714d6f96e091a9c30cb04453a01b377e3964f0))
+* stop the schema view crashing when the version changes ([fae81c4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fae81c4d5b525dbe172cc09496286073e4adc8c0))
+
 # [7.2.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.3...7.2.0-dev.4) (2026-10-22)
 
 

@@ -72,7 +72,7 @@ jobs:
           hashFiles('**.[jt]s', '**.[jt]sx') }}
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: Test Results (shard ${{ matrix.shard }})
         path: test-results

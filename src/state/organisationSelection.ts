@@ -74,8 +74,18 @@ export const useVisibleOrganisationsArePending = ({ enabled = true }: { enabled?
 
 export const useSelectedOrganisation = () => {
   const [organisationId, setOrganisationId] = useAtom(organisationIdAtom);
+  // The Account Server refuses the default organisation's addressed read to an ordinary caller, so
+  // it is never asked for: the visible list already names it. The read waits for the default
+  // organisation's id, or it would be asked for before it could be recognised.
+  const { data: defaultOrganisation, isPending: defaultOrganisationIsPending } =
+    useGetDefaultOrganisation({ query: { retry: false } });
   const { data: organisation } = useGetOrganisation(organisationId ?? "", {
-    query: { enabled: !!organisationId },
+    query: {
+      enabled:
+        !!organisationId &&
+        !defaultOrganisationIsPending &&
+        organisationId !== defaultOrganisation?.id,
+    },
   });
 
   useEffect(() => {

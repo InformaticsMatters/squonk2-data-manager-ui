@@ -94,9 +94,10 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
 
   // Calculates the current state of the schema. It loops through the original schema and looks for
   // changes to its fields in the helper object. If it finds changes, it uses those. If it doesn't,
-  // it uses the original values.
+  // it uses the original values. Until the effect above has caught up with a new original schema
+  // (another version's, say) the state still describes the previous one, so it is not used.
   const schema = useMemo<TypedSchema | undefined>(() => {
-    if (editableSchemaState) {
+    if (editableSchemaState && editableSchemaState.originalSchema === originalSchema) {
       const { originalSchema, editedSchemaProps } = editableSchemaState;
 
       const fields: Fields = {};
@@ -118,7 +119,7 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
       };
     }
     return undefined;
-  }, [editableSchemaState]);
+  }, [editableSchemaState, originalSchema]);
 
   const setSchemaField = useCallback(
     <K extends FieldKey, V extends FieldValue<K>>(

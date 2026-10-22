@@ -68,6 +68,10 @@ export const useSettledQuery = <TQueryFnData, TError, TData, TQueryKey extends Q
  * together any that are not already in flight. Nothing is observed or returned: this is how a
  * section's reads are made to answer together, so the components beneath that read them with their
  * own hooks find them answered rather than each filling in on its own.
+ *
+ * A read that has answered once stays settled. Asking a failed read again clears its failure back
+ * to pending, and a section's own hook does exactly that when it mounts, so judging by the current
+ * state alone hid the whole section behind its skeleton again for another round of retries.
  */
 export const useSettledQueries = (
   reads: readonly UseSuspenseQueryOptions<any, any, any, any>[],
@@ -75,7 +79,7 @@ export const useSettledQueries = (
   const queryClient = useQueryClient();
   const unsettled = reads.filter((read) => {
     const state = queryClient.getQueryState(read.queryKey);
-    return state?.data === undefined && (state?.error ?? null) === null;
+    return !state || state.dataUpdateCount + state.errorUpdateCount === 0;
   });
 
   if (unsettled.length > 0) {

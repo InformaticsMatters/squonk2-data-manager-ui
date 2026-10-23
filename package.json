@@ -122,7 +122,7 @@
     "@semantic-release/release-notes-generator": "14.1.1",
     "@squonk/eslint-config": "3.1.0",
     "@vitejs/plugin-react": "6.1.2",
-    "eslint": "10.4.0",
+    "eslint": "10.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
     "lucide-static": "1.61.0",

@@ -1,3 +1,10 @@
+# [7.2.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.5...7.2.0-dev.6) (2026-10-23)
+
+
+### Bug Fixes
+
+* regenerate nextjs-routes types with the CLI ([b69cd9b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b69cd9b51fcc4064c79866bdcfb9145e2c4f080f))
+
 # [7.2.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.4...7.2.0-dev.5) (2026-10-22)
 
 

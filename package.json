@@ -81,7 +81,7 @@
     "better-auth": "1.7.12",
     "dayjs": "1.11.23",
     "filesize": "11.0.28",
-    "immer": "11.1.21",
+    "immer": "11.2.7",
     "jotai": "2.20.3",
     "jwt-decode": "4.0.0",
     "ketcher-core": "3.12.0",

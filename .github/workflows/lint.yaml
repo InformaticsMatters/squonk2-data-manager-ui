@@ -58,3 +58,26 @@ jobs:
     - run: node -v
     - name: Type Check
       run: pnpm tsc
+  Generated-Sources:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7.0.1
+    - uses: pnpm/action-setup@v6.1.0
+      with:
+        run_install: false
+    - name: Setup Node
+      uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.22.1
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm ci
+    # Renovate commits skip lint-staged, so a formatter or generator upgrade
+    # fails here until its output is committed.
+    - name: Check formatting
+      run: pnpm exec prettier --check .
+    - name: Regenerate route types
+      run: pnpm exec nextjs-routes
+    - name: Fail on uncommitted generated changes
+      run: git diff --exit-code

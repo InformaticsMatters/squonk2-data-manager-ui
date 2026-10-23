@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-const withRoutes = nextRoutes({ outDir: "types" });
+const withRoutes = nextRoutes();
 
 const withMDX = nextMDX({
   extension: /\.mdx?$/u,

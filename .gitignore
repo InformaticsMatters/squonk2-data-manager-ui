@@ -48,6 +48,7 @@ motd.yaml
 # No suite writes this any more, but a stale one from before the cutover holds live tokens.
 storageState.json
 /test-results
+/playwright-report
 
 # Etc
 tsconfig.tsbuildinfo

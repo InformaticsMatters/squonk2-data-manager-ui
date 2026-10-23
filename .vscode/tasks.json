@@ -7,9 +7,7 @@
       "problemMatcher": [],
       "label": "tsc",
       "detail": "tsc --pretty --noEmit",
-      "presentation": {
-        "close": true
-      }
+      "presentation": { "close": true }
     },
     {
       "type": "npm",
@@ -17,9 +15,7 @@
       "problemMatcher": [],
       "label": "build",
       "detail": "next build",
-      "presentation": {
-        "close": true
-      }
+      "presentation": { "close": true }
     },
     {
       "type": "npm",
@@ -27,9 +23,7 @@
       "problemMatcher": [],
       "label": "lint",
       "detail": "eslint --cache --max-warnings=0 .",
-      "presentation": {
-        "close": true
-      }
+      "presentation": { "close": true }
     },
     {
       "type": "npm",
@@ -37,16 +31,8 @@
       "problemMatcher": [],
       "label": "format",
       "detail": "eslint --fix --cache --max-warnings=0 .",
-      "presentation": {
-        "close": true
-      }
+      "presentation": { "close": true }
     },
-    {
-      "type": "npm",
-      "script": "test",
-      "problemMatcher": [],
-      "label": "test",
-      "detail": "test"
-    }
+    { "type": "npm", "script": "test", "problemMatcher": [], "label": "test", "detail": "test" }
   ]
 }

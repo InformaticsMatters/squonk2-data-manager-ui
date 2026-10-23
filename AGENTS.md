@@ -37,7 +37,8 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 
 - Copy `.env.local.example` → `.env.local`. Requires Keycloak, better-auth, and API server vars to run.
 - Protobuf types in `src/protobuf/gen` are generated from `src/protobuf/proto` via buf (`buf.gen.yaml`) — regenerate after editing `.proto` files.
-- Type-safe route types (`nextjs-routes`) and Sentry instrumentation (`src/instrumentation.ts`) are generated/wired automatically.
+- Type-safe route types live in `@types/nextjs-routes.d.ts`. Next's Turbopack bundler never runs the `nextjs-routes` webpack plugin, so run `pnpm exec nextjs-routes` after adding or removing a page; CI fails while the file is stale.
+- Sentry instrumentation (`src/instrumentation.ts`) is wired automatically.
 - apps/data-manager-ui/assets is a git subtree
 
 ## Conventions

@@ -33,8 +33,9 @@ jobs:
         KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
         KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
         KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
-        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        PW_USERNAME: "dmit-user-a"
+        # The identity the live suites sign in as is pinned in `tests/liveEnvironment.ts`; only its
+        # password comes from here.
+        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: "3000"
     - name: Run non-blocking live smoke
       run: pnpm test:smoke

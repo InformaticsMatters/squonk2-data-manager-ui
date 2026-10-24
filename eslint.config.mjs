@@ -42,4 +42,9 @@ const appConfig = config.map((entry) => {
   return entry;
 });
 
-export default [{ ignores: ["**/.next/**", "src/api/*/generated/**"] }, ...appConfig];
+export default [
+  // `.playwright-cli` is where the browser CLI this repository's agents drive writes traces and
+  // page snapshots: other people's JavaScript, outside any tsconfig, and gitignored.
+  { ignores: ["**/.next/**", ".playwright-cli/**", "src/api/*/generated/**"] },
+  ...appConfig,
+];

@@ -108,8 +108,8 @@ importers:
         specifier: 1.11.23
         version: 1.11.23
       filesize:
-        specifier: 11.0.28
-        version: 11.0.28
+        specifier: 11.0.29
+        version: 11.0.29
       immer:
         specifier: 11.2.7
         version: 11.2.7
@@ -3801,8 +3801,8 @@ packages:
     resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
     engines: {node: '>= 12'}
 
-  filesize@11.0.28:
-    resolution: {integrity: sha512-tsZcwUmhL0WQpsxe9Oua6FBjb0aBTRkXobZBhQdkoII0pYgy9h+cXm5tp13Fsr8dSwp1+UVDxNwAFULDpxkXaw==}
+  filesize@11.0.29:
+    resolution: {integrity: sha512-+Mkmp8keoklLzAnvP/RQGDUEWEpjGmhvm4d4U739C1ZnkqxqoSqdLHnjv9/4QX6lltKSRk6qzQI7+94JVDtuCA==}
     engines: {node: '>= 10.8.0'}
 
   fill-range@7.1.1:
@@ -10645,7 +10645,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  filesize@11.0.28: {}
+  filesize@11.0.29: {}
 
   fill-range@7.1.1:
     dependencies:

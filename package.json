@@ -80,7 +80,7 @@
     "axios": "1.20.0",
     "better-auth": "1.7.25",
     "dayjs": "1.11.23",
-    "filesize": "11.0.33",
+    "filesize": "11.0.35",
     "immer": "11.2.7",
     "jotai": "2.20.3",
     "jwt-decode": "4.0.0",

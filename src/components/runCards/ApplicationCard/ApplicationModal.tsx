@@ -8,6 +8,7 @@ import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
 import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { definitionTerms } from "../../../projects/resultFacts";
 import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
@@ -76,7 +77,7 @@ export const ApplicationModal = ({
       }
       submitIcon={<RunIcon />}
       submitText="Run"
-      title={application?.kind ?? "Run application"}
+      title={application ? definitionTerms.applications.name(application) : "Run application"}
       titleIcon={<DefinitionKindIcon kind="application" />}
       onClose={onClose}
       onSubmit={handleLaunch}

@@ -217,6 +217,86 @@ test("a card states its kind, keeps its material, and names its documentation li
   );
 });
 
+test("an application card presents the info its Data Manager publishes, and only that", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceRun, testInfo);
+
+  // An application that publishes a name is headed by it, with the kind it is otherwise known by
+  // beneath, and its description is formatted from Markdown the way the author wrote it.
+  const published = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Run Data Visualisations" }) });
+  await expect(published.getByText("Data Visualisations", { exact: true })).toBeVisible();
+  await expect(published.getByText("DataVisualisation · squonk.it", { exact: true })).toBeVisible();
+  await expect(published.locator("strong", { hasText: "Interactive" })).toBeVisible();
+  const guide = published.getByRole("link", { name: "https://example.invalid/viz-guide" });
+  await expect(guide).toHaveAttribute("href", "https://example.invalid/viz-guide");
+  await expect(guide).toHaveAttribute("target", "_blank");
+  // A heading would break the grid's rhythm, so it is kept as text rather than as a heading.
+  await expect(published).toContainText("Linked charts");
+  await expect(published.getByRole("heading", { name: "Linked charts" })).toHaveCount(0);
+  await expect(published).toContainText("Chart preview");
+  await expect(published.getByRole("img")).toHaveCount(0);
+  await expect(published.locator("pre, code")).toHaveCount(0);
+  await expect(published.getByRole("link", { name: "View documentation" })).toHaveAttribute(
+    "href",
+    "https://example.invalid/viz-docs",
+  );
+
+  // The count, and the filter it opens, name the application exactly as its card does.
+  const count = published.getByRole("link", { name: "0 executions of Data Visualisations" });
+  await expect(count).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${acceptanceResults}?definitionType=applications&definitionId=visualisation-application`,
+  );
+
+  // An application that publishes nothing looks exactly as it always has: headed by its kind,
+  // its group alone beneath, and no description or documentation link — only its count and Run.
+  const unpublished = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Run AcceptanceNotebook" }) });
+  await expect(unpublished.getByText("AcceptanceNotebook", { exact: true })).toBeVisible();
+  await expect(unpublished.getByText("notebooks", { exact: true })).toBeVisible();
+  await expect(unpublished.getByRole("link")).toHaveCount(2);
+
+  await count.click();
+  await expect(page.getByText("Application: Data Visualisations", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("There are no results for Application: Data Visualisations in this project."),
+  ).toBeVisible();
+});
+
+test("an application is found by the words its card shows", async ({ page }, testInfo) => {
+  await login(page, `${acceptanceRun}?search=scatter`, testInfo);
+
+  // The word appears only in the application's description, so it alone is left.
+  await expect(page.getByRole("link", { name: "Run Data Visualisations" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Run AcceptanceNotebook" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Run acceptance-job" })).toHaveCount(0);
+
+  // Searches that matched an application's kind and group still do.
+  await page.goto(`${acceptanceRun}?search=notebooks`);
+  await expect(page.getByRole("link", { name: "Run AcceptanceNotebook" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Run Data Visualisations" })).toHaveCount(0);
+});
+
+test("an application's launch dialog is titled as its card and asks only what its template does", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${acceptanceRun}/applications/visualisation-application`, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: "Data Visualisations" })).toBeVisible();
+  await expect(dialog.getByLabel("Version")).toBeVisible();
+
+  // A template with no version property is one whose Data Manager chooses the version, so the
+  // dialog asks nothing about it.
+  await page.goto(`${acceptanceRun}/applications/acceptance-application`);
+  await expect(dialog.getByLabel("Instance Name")).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "AcceptanceNotebook" })).toBeVisible();
+  await expect(dialog.getByLabel("Version")).toHaveCount(0);
+});
+
 test("a definition nothing has run states zero and still links to its own results", async ({
   page,
 }, testInfo) => {

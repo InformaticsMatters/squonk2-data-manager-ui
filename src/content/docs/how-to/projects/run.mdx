@@ -35,9 +35,13 @@ Reading that card from the top:
   that is the count failing, not the job. Hovering a chip says which it is.
 - The heading is the definition's **identifier** — `sa-score` above — and the line beneath it the
   fuller name it is published under, here _Synthetic accessibility score_. The launch dialog leads
-  with that fuller name, so the two screens name the same definition differently on purpose.
+  with that fuller name, so the two screens name the same definition differently on purpose. An
+  application is headed by the name it is published under, or by its kind where it publishes none;
+  the line beneath is then its kind and group, such as _DataVisualisation · squonk.it_, or just its
+  group.
 - Then its **description**, followed by a link to its published documentation where it has any — the
-  small icon at the end of the text above. An application publishes neither.
+  small icon at the end of the text above. An application may publish both too, and a workflow a
+  description.
 - A job states its **Category** (the kind of job it is, here _molecular properties_) and its
   **Collection** (where it comes from, here _rdkit_). A workflow states its **Version** here
   instead. An application states neither, because the line under its name is already its group.
@@ -51,10 +55,11 @@ Reading that card from the top:
 
 **Filter** narrows the catalogue by kind — **Workflows**, **Applications** and **Jobs**. The search
 field matches the terms each definition declares: for a job, its keywords, category, name and
-description. For instance, jobs implemented using RDKit should be labelled as "rdkit", so typing
-"rdkit" into the search box shows only cards carrying that keyword; the keywords for each definition
-are displayed as chips towards the bottom of the card. The field's label states its shortcut —
-**Ctrl+F**, or **⌘F** on a Mac — which focuses it in place of the browser's own find.
+description; for an application, its name, kind, group and description. For instance, jobs
+implemented using RDKit should be labelled as "rdkit", so typing "rdkit" into the search box shows
+only cards carrying that keyword; the keywords for each definition are displayed as chips towards
+the bottom of the card. The field's label states its shortcut — **Ctrl+F**, or **⌘F** on a Mac —
+which focuses it in place of the browser's own find.
 
 Both controls are held in the URL, so a narrowed catalogue can be shared and survives a refresh.
 
@@ -185,9 +190,10 @@ Its card in the catalogue is a plainer thing than a job's:
 
 <Image src={application_card} alt="The JupyterNotebook application card" />
 
-An application publishes no description, category, collection or keywords, and it has a single
-version, so the card carries its kind, its execution count, its name, the group it belongs to —
-`squonk.it` above — and the **Run** control, and nothing else.
+An application publishes no category, collection or keywords, and it has a single version. It may
+publish a name, a description and a link to its documentation, which its card then shows as a job's
+does. One that publishes none, as here, carries its kind as its heading, its execution count, the
+group it belongs to — `squonk.it` above — and the **Run** control, and nothing else.
 
 Clicking **Run** opens the launch dialog:
 

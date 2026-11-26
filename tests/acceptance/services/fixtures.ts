@@ -955,7 +955,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         id: "acceptance-application",
         instances: [],
         kind: "AcceptanceNotebook",
-        template: JSON.stringify({ properties: {}, type: "object" }),
+        template: JSON.stringify({
+          description: "User-definable variables for the notebook operator",
+          properties: {},
+          type: "object",
+        }),
         versions: ["1.0.0"],
       }),
       [visualisationApplication.application_id]: AppApiApplicationGetApplicationResponse.parse({
@@ -965,6 +969,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         instances: [],
         // An application that still exposes its versions declares the choice in its template.
         template: JSON.stringify({
+          description: "User-definable variables for the visualisation operator",
           properties: { version: { enum: ["stable", "1.2.0"], title: "Version", type: "string" } },
           type: "object",
         }),

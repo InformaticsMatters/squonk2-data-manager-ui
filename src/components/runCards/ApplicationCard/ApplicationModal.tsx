@@ -65,6 +65,10 @@ export const ApplicationModal = ({
   if (schema) {
     // Remove the title from the schema so it isn't rendered by the form generator
     schema.title = undefined;
+    // A template that declares no variables has nothing for its description to introduce
+    if (Object.keys(schema.properties ?? {}).length === 0) {
+      schema.description = undefined;
+    }
   }
 
   return (

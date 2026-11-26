@@ -288,6 +288,9 @@ test("an application's launch dialog is titled as its card and asks only what it
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Data Visualisations" })).toBeVisible();
   await expect(dialog.getByLabel("Version")).toBeVisible();
+  await expect(
+    dialog.getByText("User-definable variables for the visualisation operator"),
+  ).toBeVisible();
 
   // A template with no version property is one whose Data Manager chooses the version, so the
   // dialog asks nothing about it.
@@ -295,6 +298,10 @@ test("an application's launch dialog is titled as its card and asks only what it
   await expect(dialog.getByLabel("Instance Name")).toBeVisible();
   await expect(dialog.getByRole("heading", { name: "AcceptanceNotebook" })).toBeVisible();
   await expect(dialog.getByLabel("Version")).toHaveCount(0);
+  // A template that declares no variables has nothing for its description to introduce.
+  await expect(dialog.getByText("User-definable variables for the notebook operator")).toHaveCount(
+    0,
+  );
 });
 
 test("a definition nothing has run states zero and still links to its own results", async ({

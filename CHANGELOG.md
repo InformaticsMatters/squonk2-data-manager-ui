@@ -1,3 +1,10 @@
+# [7.2.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.6...7.2.0-dev.7) (2026-11-26)
+
+
+### Bug Fixes
+
+* **deps:** update node to 24.22.1 and alpine to 3.24 ([3f02e98](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3f02e98b51d6ffb09cc0fd91f1860640853fa821))
+
 # [7.2.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.2.0-dev.5...7.2.0-dev.6) (2026-10-23)
 
 

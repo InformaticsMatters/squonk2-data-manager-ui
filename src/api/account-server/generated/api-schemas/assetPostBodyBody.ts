@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import type { AssetPostBodyBodyScope } from "./assetPostBodyBodyScope";
 
@@ -23,9 +23,9 @@ export type AssetPostBodyBody = {
    * @pattern ^[a-z0-9-]{1,63}$
    */
   name: string;
-  /** An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, or `GLOBAL`. Assets that are not `GLOBAL` need a scope ID. */
+  /** An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, `GLOBAL`, or `INTERNAL`. `PRODUCT`, `UNIT` and `ORGANISATION` assets need a scope ID. `INTERNAL` assets are read only by the Account Server (for its own use, by a **Capability** for example). Only an administrator can create, see or alter them, and they cannot be attached to a **Merchant**. */
   scope: AssetPostBodyBodyScope;
-  /** The unique identity based on the Scope of the asset. For example, this will be the Unit ID if it's a UNIT. A scope_id is required if the scope is USER as it will be automatically set to your username. Global assets do not have a scope. */
+  /** The unique identity based on the Scope of the asset. For example, this will be the Unit ID if it's a UNIT. A scope_id is required if the scope is USER as it will be automatically set to your username. Global and Internal assets do not have a scope (any scope_id provided is ignored). */
   scope_id?: string;
   /** Is this a secret asset? Secret assets are not revealed in a subsequent **GET** but are revealed to merchants they are connected to. */
   secret: boolean;

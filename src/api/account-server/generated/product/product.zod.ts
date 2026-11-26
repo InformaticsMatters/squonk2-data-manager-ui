@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import * as zod from "zod";
 
@@ -1344,7 +1344,9 @@ export const AppApiProductGetProductResponse = zod.object({
  *
  * You must be a member of the **Unit**, or its **Organisation**, or an administrator to use this method.
  *
- * At the moment we only support Products associated with the Data Manager, and these can be patched by changing the `name`, its coin `allowance` or `limit`
+ * At the moment we only support Products associated with the Data Manager, and these can be patched by changing the `name`, its coin `allowance` or `limit`.
+ *
+ * Only an administrator can change the `allowance` or `limit` of a **DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION** Product, whose values come from its flavour.
  * @summary Adjust an existing Product
  */
 export const appApiProductPatchPathProductIdRegExp = new RegExp(

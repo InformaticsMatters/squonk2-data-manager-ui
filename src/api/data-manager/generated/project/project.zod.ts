@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import * as zod from "zod";
 
@@ -443,3 +443,26 @@ export const AppApiProjectPutObserverParams = zod.object({
 });
 
 export const AppApiProjectPutObserverResponse = zod.void();
+
+/**
+ * Gets your role in a Project. The role is one of `administrator`, `editor` or `observer`.
+ *
+ * The role is also in the `X-IM-DM-Role` response header, and your username is in the `X-IM-DM-User` response header.
+ *
+ * The role comes only from your membership of the Project. You get a 403 response if the Project does not exist, it is being deleted, or you are not a member of it. You get a 403 response for a public Project if you are not a member of it.
+ * @summary Get your role in a Project
+ */
+export const appApiProjectGetProjectRolePathProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiProjectGetProjectRoleParams = zod.object({
+  project_id: zod
+    .string()
+    .regex(appApiProjectGetProjectRolePathProjectIdRegExp)
+    .describe("The project identity"),
+});
+
+export const AppApiProjectGetProjectRoleResponse = zod.object({
+  role: zod.enum(["observer", "editor", "administrator"]).describe("Your role in the Project\n"),
+});

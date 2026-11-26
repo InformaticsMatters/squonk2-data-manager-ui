@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 
 export * from "./accountServerGetNamespaceResponse";
@@ -306,6 +306,9 @@ export * from "./getProjectFileParams";
 export * from "./getProjectFileWithToken403";
 export * from "./getProjectFileWithToken404";
 export * from "./getProjectFileWithTokenParams";
+export * from "./getProjectRole200";
+export * from "./getProjectRole200Role";
+export * from "./getProjectRole403";
 export * from "./getProjects200";
 export * from "./getProjects200ProjectsItem";
 export * from "./getProjects200ProjectsItemFilesItem";
@@ -514,6 +517,8 @@ export * from "./projectGetResponseFilesItemProcessingStage";
 export * from "./projectPatchBodyBody";
 export * from "./projectPostBodyBody";
 export * from "./projectPostResponse";
+export * from "./projectRoleGetResponse";
+export * from "./projectRoleGetResponseRole";
 export * from "./projectsGetResponse";
 export * from "./projectsGetResponseProjectsItem";
 export * from "./projectsGetResponseProjectsItemFilesItem";

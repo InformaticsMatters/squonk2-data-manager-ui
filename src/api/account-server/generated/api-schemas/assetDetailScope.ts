@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 
 export type AssetDetailScope = (typeof AssetDetailScope)[keyof typeof AssetDetailScope];
@@ -17,4 +17,5 @@ export const AssetDetailScope = {
   UNIT: "UNIT",
   ORGANISATION: "ORGANISATION",
   GLOBAL: "GLOBAL",
+  INTERNAL: "INTERNAL",
 } as const;

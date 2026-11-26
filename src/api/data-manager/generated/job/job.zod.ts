@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import * as zod from "zod";
 
@@ -147,11 +147,29 @@ export const AppApiJobGetJobByVersionResponse = zod.object({
       .describe(
         "The application unique reference, the value of the Kubernetes \*\*Custom Resource Definition\*\* `metadata.name` property\n",
       ),
+    description: zod
+      .string()
+      .optional()
+      .describe(
+        "A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap).",
+      ),
     group: zod.string().optional().describe("The application group\n"),
     kind: zod
       .string()
       .describe(
         "The application name, the value of the Kubernetes \*\*Custom Resource Definition\*\* `spec.names.kind` property\n",
+      ),
+    name: zod
+      .string()
+      .optional()
+      .describe(
+        'The application\'s name, a short phrase, e.g. \"Data Visualisations\". Only present when the application declares it (in the `info` section of its ConfigMap).',
+      ),
+    url: zod
+      .string()
+      .optional()
+      .describe(
+        "A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap).",
       ),
   }),
   category: zod.string().optional().describe("The Job's category\n"),
@@ -271,11 +289,29 @@ export const AppApiJobGetJobResponse = zod.object({
       .describe(
         "The application unique reference, the value of the Kubernetes \*\*Custom Resource Definition\*\* `metadata.name` property\n",
       ),
+    description: zod
+      .string()
+      .optional()
+      .describe(
+        "A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap).",
+      ),
     group: zod.string().optional().describe("The application group\n"),
     kind: zod
       .string()
       .describe(
         "The application name, the value of the Kubernetes \*\*Custom Resource Definition\*\* `spec.names.kind` property\n",
+      ),
+    name: zod
+      .string()
+      .optional()
+      .describe(
+        'The application\'s name, a short phrase, e.g. \"Data Visualisations\". Only present when the application declares it (in the `info` section of its ConfigMap).',
+      ),
+    url: zod
+      .string()
+      .optional()
+      .describe(
+        "A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap).",
       ),
   }),
   category: zod.string().optional().describe("The Job's category\n"),

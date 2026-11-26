@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import type { GetTask200EventsItem } from "./getTask200EventsItem";
 import type { GetTask200Purpose } from "./getTask200Purpose";

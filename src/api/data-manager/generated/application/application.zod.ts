@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import * as zod from "zod";
 
@@ -25,11 +25,29 @@ export const AppApiApplicationGetResponse = zod.object({
           .describe(
             "The application unique reference, the value of the Kubernetes \*\*Custom Resource Definition\*\* `metadata.name` property\n",
           ),
+        description: zod
+          .string()
+          .optional()
+          .describe(
+            "A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap).",
+          ),
         group: zod.string().optional().describe("The application group\n"),
         kind: zod
           .string()
           .describe(
             "The application name, the value of the Kubernetes \*\*Custom Resource Definition\*\* `spec.names.kind` property\n",
+          ),
+        name: zod
+          .string()
+          .optional()
+          .describe(
+            'The application\'s name, a short phrase, e.g. \"Data Visualisations\". Only present when the application declares it (in the `info` section of its ConfigMap).',
+          ),
+        url: zod
+          .string()
+          .optional()
+          .describe(
+            "A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap).",
           ),
       }),
     )
@@ -80,6 +98,12 @@ export const AppApiApplicationGetApplicationResponse = zod.object({
     .describe(
       "The unit being charged. PxGi is application processor count x Memory (GiB).\n Only required if the cost if non-zero.",
     ),
+  description: zod
+    .string()
+    .optional()
+    .describe(
+      "A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap).",
+    ),
   group: zod.string().describe("The application group\n"),
   id: zod.string().describe("The Application's unique ID\n"),
   idle_path: zod
@@ -111,10 +135,47 @@ export const AppApiApplicationGetApplicationResponse = zod.object({
       public: zod.array(zod.object({ image: zod.string(), name: zod.string() })).optional(),
     })
     .optional(),
+  info_description: zod
+    .string()
+    .optional()
+    .describe(
+      "A description of the application (the same value as `description`). Only present when the application declares it (in the `info` section of its ConfigMap).",
+    ),
+  info_name: zod
+    .string()
+    .optional()
+    .describe(
+      "The application's name (the same value as `name`). Only present when the application declares it (in the `info` section of its ConfigMap).",
+    ),
+  info_url: zod
+    .string()
+    .optional()
+    .describe(
+      "A URL where more information about the application can be found (the same value as `url`). Only present when the application declares it (in the `info` section of its ConfigMap).",
+    ),
   instances: zod.array(zod.string()).describe("A list of instances of the application\n"),
   kind: zod.string().describe("The name (kind) of the application\n"),
+  name: zod
+    .string()
+    .optional()
+    .describe(
+      'The application\'s name, a short phrase, e.g. \"Data Visualisations\". Only present when the application declares it (in the `info` section of its ConfigMap).',
+    ),
   template: zod
     .string()
-    .describe("The application specification template. Used when creating application instances\n"),
-  versions: zod.array(zod.string()).describe("The list of available versions\n"),
+    .describe(
+      "The application specification template. Used when creating application instances. When the application does not expose its versions the template has no `version` property.\n",
+    ),
+  url: zod
+    .string()
+    .optional()
+    .describe(
+      "A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap).",
+    ),
+  versions: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      "The list of available versions. Not present when the application does not expose its versions (with `expose = no` in the `versioning` section of its ConfigMap). The user does not choose the version of such an application - the Data Manager uses the first value of the `version` property's `enum` in the application's `template`.\n",
+    ),
 });

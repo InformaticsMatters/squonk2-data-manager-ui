@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import * as zod from "zod";
 
@@ -53,6 +53,28 @@ export const AppApiEventStreamPostResponse = zod.object({
 });
 
 /**
+ * Gets every event stream, oldest first, with the user that owns it. Use the `id` of an event stream to delete it.
+ *
+ * You need admin rights to use this path.
+ * @summary Gets every event stream
+ */
+export const AppApiAdminGetEventStreamsResponse = zod.object({
+  count: zod.number(),
+  event_streams: zod.array(
+    zod.object({
+      created: zod.string().describe("The date and time the EventStream was created"),
+      format: zod.string().describe("The Event Stream format."),
+      id: zod.number().describe("The EventStream ID"),
+      location: zod
+        .string()
+        .describe("The Event Stream location. This will be a URL where events can be fetched."),
+      name: zod.string().describe("A symbolic name, used internally to identify the stream"),
+      owner: zod.string().describe("The username of the user that created the EventStream"),
+    }),
+  ),
+});
+
+/**
  * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
  * @summary Gets the details of the installed event stream
  */
@@ -71,8 +93,8 @@ export const AppApiEventStreamGetEventStreamVersionResponse = zod.object({
 });
 
 /**
- * You must be the user who created the event stream.
- * @summary Deletes an existing event stream (that you created)
+ * You must be the user who created the event stream, or a user with admin rights.
+ * @summary Deletes an existing event stream
  */
 
 export const AppApiEventStreamDeleteParams = zod.object({

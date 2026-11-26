@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import type { GetJobByVersion200VariablesInputs } from "./getJobByVersion200VariablesInputs";
 import type { GetJobByVersion200VariablesOptions } from "./getJobByVersion200VariablesOptions";

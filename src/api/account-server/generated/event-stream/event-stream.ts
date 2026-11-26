@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
@@ -32,6 +32,7 @@ import type {
   EventStreamGetPostResponse,
   EventStreamPostBodyBody,
   EventStreamVersionGetResponse,
+  EventStreamsGetResponse,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/account-server/axios";
@@ -361,6 +362,221 @@ export const useCreateEventStream = <TError = ErrorType<AsError | void>, TContex
   return useMutation(getCreateEventStreamMutationOptions(options), queryClient);
 };
 /**
+ * Gets every event stream, oldest first, with the user that owns it. Use the `id` of an event stream to delete it.
+ *
+ * You need admin rights to use this path.
+ * @summary Gets every event stream
+ */
+export const getEventStreams = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<EventStreamsGetResponse>(
+    { url: `/event-stream/list`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetEventStreamsQueryKey = () => {
+  return ["account-server", "event-stream", "list"] as const;
+};
+
+export const getGetEventStreamsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetEventStreamsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreams>>> = ({ signal }) =>
+    getEventStreams(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEventStreams>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetEventStreamsQueryResult = NonNullable<Awaited<ReturnType<typeof getEventStreams>>>;
+export type GetEventStreamsQueryError = ErrorType<void | AsError>;
+
+export function useGetEventStreams<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStreams>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStreams>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreams<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStreams>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStreams>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreams<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets every event stream
+ */
+
+export function useGetEventStreams<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetEventStreamsQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets every event stream
+ */
+export const invalidateGetEventStreams = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetEventStreamsQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetEventStreamsSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetEventStreamsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreams>>> = ({ signal }) =>
+    getEventStreams(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getEventStreams>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetEventStreamsSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEventStreams>>
+>;
+export type GetEventStreamsSuspenseQueryError = ErrorType<void | AsError>;
+
+export function useGetEventStreamsSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamsSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamsSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets every event stream
+ */
+
+export function useGetEventStreamsSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreams>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetEventStreamsSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
  * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
  * @summary Gets the details of the installed event stream
  */
@@ -586,8 +802,8 @@ export function useGetEventStreamVersionSuspense<
 }
 
 /**
- * You must be the user who created the event stream.
- * @summary Deletes an existing event stream (that you created)
+ * You must be the user who created the event stream, or a user with admin rights.
+ * @summary Deletes an existing event stream
  */
 export const deleteEventStream = (
   eventStreamId: number,
@@ -643,7 +859,7 @@ export type DeleteEventStreamMutationResult = NonNullable<
 export type DeleteEventStreamMutationError = ErrorType<void | AsError>;
 
 /**
- * @summary Deletes an existing event stream (that you created)
+ * @summary Deletes an existing event stream
  */
 export const useDeleteEventStream = <TError = ErrorType<void | AsError>, TContext = unknown>(
   options?: {

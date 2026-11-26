@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
@@ -61,6 +61,8 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 
 /**
  * Gets Assets you have access to.
+ *
+ * You can filter the Assets using one of `user_id`, `product_id`, `unit_id` or `org_id`. You can also filter them by their `scope`. Only an administrator can get `INTERNAL` Assets, and as they do not have a scope ID you cannot combine the `INTERNAL` scope with any of the other filters.
  * @summary Gets Assets
  */
 export const getAsset = (
@@ -277,7 +279,7 @@ export function useGetAssetSuspense<
 }
 
 /**
- * Creates an Asset, which can be attached to a **User** account, a **Product**, **Unit**, **Organisation** or can be made **Global**
+ * Creates an Asset, which can be attached to a **User** account, a **Product**, **Unit**, **Organisation** or can be made **Global**. An administrator can also create an **Internal** Asset, one that is read only by the Account Server
  *
  * Assets are text and file resources that can be requested by **Merchants**. The Data Manager **Merchant** uses assets to provide additional information that's often sensitive to **Job** (and **Application**) **Instances**.
  *
@@ -385,7 +387,7 @@ export const useCreateAsset = <TError = ErrorType<AsError | void>, TContext = un
 /**
  * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Deletes an Asset
  */
 export const deleteAsset = (
@@ -692,7 +694,7 @@ export function useGetSpecificAssetSuspense<
  *
  * The content of an Asset currently in use will not be affected by a change made here. If a **Merchant** has already obtained the Asset it may continue to use the original value until the **Merchant** requests the **Asset** again.
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Adjust an existing Asset
  */
 export const patchAsset = (
@@ -789,7 +791,7 @@ export const usePatchAsset = <TError = ErrorType<void | AsError>, TContext = unk
 /**
  * Attaches an Asset to a **Merchant**. This allows the **Merchant** to query the Asset. **Merchants** cannot obtain Assets that are not attached to them.
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Attaches an Asset to a Merchant
  */
 export const attachAsset = (
@@ -869,7 +871,7 @@ export const useAttachAsset = <TError = ErrorType<AsError | void>, TContext = un
 /**
  * Detaches an Asset from a **Merchant**
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Detaches an Asset from a Merchant
  */
 export const detachAsset = (
@@ -949,7 +951,7 @@ export const useDetachAsset = <TError = ErrorType<AsError | void>, TContext = un
 /**
  * Disables a known Asset
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Disables an Asset
  */
 export const disableAsset = (
@@ -1028,7 +1030,7 @@ export const useDisableAsset = <TError = ErrorType<AsError | void>, TContext = u
 /**
  * Enables a known Asset
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Enables an Asset
  */
 export const enableAsset = (

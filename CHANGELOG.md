@@ -49,6 +49,13 @@
 
 * make the navigation bar fit phone and tablet viewports ([fbabcea](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fbabcea5afb4fb29a110422519516acaba9ff61f))
 
+## [7.1.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.2...7.1.3) (2026-10-22)
+
+
+### Bug Fixes
+
+* **deps:** update node to 24.22.1 and alpine to 3.24 ([3f02e98](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3f02e98b51d6ffb09cc0fd91f1860640853fa821))
+
 ## [7.1.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.1...7.1.2) (2026-10-16)
 
 

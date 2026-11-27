@@ -277,6 +277,24 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
               variant="outlined"
             />
           </Tooltip>
+          {/* The documentation link sits with the card's other links rather than at the end of the
+          description, so it is in the same place on every card whatever the description holds. */}
+          {!!docUrl && (
+            <Tooltip title="View documentation">
+              <IconButton
+                // A link around an icon says nothing about where it goes.
+                aria-label="View documentation"
+                href={docUrl}
+                rel="noopener noreferrer"
+                size="small"
+                // Outlined and as tall as the count chip beside it, so the two read as one row.
+                sx={{ border: 1, borderColor: "divider", height: 24, p: 0, width: 24 }}
+                target="_blank"
+              >
+                <ExternalLinkIcon sx={{ fontSize: "0.875rem" }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
         <Typography sx={{ fontWeight: 600, lineHeight: 1.3 }} variant="subtitle1">
           {item.title}
@@ -284,10 +302,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
         <Typography sx={{ color: "text.secondary", display: "block" }} variant="caption">
           {item.subtitle}
         </Typography>
-        {/* The documentation link is the definition's own, so a definition that publishes
-        documentation but no description still offers it rather than losing it with the paragraph it
-        used to hang off. */}
-        {(description !== undefined || docUrl !== undefined) && (
+        {description !== undefined && (
           // A block rather than a paragraph, so an application's Markdown paragraphs and lists are
           // valid inside it.
           <Typography
@@ -302,22 +317,6 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
             variant="body2"
           >
             {description}
-            {!!docUrl && (
-              <Tooltip title="View documentation">
-                <IconButton
-                  // A link around an icon says nothing about where it goes, and a target smaller
-                  // than a fingertip cannot be followed on the device most likely to meet it.
-                  aria-label="View documentation"
-                  href={docUrl}
-                  rel="noopener noreferrer"
-                  size="small"
-                  sx={{ height: 24, ml: 0.5, p: 0, verticalAlign: "middle", width: 24 }}
-                  target="_blank"
-                >
-                  <ExternalLinkIcon sx={{ fontSize: "0.875rem" }} />
-                </IconButton>
-              </Tooltip>
-            )}
           </Typography>
         )}
         {meta.length > 0 && (

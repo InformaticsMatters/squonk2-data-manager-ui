@@ -369,7 +369,7 @@ export const areas: Area[] = [
           { element: "Kind chip", concepts: ["workflow", "application", "job"], priority: "high" },
           { element: "Past runs count", concepts: "results", was: "History" },
           {
-            element: "View documentation (jobs and applications)",
+            element: "View documentation, beside the count (jobs and applications)",
             concepts: "externalLink",
             was: "Launch",
           },

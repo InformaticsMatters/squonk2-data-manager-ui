@@ -6,12 +6,14 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import * as zod from "zod";
 
 /**
  * Gets Assets you have access to.
+ *
+ * You can filter the Assets using one of `user_id`, `product_id`, `unit_id` or `org_id`. You can also filter them by their `scope`. Only an administrator can get `INTERNAL` Assets, and as they do not have a scope ID you cannot combine the `INTERNAL` scope with any of the other filters.
  * @summary Gets Assets
  */
 export const appApiAssetGetQueryUserIdMin = 3;
@@ -29,6 +31,10 @@ export const appApiAssetGetQueryOrgIdRegExp = new RegExp(
 );
 
 export const AppApiAssetGetQueryParams = zod.object({
+  scope: zod
+    .enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL", "INTERNAL"])
+    .optional()
+    .describe("An Asset scope. Only an administrator can use `INTERNAL`"),
   user_id: zod
     .string()
     .min(appApiAssetGetQueryUserIdMin)
@@ -74,7 +80,7 @@ export const AppApiAssetGetResponse = zod.object({
           }),
         ),
         name: zod.string(),
-        scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"]),
+        scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL", "INTERNAL"]),
         scope_id: zod.string(),
         secret: zod.boolean(),
       }),
@@ -84,7 +90,7 @@ export const AppApiAssetGetResponse = zod.object({
 });
 
 /**
- * Creates an Asset, which can be attached to a **User** account, a **Product**, **Unit**, **Organisation** or can be made **Global**
+ * Creates an Asset, which can be attached to a **User** account, a **Product**, **Unit**, **Organisation** or can be made **Global**. An administrator can also create an **Internal** Asset, one that is read only by the Account Server
  *
  * Assets are text and file resources that can be requested by **Merchants**. The Data Manager **Merchant** uses assets to provide additional information that's often sensitive to **Job** (and **Application**) **Instances**.
  *
@@ -114,15 +120,15 @@ export const AppApiAssetCreateBody = zod.object({
       'The name of the asset. This must be unique within its scope. For example, only one asset can be called \"asset-1\" within a given `UNIT`. Asset names must be valid RFC 1123 Label Names',
     ),
   scope: zod
-    .enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"])
+    .enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL", "INTERNAL"])
     .describe(
-      "An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, or `GLOBAL`. Assets that are not `GLOBAL` need a scope ID.",
+      "An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, `GLOBAL`, or `INTERNAL`. `PRODUCT`, `UNIT` and `ORGANISATION` assets need a scope ID. `INTERNAL` assets are read only by the Account Server (for its own use, by a \*\*Capability\*\* for example). Only an administrator can create, see or alter them, and they cannot be attached to a \*\*Merchant\*\*.",
     ),
   scope_id: zod
     .string()
     .optional()
     .describe(
-      "The unique identity based on the Scope of the asset. For example, this will be the Unit ID if it's a UNIT. A scope_id is required if the scope is USER as it will be automatically set to your username. Global assets do not have a scope.",
+      "The unique identity based on the Scope of the asset. For example, this will be the Unit ID if it's a UNIT. A scope_id is required if the scope is USER as it will be automatically set to your username. Global and Internal assets do not have a scope (any scope_id provided is ignored).",
     ),
   secret: zod
     .boolean()
@@ -138,7 +144,7 @@ export const AppApiAssetCreateResponse = zod.object({
 /**
  * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Deletes an Asset
  */
 export const appApiAssetDeletePathAssetIdRegExp = new RegExp(
@@ -181,7 +187,7 @@ export const AppApiAssetGetByIdResponse = zod.object({
     }),
   ),
   name: zod.string(),
-  scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"]),
+  scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL", "INTERNAL"]),
   scope_id: zod.string(),
   secret: zod.boolean(),
 });
@@ -191,7 +197,7 @@ export const AppApiAssetGetByIdResponse = zod.object({
  *
  * The content of an Asset currently in use will not be affected by a change made here. If a **Merchant** has already obtained the Asset it may continue to use the original value until the **Merchant** requests the **Asset** again.
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Adjust an existing Asset
  */
 export const appApiAssetPatchPathAssetIdRegExp = new RegExp(
@@ -216,7 +222,7 @@ export const AppApiAssetPatchResponse = zod.unknown();
 /**
  * Attaches an Asset to a **Merchant**. This allows the **Merchant** to query the Asset. **Merchants** cannot obtain Assets that are not attached to them.
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Attaches an Asset to a Merchant
  */
 export const appApiAssetAttachPathAssetIdRegExp = new RegExp(
@@ -236,7 +242,7 @@ export const AppApiAssetAttachResponse = zod.void();
 /**
  * Detaches an Asset from a **Merchant**
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Detaches an Asset from a Merchant
  */
 export const appApiAssetDetachPathAssetIdRegExp = new RegExp(
@@ -256,7 +262,7 @@ export const AppApiAssetDetachResponse = zod.void();
 /**
  * Disables a known Asset
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Disables an Asset
  */
 export const appApiAssetDisablePathAssetIdRegExp = new RegExp(
@@ -272,7 +278,7 @@ export const AppApiAssetDisableResponse = zod.void();
 /**
  * Enables a known Asset
  *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Only administrators can alter `INTERNAL` assets. Administrators can patch any asset.
  * @summary Enables an Asset
  */
 export const appApiAssetEnablePathAssetIdRegExp = new RegExp(

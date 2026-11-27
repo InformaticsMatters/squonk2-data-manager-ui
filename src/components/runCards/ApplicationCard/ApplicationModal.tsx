@@ -8,6 +8,7 @@ import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
 import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { definitionTerms } from "../../../projects/resultFacts";
 import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
@@ -64,6 +65,10 @@ export const ApplicationModal = ({
   if (schema) {
     // Remove the title from the schema so it isn't rendered by the form generator
     schema.title = undefined;
+    // A template that declares no variables has nothing for its description to introduce
+    if (Object.keys(schema.properties ?? {}).length === 0) {
+      schema.description = undefined;
+    }
   }
 
   return (
@@ -76,7 +81,7 @@ export const ApplicationModal = ({
       }
       submitIcon={<RunIcon />}
       submitText="Run"
-      title={application?.kind ?? "Run application"}
+      title={application ? definitionTerms.applications.name(application) : "Run application"}
       titleIcon={<DefinitionKindIcon kind="application" />}
       onClose={onClose}
       onSubmit={handleLaunch}

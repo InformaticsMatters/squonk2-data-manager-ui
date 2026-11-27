@@ -6,14 +6,19 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
+import type { QAssetScopeParameter } from "./qAssetScopeParameter";
 import type { QOrgIdParameter } from "./qOrgIdParameter";
 import type { QProductIdParameter } from "./qProductIdParameter";
 import type { QUnitIdParameter } from "./qUnitIdParameter";
 import type { QUserIdParameter } from "./qUserIdParameter";
 
 export type GetAssetParams = {
+  /**
+   * An Asset scope. Only an administrator can use `INTERNAL`
+   */
+  scope?: QAssetScopeParameter;
   /**
    * A User Identity
    * @minLength 3

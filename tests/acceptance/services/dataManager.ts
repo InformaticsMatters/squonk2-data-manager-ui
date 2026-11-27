@@ -1090,8 +1090,11 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     return json(response, 200, state.fixtures.workflows);
   }
-  if (url.pathname === "/application/acceptance-application") {
-    return json(response, 200, state.fixtures.applicationDetail);
+  if (segments[0] === "application" && segments.length === 2 && request.method === "GET") {
+    const detail = state.fixtures.applicationDetails[segments[1] ?? ""];
+    return detail
+      ? json(response, 200, detail)
+      : json(response, 404, { error: "fixture-application-not-found" });
   }
   if (url.pathname === `/workflow/${fixtureIds.workflow}` && request.method === "GET") {
     return json(response, 200, state.fixtures.workflowDetail);

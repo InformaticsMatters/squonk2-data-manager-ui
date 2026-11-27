@@ -368,7 +368,11 @@ export const areas: Area[] = [
         usages: [
           { element: "Kind chip", concepts: ["workflow", "application", "job"], priority: "high" },
           { element: "Past runs count", concepts: "results", was: "History" },
-          { element: "View documentation", concepts: "externalLink", was: "Launch" },
+          {
+            element: "View documentation, beside the count (jobs and applications)",
+            concepts: "externalLink",
+            was: "Launch",
+          },
           { element: "Version menu", concepts: "dropdown", was: "KeyboardArrowDown" },
           { element: "Run button", concepts: "run", priority: "high" },
           { element: "Category / collection lines", concepts: "label", priority: "medium" },

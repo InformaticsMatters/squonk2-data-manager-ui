@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import type { GetApplication200CostUnit } from "./getApplication200CostUnit";
 import type { GetApplication200ImageVariants } from "./getApplication200ImageVariants";
@@ -26,6 +26,8 @@ export type GetApplication200 = {
    *  Only required if the cost if non-zero.
    */
   cost_unit?: GetApplication200CostUnit;
+  /** A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap). */
+  description?: string;
   /** The application group */
   group: string;
   /** The Application's unique ID */
@@ -39,12 +41,22 @@ export type GetApplication200 = {
   /** Humanised expression of the period an instance of this application may be idle before it is terminated, e.g. "4 hours". Only present when the application declares its own period - otherwise the Data Manager's default period applies. */
   idle_terminate_after?: string;
   image_variants?: GetApplication200ImageVariants;
+  /** A description of the application (the same value as `description`). Only present when the application declares it (in the `info` section of its ConfigMap). */
+  info_description?: string;
+  /** The application's name (the same value as `name`). Only present when the application declares it (in the `info` section of its ConfigMap). */
+  info_name?: string;
+  /** A URL where more information about the application can be found (the same value as `url`). Only present when the application declares it (in the `info` section of its ConfigMap). */
+  info_url?: string;
   /** A list of instances of the application */
   instances: string[];
   /** The name (kind) of the application */
   kind: string;
-  /** The application specification template. Used when creating application instances */
+  /** The application's name, a short phrase, e.g. "Data Visualisations". Only present when the application declares it (in the `info` section of its ConfigMap). */
+  name?: string;
+  /** The application specification template. Used when creating application instances. When the application does not expose its versions the template has no `version` property. */
   template: string;
-  /** The list of available versions */
-  versions: string[];
+  /** A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap). */
+  url?: string;
+  /** The list of available versions. Not present when the application does not expose its versions (with `expose = no` in the `versioning` section of its ConfigMap). The user does not choose the version of such an application - the Data Manager uses the first value of the `version` property's `enum` in the application's `template`. */
+  versions?: string[];
 };

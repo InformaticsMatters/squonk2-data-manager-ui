@@ -6,11 +6,11 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 
 /**
- * An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, or `GLOBAL`. Assets that are not `GLOBAL` need a scope ID.
+ * An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, `GLOBAL`, or `INTERNAL`. `PRODUCT`, `UNIT` and `ORGANISATION` assets need a scope ID. `INTERNAL` assets are read only by the Account Server (for its own use, by a **Capability** for example). Only an administrator can create, see or alter them, and they cannot be attached to a **Merchant**.
  */
 export type AssetPostBodyBodyScope =
   (typeof AssetPostBodyBodyScope)[keyof typeof AssetPostBodyBodyScope];
@@ -21,4 +21,5 @@ export const AssetPostBodyBodyScope = {
   UNIT: "UNIT",
   ORGANISATION: "ORGANISATION",
   GLOBAL: "GLOBAL",
+  INTERNAL: "INTERNAL",
 } as const;

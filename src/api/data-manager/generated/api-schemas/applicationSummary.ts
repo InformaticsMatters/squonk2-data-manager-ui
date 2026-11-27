@@ -6,14 +6,20 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 
 export interface ApplicationSummary {
   /** The application unique reference, the value of the Kubernetes **Custom Resource Definition** `metadata.name` property */
   application_id: string;
+  /** A description of the application, which can be Markdown. It is returned verbatim (without interpolation), less the common indentation of its lines. Only present when the application declares it (in the `info` section of its ConfigMap). */
+  description?: string;
   /** The application group */
   group?: string;
   /** The application name, the value of the Kubernetes **Custom Resource Definition** `spec.names.kind` property */
   kind: string;
+  /** The application's name, a short phrase, e.g. "Data Visualisations". Only present when the application declares it (in the `info` section of its ConfigMap). */
+  name?: string;
+  /** A URL where more information about the application can be found. Only present when the application declares it (in the `info` section of its ConfigMap). */
+  url?: string;
 }

@@ -109,6 +109,27 @@ export const fixtureIds = {
  */
 export const rejectedProjectName = "Reserved";
 
+/**
+ * An application whose ConfigMap declares an `[info]` section. Its Markdown description has two
+ * paragraphs, bold text, a bare URL, a heading, an image and a code block, so the card's formatting, its autolinking and
+ * the elements it reduces to text are all exercised by the one description.
+ */
+const visualisationApplication = {
+  application_id: "visualisation-application",
+  description: [
+    "**Interactive** visualisation of your data, explained at https://example.invalid/viz-guide.",
+    "## Linked charts",
+    "Selecting points in one scatter plot changes what the others show.",
+    "![Chart preview](https://example.invalid/preview.png)",
+    "```\nlaunch --stable\n```",
+  ].join("\n\n"),
+  group: "squonk.it",
+  kind: "DataVisualisation",
+  name: "Data Visualisations",
+  url: "https://example.invalid/viz-docs",
+};
+const { application_id: _, ...visualisationInfo } = visualisationApplication;
+
 export const datasetContentFixtures = {
   1: gzipSync(Buffer.from("acceptance dataset version 1\n")),
   2: gzipSync(Buffer.from("acceptance dataset version 2\n")),
@@ -914,25 +935,47 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     // The Run catalogue. Applications and workflow definitions are catalogues the Data Manager
     // does not scope by project; jobs are, so they answer for the project they were asked about.
+    // One application publishes the info its ConfigMap may declare and one publishes none, so the
+    // card is seen both presenting that info and looking exactly as it did before there was any.
     applications: AppApiApplicationGetResponse.parse({
-      count: 1,
+      count: 2,
       applications: [
         {
           application_id: "acceptance-application",
           group: "notebooks",
           kind: "AcceptanceNotebook",
         },
+        visualisationApplication,
       ],
     }),
-    applicationDetail: AppApiApplicationGetApplicationResponse.parse({
-      cost: "0",
-      group: "notebooks",
-      id: "acceptance-application",
-      instances: [],
-      kind: "AcceptanceNotebook",
-      template: JSON.stringify({ properties: {}, type: "object" }),
-      versions: ["1.0.0"],
-    }),
+    applicationDetails: {
+      "acceptance-application": AppApiApplicationGetApplicationResponse.parse({
+        cost: "0",
+        group: "notebooks",
+        id: "acceptance-application",
+        instances: [],
+        kind: "AcceptanceNotebook",
+        template: JSON.stringify({
+          description: "User-definable variables for the notebook operator",
+          properties: {},
+          type: "object",
+        }),
+        versions: ["1.0.0"],
+      }),
+      [visualisationApplication.application_id]: AppApiApplicationGetApplicationResponse.parse({
+        ...visualisationInfo,
+        cost: "0",
+        id: visualisationApplication.application_id,
+        instances: [],
+        // An application that still exposes its versions declares the choice in its template.
+        template: JSON.stringify({
+          description: "User-definable variables for the visualisation operator",
+          properties: { version: { enum: ["stable", "1.2.0"], title: "Version", type: "string" } },
+          type: "object",
+        }),
+        versions: ["stable", "1.2.0"],
+      }),
+    } as Partial<Record<string, ReturnType<typeof AppApiApplicationGetApplicationResponse.parse>>>,
     jobs: AppApiJobGetResponse.parse({
       count: 3,
       jobs: [

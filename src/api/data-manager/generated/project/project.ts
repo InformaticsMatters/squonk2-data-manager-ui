@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
@@ -45,6 +45,8 @@ import type {
   GetProject200,
   GetProject403,
   GetProject404,
+  GetProjectRole200,
+  GetProjectRole403,
   GetProjects200,
   GetProjects403,
   GetProjectsParams,
@@ -1365,3 +1367,238 @@ export const useAddObserverToProject = <
 > => {
   return useMutation(getAddObserverToProjectMutationOptions(options), queryClient);
 };
+/**
+ * Gets your role in a Project. The role is one of `administrator`, `editor` or `observer`.
+ *
+ * The role is also in the `X-IM-DM-Role` response header, and your username is in the `X-IM-DM-User` response header.
+ *
+ * The role comes only from your membership of the Project. You get a 403 response if the Project does not exist, it is being deleted, or you are not a member of it. You get a 403 response for a public Project if you are not a member of it.
+ * @summary Get your role in a Project
+ */
+export const getProjectRole = (
+  projectId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetProjectRole200>(
+    { url: `/project/${projectId}/role`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetProjectRoleQueryKey = (projectId: string) => {
+  return ["data-manager", "project", projectId, "role"] as const;
+};
+
+export const getGetProjectRoleQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetProjectRoleQueryKey(projectId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProjectRole>>> = ({ signal }) =>
+    getProjectRole(projectId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: projectId !== null && projectId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetProjectRoleQueryResult = NonNullable<Awaited<ReturnType<typeof getProjectRole>>>;
+export type GetProjectRoleQueryError = ErrorType<void | GetProjectRole403>;
+
+export function useGetProjectRole<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectRole>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectRole>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectRole<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectRole>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectRole>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectRole<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get your role in a Project
+ */
+
+export function useGetProjectRole<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetProjectRoleQueryOptions(projectId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get your role in a Project
+ */
+export const invalidateGetProjectRole = async (
+  queryClient: QueryClient,
+  projectId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetProjectRoleQueryKey(projectId) }, options);
+
+  return queryClient;
+};
+
+export const getGetProjectRoleSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetProjectRoleQueryKey(projectId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProjectRole>>> = ({ signal }) =>
+    getProjectRole(projectId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getProjectRole>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectRoleSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectRole>>
+>;
+export type GetProjectRoleSuspenseQueryError = ErrorType<void | GetProjectRole403>;
+
+export function useGetProjectRoleSuspense<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectRoleSuspense<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectRoleSuspense<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get your role in a Project
+ */
+
+export function useGetProjectRoleSuspense<
+  TData = Awaited<ReturnType<typeof getProjectRole>>,
+  TError = ErrorType<void | GetProjectRole403>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProjectRole>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetProjectRoleSuspenseQueryOptions(projectId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

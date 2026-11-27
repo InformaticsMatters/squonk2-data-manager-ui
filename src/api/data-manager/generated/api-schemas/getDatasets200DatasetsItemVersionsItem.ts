@@ -6,7 +6,7 @@
  *
  * A service that allows *registered* users to make **Datasets** and associated **Metadata** available to **Applications**, **Jobs**, and **Workflows** using **Projects** and **Files**.
  *
- * OpenAPI spec version: 6.7
+ * OpenAPI spec version: 6.16
  */
 import type { GetDatasets200DatasetsItemVersionsItemLabels } from "./getDatasets200DatasetsItemVersionsItemLabels";
 import type { GetDatasets200DatasetsItemVersionsItemProcessingStage } from "./getDatasets200DatasetsItemVersionsItemProcessingStage";

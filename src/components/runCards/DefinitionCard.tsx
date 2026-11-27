@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 import {
   alpha,
@@ -10,12 +11,14 @@ import {
   Chip,
   Divider,
   IconButton,
+  Link,
   Menu,
   MenuItem,
   Tooltip,
   Typography,
 } from "@mui/material";
 import A from "next/link";
+import remarkGfm from "remark-gfm";
 
 import { definitionKindInk, definitionKinds } from "../../constants/definitionKinds";
 import { projectLinks, type RunState } from "../../projects/routes";
@@ -57,6 +60,34 @@ interface DefinitionPresentation {
 }
 
 /**
+ * An application's description, formatted from the Markdown its ConfigMap declares. Only inline
+ * formatting, paragraphs and lists are kept, and anything else (headings, images, tables, code
+ * blocks) is unwrapped to its text, so every card in the grid keeps the same scale. The description
+ * is runtime configuration, so react-markdown's safe defaults stay on: raw HTML is escaped and
+ * unsafe URLs dropped (no `rehype-raw`, no permissive `urlTransform`).
+ */
+const ApplicationDescription = ({ markdown }: { markdown: string }) => (
+  <ReactMarkdown
+    unwrapDisallowed
+    allowedElements={["p", "strong", "em", "del", "a", "code", "ul", "ol", "li", "br", "img"]}
+    // A code block's `code` is moved out of its unwrapped `pre` before it is visited, so it is
+    // told from inline code by the line break that always ends a code block's text.
+    allowElement={({ children, tagName }) => {
+      const text = children.at(-1);
+      return !(tagName === "code" && text?.type === "text" && text.value.endsWith("\n"));
+    }}
+    components={{
+      a: ({ node: _, ...props }) => <Link {...props} rel="noopener noreferrer" target="_blank" />,
+      // An image has no children to unwrap to, so it is kept only to be shown as its alt text.
+      img: ({ alt }) => alt,
+    }}
+    remarkPlugins={[remarkGfm]}
+  >
+    {markdown}
+  </ReactMarkdown>
+);
+
+/**
  * What one catalogue entry puts on its card. A job's is decided by the version selected on the
  * card, so choosing another version moves the card's whole footer, count and Run destination
  * together.
@@ -70,9 +101,13 @@ const describeDefinition = (
       const application = item.data;
       return {
         definitionId: application.application_id,
+        description: application.description ? (
+          <ApplicationDescription markdown={application.description} />
+        ) : undefined,
+        docUrl: application.url,
         keywords: [],
-        // The card's subtitle is already the application's group, so the card does not state it a
-        // second time as a metadata line.
+        // The card's subtitle already states the application's kind and group, so the card does not
+        // state them a second time as metadata lines.
         meta: [],
         selection: { kind: "application", application },
         versions: [],
@@ -242,6 +277,24 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
               variant="outlined"
             />
           </Tooltip>
+          {/* The documentation link sits with the card's other links rather than at the end of the
+          description, so it is in the same place on every card whatever the description holds. */}
+          {!!docUrl && (
+            <Tooltip title="View documentation">
+              <IconButton
+                // A link around an icon says nothing about where it goes.
+                aria-label="View documentation"
+                href={docUrl}
+                rel="noopener noreferrer"
+                size="small"
+                // Outlined and as tall as the count chip beside it, so the two read as one row.
+                sx={{ border: 1, borderColor: "divider", height: 24, p: 0, width: 24 }}
+                target="_blank"
+              >
+                <ExternalLinkIcon sx={{ fontSize: "0.875rem" }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
         <Typography sx={{ fontWeight: 600, lineHeight: 1.3 }} variant="subtitle1">
           {item.title}
@@ -249,28 +302,21 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
         <Typography sx={{ color: "text.secondary", display: "block" }} variant="caption">
           {item.subtitle}
         </Typography>
-        {/* The documentation link is the definition's own, so a definition that publishes
-        documentation but no description still offers it rather than losing it with the paragraph it
-        used to hang off. */}
-        {(description !== undefined || docUrl !== undefined) && (
-          <Typography sx={{ mt: 1, textWrap: "pretty" }} variant="body2">
+        {description !== undefined && (
+          // A block rather than a paragraph, so an application's Markdown paragraphs and lists are
+          // valid inside it.
+          <Typography
+            component="div"
+            sx={{
+              mt: 1,
+              textWrap: "pretty",
+              "& p, & ul, & ol": { my: 0 },
+              "& > * + *": { mt: 0.5 },
+              "& ul, & ol": { pl: 2.5 },
+            }}
+            variant="body2"
+          >
             {description}
-            {!!docUrl && (
-              <Tooltip title="View documentation">
-                <IconButton
-                  // A link around an icon says nothing about where it goes, and a target smaller
-                  // than a fingertip cannot be followed on the device most likely to meet it.
-                  aria-label="View documentation"
-                  href={docUrl}
-                  rel="noopener noreferrer"
-                  size="small"
-                  sx={{ height: 24, ml: 0.5, p: 0, verticalAlign: "middle", width: 24 }}
-                  target="_blank"
-                >
-                  <ExternalLinkIcon sx={{ fontSize: "0.875rem" }} />
-                </IconButton>
-              </Tooltip>
-            )}
           </Typography>
         )}
         {meta.length > 0 && (

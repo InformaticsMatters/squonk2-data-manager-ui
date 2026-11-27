@@ -6,7 +6,7 @@
  *
  * A service that provides access to the Account Server, which gives *registered* users access to and management of **Organisations**, **Units**, **Products**, **Users**, and **Assets**.
  *
- * OpenAPI spec version: 4.7
+ * OpenAPI spec version: 4.17
  */
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
@@ -29,6 +29,7 @@ import type {
 
 import type {
   AsError,
+  DeleteOrganisationParams,
   GetOrganisationsParams,
   OrganisationAllDetail,
   OrganisationGetDefaultResponse,
@@ -608,15 +609,21 @@ export const useCreateOrganisation = <TError = ErrorType<AsError | void>, TConte
 /**
  * Before an Organisation can be deleted all its underlying **Units** must also be deleted, remembering that **Units** that have undeleted **Products** cannot be deleted.
  *
+ * The Organisation's **Capabilities** are deleted with it, each doing what it does when it's deleted (for example, the `viz` Capability drops the Organisation's database). If a Capability cannot be deleted the Organisation is not deleted, and the Capabilities that were deleted remain deleted. An admin can set `force` to delete the Capabilities (and the Organisation) anyway. Only an admin can delete an Organisation that has Capabilities.
+ *
  * You need admin rights to use this method
  * @summary Deletes an Organisation
  */
 export const deleteOrganisation = (
   orgId: string,
+  params?: DeleteOrganisationParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>({ url: `/organisation/${orgId}`, method: "DELETE", signal }, options);
+  return customInstance<void>(
+    { url: `/organisation/${orgId}`, method: "DELETE", params, signal },
+    options,
+  );
 };
 
 export const getDeleteOrganisationMutationOptions = <
@@ -626,14 +633,14 @@ export const getDeleteOrganisationMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteOrganisation>>,
     TError,
-    { orgId: string },
+    { orgId: string; params?: DeleteOrganisationParams },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteOrganisation>>,
   TError,
-  { orgId: string },
+  { orgId: string; params?: DeleteOrganisationParams },
   TContext
 > => {
   const mutationKey = ["deleteOrganisation"];
@@ -645,11 +652,11 @@ export const getDeleteOrganisationMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteOrganisation>>,
-    { orgId: string }
+    { orgId: string; params?: DeleteOrganisationParams }
   > = (props) => {
-    const { orgId } = props ?? {};
+    const { orgId, params } = props ?? {};
 
-    return deleteOrganisation(orgId, requestOptions);
+    return deleteOrganisation(orgId, params, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -669,7 +676,7 @@ export const useDeleteOrganisation = <TError = ErrorType<AsError | void>, TConte
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteOrganisation>>,
       TError,
-      { orgId: string },
+      { orgId: string; params?: DeleteOrganisationParams },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -678,7 +685,7 @@ export const useDeleteOrganisation = <TError = ErrorType<AsError | void>, TConte
 ): UseMutationResult<
   Awaited<ReturnType<typeof deleteOrganisation>>,
   TError,
-  { orgId: string },
+  { orgId: string; params?: DeleteOrganisationParams },
   TContext
 > => {
   return useMutation(getDeleteOrganisationMutationOptions(options), queryClient);

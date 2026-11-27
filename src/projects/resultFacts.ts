@@ -232,7 +232,10 @@ export type ResultsDefinitionCatalogue = {
 export const definitionTerms = {
   applications: {
     label: "Application",
-    name: (application: Pick<ApplicationSummary, "kind">) => application.kind,
+    // An application published under a name of its own is known by it; one that publishes none
+    // is known by its Kubernetes kind, as every application was before applications could.
+    name: (application: Pick<ApplicationSummary, "kind" | "name">) =>
+      application.name ?? application.kind,
   },
   jobs: { label: "Job", name: (job: Pick<JobSummary, "job">) => job.job },
   workflows: {

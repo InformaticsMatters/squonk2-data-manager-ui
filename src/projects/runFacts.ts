@@ -98,7 +98,8 @@ export const selectRunCatalogue = ({
     kind: "application",
     data: application,
     title: definitionTerms.applications.name(application),
-    subtitle: application.group ?? "",
+    // The kind is the heading when no name is published, so it is only repeated here when it is not.
+    subtitle: [application.name && application.kind, application.group].filter(Boolean).join(" · "),
   }));
 
   const jobGroups = new Map<string, JobSummary[]>();
@@ -140,7 +141,11 @@ export const selectRunCatalogue = ({
 const matchesSearch = (item: RunDefinitionItem, searchValue: string) => {
   switch (item.kind) {
     case "application":
-      return search([item.data.kind, item.data.group], searchValue);
+      // Exactly what the card shows; the description is searched as its raw Markdown.
+      return search(
+        [item.data.name, item.data.kind, item.data.group, item.data.description],
+        searchValue,
+      );
     case "job": {
       const [job] = item.data;
       return search([job.keywords, job.category, job.name, job.job, job.description], searchValue);
